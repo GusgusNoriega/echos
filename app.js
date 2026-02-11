@@ -95,33 +95,38 @@ const prev = document.getElementById("projPrev");
 const next = document.getElementById("projNext");
 
 function scrollByCard(dir){
+  if (!rail) return;
   const card = rail.querySelector(".proj-card");
   const step = (card?.offsetWidth || 270) + 16;
   rail.scrollBy({ left: dir * step, behavior: "smooth" });
 }
-prev.addEventListener("click", () => scrollByCard(-1));
-next.addEventListener("click", () => scrollByCard(1));
+if (prev && next && rail){
+  prev.addEventListener("click", () => scrollByCard(-1));
+  next.addEventListener("click", () => scrollByCard(1));
+}
 
 /* Optional: drag-to-scroll (desktop) */
 let isDown = false;
 let startX = 0;
 let startLeft = 0;
 
-rail.addEventListener("mousedown", (e) => {
-  isDown = true;
-  startX = e.pageX;
-  startLeft = rail.scrollLeft;
-  rail.classList.add("is-dragging");
-});
-window.addEventListener("mouseup", () => {
-  isDown = false;
-  rail.classList.remove("is-dragging");
-});
-rail.addEventListener("mousemove", (e) => {
-  if (!isDown) return;
-  const dx = e.pageX - startX;
-  rail.scrollLeft = startLeft - dx;
-});
+if (rail){
+  rail.addEventListener("mousedown", (e) => {
+    isDown = true;
+    startX = e.pageX;
+    startLeft = rail.scrollLeft;
+    rail.classList.add("is-dragging");
+  });
+  window.addEventListener("mouseup", () => {
+    isDown = false;
+    rail.classList.remove("is-dragging");
+  });
+  rail.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    const dx = e.pageX - startX;
+    rail.scrollLeft = startLeft - dx;
+  });
+}
 
 /* -----------------------------
    Contact tabs -> hidden input
@@ -129,29 +134,33 @@ rail.addEventListener("mousemove", (e) => {
 const tabs = [...document.querySelectorAll(".tab")];
 const servicio = document.getElementById("servicioElegido");
 
-tabs.forEach(t => {
-  t.addEventListener("click", () => {
-    tabs.forEach(x => x.classList.remove("is-active"));
-    t.classList.add("is-active");
-    servicio.value = t.dataset.service || t.textContent.trim();
+if (tabs.length && servicio){
+  tabs.forEach(t => {
+    t.addEventListener("click", () => {
+      tabs.forEach(x => x.classList.remove("is-active"));
+      t.classList.add("is-active");
+      servicio.value = t.dataset.service || t.textContent.trim();
+    });
   });
-});
+}
 
 /* -----------------------------
    Form submit demo
 ------------------------------ */
 const form = document.getElementById("quoteForm");
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const data = new FormData(form);
-  const payload = Object.fromEntries(data.entries());
+if (form){
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const payload = Object.fromEntries(data.entries());
 
-  // Demo UX: simula envío
-  alert(
-    `Datos enviados (demo)\n\nServicio: ${payload.servicio}\nNombre: ${payload.nombre}\nEmpresa: ${payload.empresa}\nEmail: ${payload.email}`
-  );
+    // Demo UX: simula envío
+    alert(
+      `Datos enviados (demo)\n\nServicio: ${payload.servicio}\nNombre: ${payload.nombre}\nEmpresa: ${payload.empresa}\nEmail: ${payload.email}`
+    );
 
-  form.reset();
-  servicio.value = "Infraestructura";
-  tabs.forEach((x,i)=>x.classList.toggle("is-active", i===0));
-});
+    form.reset();
+    if (servicio) servicio.value = "Infraestructura";
+    tabs.forEach((x,i)=>x.classList.toggle("is-active", i===0));
+  });
+}

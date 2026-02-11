@@ -1,0 +1,161 @@
+.product-page{
+  background:#f6f1e8;
+}
+
+.topbar--solid{
+  position: static;
+  background:#050505;
+}
+
+.product-hero{
+  padding: 64px 0 76px;
+  background: linear-gradient(180deg,#050505 0%,#111 65%,#171717 100%);
+  color:#fff;
+}
+
+.product-hero__grid{
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 44px;
+  align-items:center;
+}
+
+.product-hero__eyebrow{
+  margin: 0 0 14px;
+  color: rgba(255,255,255,.7);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: 12px;
+}
+
+.product-hero__title{
+  margin: 0 0 20px;
+  font: 700 58px/1 var(--font-display);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.product-hero__text{
+  margin: 0 0 14px;
+  max-width: 620px;
+  color: rgba(255,255,255,.78);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.product-hero__media{
+  min-height: 470px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,149,67,.65), transparent 35%),
+    radial-gradient(circle at 70% 70%, rgba(235,72,16,.45), transparent 38%),
+    linear-gradient(145deg,#191919,#323232);
+  box-shadow: 0 24px 70px rgba(0,0,0,.35);
+}
+
+.product-contact{
+  padding: 44px 0;
+  background:#111;
+}
+
+.product-contact__panel{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 28px;
+  color:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+}
+
+.product-contact__title{ margin:0 0 10px; font:700 36px/1.05 var(--font-display); text-transform:uppercase; }
+.product-contact__desc{ margin:0 0 8px; color:rgba(255,255,255,.8); }
+.product-contact__small{ margin:0; color:rgba(255,255,255,.55); font-size:13px; }
+.product-contact__actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+.product-features{ padding: 78px 0; }
+
+.product-features__head{ max-width: 720px; margin: 0 0 26px; }
+
+.product-features__grid{
+  display:grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 18px;
+}
+
+.feature-card{
+  background:#fff;
+  border-radius:20px;
+  padding:24px;
+  border:1px solid rgba(0,0,0,.08);
+}
+
+.feature-card h3{
+  margin:0 0 12px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.feature-card ul{ margin:0; padding-left:18px; color:rgba(13,14,16,.78); line-height:1.55; font-size:14px; }
+.feature-card li+li{ margin-top:8px; }
+.feature-card.is-highlight{ background:#181818; color:#fff; }
+.feature-card.is-highlight ul{ color:rgba(255,255,255,.82); }
+.feature-card--media{
+  background:
+    radial-gradient(circle at 40% 30%, rgba(255,153,63,.6), transparent 40%),
+    linear-gradient(135deg,#272727,#0f0f0f);
+  min-height: 280px;
+}
+
+.product-related{ padding: 0 0 90px; }
+.product-related__grid{
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:20px;
+  align-items:start;
+}
+.related-list{ display:grid; gap:12px; }
+.related-card{
+  display:grid;
+  grid-template-columns: 160px 1fr;
+  gap:16px;
+  padding:16px;
+  background:#fff;
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,.08);
+}
+.related-card__media{
+  border-radius:12px;
+  min-height:120px;
+  background:linear-gradient(135deg,#f89446,#d95a18);
+}
+.related-card__media--alt{ background:linear-gradient(135deg,#6b7179,#1f242a); }
+.related-card__content h3{ margin:2px 0 8px; font-size:17px; text-transform:uppercase; font-family:var(--font-display); }
+.related-card__content p{ margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+
+.tech-sheet{
+  background:#111;
+  color:#fff;
+  border-radius:22px;
+  padding:24px;
+}
+.tech-sheet h3{ margin:0 0 12px; text-transform:uppercase; font-family:var(--font-display); }
+.tech-sheet p{ margin:0 0 18px; color:rgba(255,255,255,.75); line-height:1.6; font-size:14px; }
+
+@media (max-width: 1024px){
+  .product-hero__grid,
+  .product-related__grid,
+  .product-features__grid{
+    grid-template-columns: 1fr;
+  }
+  .product-hero__title{ font-size:44px; }
+}
+
+@media (max-width: 768px){
+  .topbar__inner{ grid-template-columns: 1fr; }
+  .nav{ order:3; justify-content:flex-start; }
+  .cta{ justify-self:start; }
+  .product-contact__panel{ flex-direction:column; align-items:flex-start; }
+  .related-card{ grid-template-columns:1fr; }
+}
