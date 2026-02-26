@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ECH*S — Infraestructura</title>
+  <title>ECH*S — Iluminación</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="servicios-1.css" />
+  <link rel="stylesheet" href="servicios-2.css" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
@@ -46,7 +46,7 @@
 
     <!-- Contenido centrado -->
     <div class="srv-hero__content">
-      <h1 class="srv-hero__title">INFRAESTRUCTURA</h1>
+      <h1 class="srv-hero__title">ILUMINACION</h1>
       <p class="srv-hero__desc">
         Lorem ipsum dolor sit amet consectetur. Viverra amet semper sed quam lobortis lacus sit. Nulla id m
       </p>
@@ -65,33 +65,17 @@
 
   <!-- SECCIÓN SISTEMAS -->
   <section class="srv-systems">
-    <div class="srv-systems__inner">
+    <div class="srv-systems__inner srv-systems__inner--text-only">
 
-      <!-- Bloque 1: Sistema Losberger -->
-      <div class="srv-systems__row">
-        <div class="srv-systems__text">
-          <h2 class="srv-systems__title">SISTEMA LOSBERGER</h2>
-          <p>El sistema Losberger ofrece soluciones de espacio tanto temporales como permanentes de primera clase, adaptándose a una amplia variedad de necesidades.</p>
-          <p>Gracias a su diseño modular y alta calidad en materiales, este sistema es ideal para la realización de eventos, implementación de soluciones empresariales, uso en espacios públicos, así como en operaciones de protección civil y defensa.</p>
-        </div>
-        <div class="srv-systems__img">
-          <img src="img/inicio/baner1.jpg" alt="Sistema Losberger" />
-        </div>
-      </div>
-
-      <!-- Separador -->
+      <h2 class="srv-systems__title srv-systems__title--centered">LOREM IPSUM DOLOR</h2>
       <hr class="srv-systems__divider" />
 
-      <!-- Bloque 2: Sistema Truss de Aluminio -->
-      <div class="srv-systems__row srv-systems__row--reverse">
-        <div class="srv-systems__img">
-          <img src="img/inicio/baner1.jpg" alt="Sistema Truss de Aluminio" />
-        </div>
-        <div class="srv-systems__text">
-          <h2 class="srv-systems__title">SISTEMA TRUSS DE ALUMINIO</h2>
-          <p>El sistema de Trust de aluminio con acoplamiento cónico CCS está diseñado para ofrecer un soporte de carga elevado gracias a su estructura robusta y ligera fabricada en aluminio de alta resistencia. Este sistema destaca por su gran versatilidad y facilidad de montaje, permitiendo una instalación rápida y segura en una amplia variedad de configuraciones.</p>
-          <p>Es ideal para adaptarse a diferentes tipos de escenarios, estructuras temporales, eventos en vivo y montajes técnicos, brindando soluciones eficientes tanto en interiores como en exteriores.</p>
-        </div>
+      <div class="srv-systems__paragraphs">
+        <p>Lorem ipsum dolor sit amet consectetur. In donec id tortor sollicitudin varius gravida aenean sit. Quam nisl quis mauris viverra. Blandit vestibulum tempus lectus consequat auctor velit egestas. Egestas pretium enim tellus nibh. Velit nibh lectus quis nec tellus. Enim pellentesque tristi</p>
+
+        <p>Lorem ipsum dolor sit amet consectetur. In donec id tortor sollicitudin varius gravida aenean sit. Quam nisl quis mauris viverra. Blandit vestibulum tempus lectus consequat auctor velit egestas. Egestas pretium enim tellus nibh. Velit nibh lectus quis nec tellus. Enim pellentesque tristi</p>
+
+        <p>Lorem ipsum dolor sit amet consectetur. In donec id tortor sollicitudin varius gravida aenean sit. Quam nisl quis mauris viverra. Blandit vestibulum tempus lectus consequat auctor velit egestas. Egestas pretium enim tellus nibh. Velit nibh lectus quis nec tellus. Enim pellentesque tristi</p>
       </div>
 
     </div>
@@ -189,6 +173,25 @@
           <span>Cotizar servicio</span>
           <span class="srv-products__cta-arrow" aria-hidden="true">→</span>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN SERVICIOS ADICIONALES -->
+  <section class="srv-additional">
+    <div class="srv-additional__inner">
+      <h2 class="srv-additional__title">SERVICIOS ADICIONALES</h2>
+      <p class="srv-additional__subtitle">Complementamos nuestros servicio de iluminación con soluciones energéticas confiables para garantizar el suministro eléctrico continuo en su evento.</p>
+
+      <div class="srv-additional__card">
+        <div class="srv-additional__card-img">
+          <img src="img/inicio/baner1.jpg" alt="Grupo Electrógeno" />
+        </div>
+        <div class="srv-additional__card-body">
+          <h3 class="srv-additional__card-title">GRUPO ELECTROGENO</h3>
+          <p class="srv-additional__card-desc">Generador de alta potencia para eventos de gran escala y requerimientos energéticos elevados</p>
+          <a class="srv-additional__card-btn" href="#contacto">Más información</a>
+        </div>
       </div>
     </div>
   </section>
@@ -310,42 +313,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN CERTIFICACIONES Y RESPALDO -->
-  <section class="srv-certifications">
-    <div class="srv-certifications__inner">
-      <h2 class="srv-certifications__title">CERTIFICACIONES Y RESPALDO</h2>
-      <p class="srv-certifications__subtitle">Contamos con todas las certificaciones necesarias para garantizar la calidad y seguridad en nuestros servicios.</p>
-
-      <div class="srv-certifications__cards">
-        <!-- Card 1 -->
-        <div class="srv-certifications__card">
-          <div class="srv-certifications__card-header">
-            <span class="srv-certifications__card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff5c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-                <path d="M9 12l2 2 4-4"/>
-              </svg>
-            </span>
-            <h3 class="srv-certifications__card-title">Construcción técnica</h3>
-          </div>
-          <p class="srv-certifications__card-desc">Lorem ipsum dolor sit amet consectetur. Nibh feugiat sit id sed.</p>
-        </div>
-        <!-- Card 2 -->
-        <div class="srv-certifications__card">
-          <div class="srv-certifications__card-header">
-            <span class="srv-certifications__card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff5c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-                <path d="M9 12l2 2 4-4"/>
-              </svg>
-            </span>
-            <h3 class="srv-certifications__card-title">Construcción técnica</h3>
-          </div>
-          <p class="srv-certifications__card-desc">Lorem ipsum dolor sit amet consectetur. Nibh feugiat sit id sed.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- SECCIÓN OTROS SERVICIOS -->
   <section class="srv-other">

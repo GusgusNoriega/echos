@@ -125,84 +125,50 @@
 }
 
 /* ================================
-   Servicios-1 : Sección Sistemas
+   Servicios-3 : Sección Descripción
    ================================ */
 
-.srv-systems {
+.srv-description {
   position: relative;
   background: #F6F1E8;
   padding: 0;
 }
 
-/* Inner con bordes redondeados superiores que "sobrepasan" el hero */
-.srv-systems__inner {
+.srv-description__inner {
   position: relative;
   z-index: 5;
   margin-top: -40px;
   background: #F6F1E8;
   border-radius: 32px 32px 0 0;
-  padding: 60px 80px 80px;
-  max-width: 1200px;
+  padding: 70px 80px 80px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Fila: grid de 2 columnas */
-.srv-systems__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-}
-
-/* Fila invertida (imagen izquierda, texto derecha) */
-.srv-systems__row--reverse {
-  direction: ltr; /* asegura orden */
-}
-
-.srv-systems__row--reverse .srv-systems__img {
-  order: -1;
-}
-
-/* Título */
-.srv-systems__title {
-  margin: 0 0 20px;
+.srv-description__title {
+  margin: 0 0 36px;
   font-family: var(--font-display);
   font-weight: 900;
   font-style: italic;
-  font-size: clamp(22px, 2.4vw, 30px);
+  font-size: clamp(26px, 3vw, 38px);
   color: #0b0c10;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1.15;
+  letter-spacing: 1.5px;
+  line-height: 1.1;
+  text-align: center;
 }
 
-/* Párrafos */
-.srv-systems__text p {
-  margin: 0 0 16px;
+.srv-description__text {
+  margin: 0 0 28px;
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.75;
   color: #3a3a3a;
+  text-align: justify;
 }
 
-.srv-systems__text p:last-child {
+.srv-description__text:last-child {
   margin-bottom: 0;
-}
-
-/* Imagen */
-.srv-systems__img img {
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
-  border-radius: 16px;
-  display: block;
-}
-
-/* Separador */
-.srv-systems__divider {
-  border: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  margin: 56px 0;
 }
 
 /* ================================
@@ -397,6 +363,112 @@
 
 .srv-products__cta-arrow {
   font-size: 18px;
+}
+
+/* ================================
+   Servicios-3 : Ficha Técnica
+   ================================ */
+
+.srv-ficha {
+  background: #F6F1E8;
+  padding: 80px 0;
+}
+
+.srv-ficha__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.srv-ficha__card {
+  background: #EDE8DD;
+  border-radius: 28px;
+  padding: 60px 70px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+/* Tablet / imagen con marco negro */
+.srv-ficha__img-wrap {
+  flex-shrink: 0;
+  width: 380px;
+}
+
+.srv-ficha__tablet {
+  position: relative;
+  background: #0b0c10;
+  border-radius: 18px;
+  padding: 24px 20px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+}
+
+.srv-ficha__tablet img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* Contenido derecho */
+.srv-ficha__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.srv-ficha__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(28px, 3.2vw, 42px);
+  color: #0b0c10;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.srv-ficha__text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3a3a3a;
+  max-width: 480px;
+}
+
+.srv-ficha__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a18, #ff5c00);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  box-shadow: 0 12px 36px rgba(255, 106, 0, 0.3);
+  transition: transform 0.2s, filter 0.2s;
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.srv-ficha__btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.srv-ficha__btn-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 /* ================================
@@ -605,6 +677,342 @@
 
 .srv-featured__cta-arrow {
   font-size: 20px;
+}
+
+/* ================================
+   Servicios-3 : Servicios Adicionales (Slider)
+   ================================ */
+
+.srv-additional {
+  background: #F6F1E8;
+  padding: 80px 0 70px;
+}
+
+.srv-additional__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.srv-additional__title {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(28px, 3.2vw, 42px);
+  color: #0b0c10;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.srv-additional__subtitle {
+  margin: 0 auto 50px;
+  max-width: 720px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #3a3a3a;
+}
+
+/* Slider container */
+.srv-additional__slider {
+  overflow: hidden;
+}
+
+.srv-additional__track {
+  display: flex;
+  gap: 28px;
+  transition: transform 0.4s ease;
+}
+
+/* Card horizontal */
+.srv-additional__card {
+  min-width: calc((100% - 28px) / 2);
+  max-width: calc((100% - 28px) / 2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  background: #EDE8DD;
+  border-radius: 20px;
+  overflow: hidden;
+  gap: 0;
+}
+
+.srv-additional__card-img {
+  width: 45%;
+  min-height: 260px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 16px 0 16px 16px;
+}
+
+.srv-additional__card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 16px;
+  transition: transform 0.35s ease;
+}
+
+.srv-additional__card:hover .srv-additional__card-img img {
+  transform: scale(1.05);
+}
+
+.srv-additional__card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 32px 32px 28px;
+  gap: 12px;
+}
+
+.srv-additional__card-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(16px, 1.6vw, 20px);
+  color: #0b0c10;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.srv-additional__card-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #555;
+}
+
+.srv-additional__card-btn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: #2E1A0E;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: background 0.25s, transform 0.2s;
+  margin-top: 8px;
+}
+
+.srv-additional__card-btn:hover {
+  background: #1a0e05;
+  transform: translateY(-2px);
+}
+
+/* Navegación: flechas + dots */
+.srv-additional__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.srv-additional__arrow {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: #0b0c10;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.srv-additional__arrow:hover {
+  opacity: 0.6;
+}
+
+/* Dots */
+.srv-additional__dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.srv-additional__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid #0b0c10;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.srv-additional__dot--active {
+  background: #0b0c10;
+  border-color: #0b0c10;
+}
+
+/* ================================
+   Servicios-3 : Mobiliario en Alquiler (Slider)
+   ================================ */
+
+.srv-furniture {
+  background: #EDE8DD;
+  padding: 80px 0 70px;
+  overflow: hidden;
+}
+
+.srv-furniture__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0;
+}
+
+.srv-furniture__title {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(26px, 3.2vw, 40px);
+  color: #0b0c10;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  line-height: 1.1;
+  text-align: center;
+  padding: 0 40px;
+}
+
+.srv-furniture__subtitle {
+  margin: 0 auto 50px;
+  max-width: 720px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #3a3a3a;
+  padding: 0 40px;
+}
+
+/* Slider container - full width con overflow visible para efecto de transparencia */
+.srv-furniture__slider {
+  position: relative;
+  overflow: visible;
+  padding: 0 0;
+  /* Gradientes laterales para efecto de desvanecimiento */
+}
+
+.srv-furniture__slider::before,
+.srv-furniture__slider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.srv-furniture__slider::before {
+  left: 0;
+  background: linear-gradient(to right, #EDE8DD 0%, transparent 100%);
+}
+
+.srv-furniture__slider::after {
+  right: 0;
+  background: linear-gradient(to left, #EDE8DD 0%, transparent 100%);
+}
+
+.srv-furniture__track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 0 calc((100vw - 1120px) / 2);
+  cursor: grab;
+}
+
+/* Card */
+.srv-furniture__card {
+  min-width: 240px;
+  max-width: 240px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #d9d3c7;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.srv-furniture__card:hover {
+  transform: translateY(-4px);
+}
+
+.srv-furniture__card-img {
+  width: 100%;
+  aspect-ratio: 3 / 3.2;
+  overflow: hidden;
+}
+
+.srv-furniture__card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.srv-furniture__card:hover .srv-furniture__card-img img {
+  transform: scale(1.05);
+}
+
+/* Label en la parte inferior de la card */
+.srv-furniture__card-label {
+  padding: 14px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0b0c10;
+  line-height: 1.3;
+}
+
+/* CTA Descargar brochure */
+.srv-furniture__cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 0 40px;
+}
+
+.srv-furniture__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7a18, #ff5c00);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  box-shadow: 0 12px 36px rgba(255, 106, 0, 0.3);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.srv-furniture__cta:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+.srv-furniture__cta-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 /* ================================
@@ -966,18 +1374,10 @@
     padding: 90px 20px 70px;
   }
 
-  .srv-systems__inner {
+  .srv-description__inner {
     padding: 48px 40px 60px;
     margin-top: -30px;
     border-radius: 24px 24px 0 0;
-  }
-
-  .srv-systems__row {
-    gap: 32px;
-  }
-
-  .srv-systems__img img {
-    height: 260px;
   }
 
   .srv-products__grid {
@@ -988,6 +1388,42 @@
   .srv-featured__card {
     min-width: calc((100% - 28px) / 2);
     max-width: calc((100% - 28px) / 2);
+  }
+
+  .srv-ficha__card {
+    padding: 48px 40px;
+    gap: 40px;
+  }
+
+  .srv-ficha__img-wrap {
+    width: 300px;
+  }
+
+  .srv-additional__card {
+    min-width: calc((100% - 28px) / 2);
+    max-width: calc((100% - 28px) / 2);
+  }
+
+  .srv-additional__card-img {
+    min-height: 220px;
+  }
+
+  .srv-additional__card-content {
+    padding: 24px 24px 24px 20px;
+  }
+
+  .srv-furniture__card {
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .srv-furniture__track {
+    padding: 0 60px;
+  }
+
+  .srv-furniture__slider::before,
+  .srv-furniture__slider::after {
+    width: 80px;
   }
 
   .srv-other__grid {
@@ -1009,21 +1445,8 @@
 }
 
 @media (max-width: 720px) {
-  .srv-systems__row {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .srv-systems__row--reverse .srv-systems__img {
-    order: -1;
-  }
-
-  .srv-systems__inner {
+  .srv-description__inner {
     padding: 36px 24px 48px;
-  }
-
-  .srv-systems__img img {
-    height: 240px;
   }
 
   .srv-products__grid {
@@ -1057,6 +1480,63 @@
     gap: 16px;
   }
 
+  .srv-additional__card {
+    min-width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+  }
+
+  .srv-additional__card-img {
+    width: 100%;
+    min-height: 200px;
+    margin: 16px 16px 0 16px;
+    width: calc(100% - 32px);
+  }
+
+  .srv-additional__card-content {
+    padding: 24px;
+  }
+
+  .srv-additional__inner {
+    padding: 0 20px;
+  }
+
+  .srv-additional {
+    padding: 60px 0 50px;
+  }
+
+  .srv-ficha__card {
+    flex-direction: column;
+    padding: 40px 28px;
+    gap: 36px;
+    text-align: center;
+  }
+
+  .srv-ficha__img-wrap {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .srv-ficha__content {
+    align-items: center;
+  }
+
+  .srv-ficha__text {
+    max-width: 100%;
+  }
+
+  .srv-ficha__btn {
+    align-self: center;
+  }
+
+  .srv-ficha__inner {
+    padding: 0 20px;
+  }
+
+  .srv-ficha {
+    padding: 60px 0;
+  }
+
   .srv-other__grid {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -1072,6 +1552,36 @@
 
   .srv-other__card {
     min-height: 220px;
+  }
+
+  .srv-furniture {
+    padding: 60px 0 50px;
+  }
+
+  .srv-furniture__card {
+    min-width: 180px;
+    max-width: 180px;
+  }
+
+  .srv-furniture__track {
+    padding: 0 30px;
+  }
+
+  .srv-furniture__slider::before,
+  .srv-furniture__slider::after {
+    width: 50px;
+  }
+
+  .srv-furniture__title {
+    padding: 0 20px;
+  }
+
+  .srv-furniture__subtitle {
+    padding: 0 20px;
+  }
+
+  .srv-furniture__cta-wrap {
+    padding: 0 20px;
   }
 
   .prod-cta {
@@ -1111,25 +1621,42 @@
     font-size: 13px;
   }
 
-  .srv-systems__inner {
+  .srv-description__inner {
     padding: 28px 16px 40px;
     margin-top: -20px;
     border-radius: 20px 20px 0 0;
   }
 
-  .srv-systems__title {
-    font-size: 20px;
+  .srv-description__title {
+    font-size: 22px;
   }
 
-  .srv-systems__text p {
+  .srv-description__text {
     font-size: 14px;
   }
 
-  .srv-systems__img img {
-    height: 200px;
+  .srv-furniture__card {
+    min-width: 160px;
+    max-width: 160px;
   }
 
-  .srv-systems__divider {
-    margin: 36px 0;
+  .srv-furniture__track {
+    padding: 0 20px;
+    gap: 16px;
+  }
+
+  .srv-furniture__slider::before,
+  .srv-furniture__slider::after {
+    width: 30px;
+  }
+
+  .srv-furniture__card-label {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .srv-furniture__cta {
+    padding: 14px 28px;
+    font-size: 14px;
   }
 }
