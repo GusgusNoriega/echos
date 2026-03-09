@@ -1,0 +1,884 @@
+/**
+ * Nosotros — Estilos
+ *
+ * @package Echos
+ */
+
+/* ---- Header estático ---- */
+.nosotros-header {
+  position: relative;
+  background: #0b0c10;
+}
+
+/* ============================================
+   Hero — Nosotros
+   ============================================ */
+.nosotros-hero {
+  position: relative;
+  overflow: hidden;
+  background: #0b0c10;
+  padding: 80px 0 100px;
+  text-align: center;
+}
+
+.nosotros-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Overlay oscuro + degradado sobre la imagen */
+.nosotros-hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px 600px at 20% 70%, rgba(180, 90, 20, .40), transparent 60%),
+    radial-gradient(500px 400px at 25% 60%, rgba(255, 106, 0, .22), transparent 55%),
+    radial-gradient(400px 300px at 80% 30%, rgba(120, 60, 10, .15), transparent 50%),
+    linear-gradient(180deg, rgba(11,12,16,.85) 0%, rgba(16,14,12,.80) 50%, rgba(11,12,16,.90) 100%);
+  z-index: 1;
+}
+
+.nosotros-hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.nosotros-hero__title {
+  margin: 0 0 20px 0;
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.1;
+  font-style: italic;
+}
+
+.nosotros-hero__accent {
+  color: var(--accent, #ff6a00);
+}
+
+.nosotros-hero__desc {
+  margin: 0 auto;
+  color: rgba(255, 255, 255, .55);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* ============================================
+   Imagen Equipo — Nosotros
+   ============================================ */
+.nosotros-imagen {
+  position: relative;
+  margin-top: -80px;
+  padding: 0 0 80px;
+  z-index: 2;
+}
+
+/* Fondo claro solo desde donde terminaba el hero hacia abajo */
+.nosotros-imagen::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px; /* = valor absoluto del margin-top negativo */
+  bottom: 0;
+  background: #fff8f0;
+  z-index: 0;
+}
+
+.nosotros-imagen__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.nosotros-imagen__wrap {
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 16 / 7;
+  background: #0b0c10;
+}
+
+.nosotros-imagen__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================
+   Descripción Empresa — Nosotros
+   ============================================ */
+.nosotros-descripcion {
+  background: #fff8f0;
+  padding: 60px 0 80px;
+}
+
+.nosotros-descripcion__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.nosotros-descripcion__text {
+  font-family: var(--font-body, sans-serif);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #1a1a1a;
+  margin: 0 0 28px;
+}
+
+.nosotros-descripcion__text:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   Nuestra Historia — Timeline Slider
+   ============================================ */
+.nosotros-historia {
+  position: relative;
+  background: #0b0c10;
+  padding: 80px 0 100px;
+  overflow: hidden;
+  border-radius: 40px 40px 40px 40px;
+}
+
+/* Degradado cálido inferior-izquierdo */
+.nosotros-historia::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px 500px at 10% 90%, rgba(180, 90, 20, .30), transparent 60%),
+    radial-gradient(400px 350px at 15% 80%, rgba(255, 106, 0, .15), transparent 55%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---- Años de fondo ---- */
+.nosotros-historia__bg-years {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nosotros-historia__bg-year {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-weight: 900;
+  font-style: italic;
+  color: rgba(255, 255, 255, .06);
+  line-height: 1;
+  position: absolute;
+  user-select: none;
+  transition: opacity .5s ease, transform .5s ease;
+}
+
+.nosotros-historia__bg-year--prev {
+  font-size: clamp(180px, 22vw, 320px);
+  left: -2%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.nosotros-historia__bg-year--next {
+  font-size: clamp(180px, 22vw, 320px);
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.nosotros-historia__bg-year--far {
+  font-size: clamp(180px, 22vw, 320px);
+  right: -12%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ---- Contenido centrado ---- */
+.nosotros-historia__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nosotros-historia__title {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 24px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 0 50px;
+  text-align: center;
+}
+
+/* ---- Card naranja ---- */
+.nosotros-historia__card {
+  position: relative;
+  background: #ff6a00;
+  border-radius: 20px;
+  padding: 32px 36px 36px;
+  width: 100%;
+  max-width: 420px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Badge año */
+.nosotros-historia__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 50px;
+  width: fit-content;
+  margin-bottom: 6px;
+}
+
+/* Navegación flechas */
+.nosotros-historia__nav {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  display: flex;
+  gap: 8px;
+}
+
+.nosotros-historia__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background .2s ease, opacity .2s ease;
+  padding: 0;
+}
+
+.nosotros-historia__arrow:hover {
+  background: rgba(255, 255, 255, .15);
+}
+
+.nosotros-historia__arrow:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.nosotros-historia__arrow:disabled:hover {
+  background: transparent;
+}
+
+/* Contenido slide */
+.nosotros-historia__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nosotros-historia__slide-title {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 26px;
+  font-weight: 800;
+  font-style: italic;
+  color: #ffffff;
+  margin: 14px 0 0;
+  line-height: 1.2;
+}
+
+.nosotros-historia__slide-desc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .90);
+  margin: auto 0 0;
+  padding-top: 20px;
+}
+
+/* Animación de transición del contenido */
+.nosotros-historia__card.is-sliding .nosotros-historia__content {
+  animation: historia-slide .4s ease;
+}
+
+@keyframes historia-slide {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   Misión y Visión — Cards
+   ============================================ */
+.nosotros-mv {
+  background: #fff8f0;
+  padding: 0 0 80px;
+  padding-top: 80px;
+}
+
+.nosotros-mv__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.nosotros-mv__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.nosotros-mv__card {
+  background: #111111;
+  border-radius: 24px;
+  padding: 40px 40px 44px;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.nosotros-mv__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: auto;
+}
+
+.nosotros-mv__title {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 32px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.nosotros-mv__icon {
+  color: rgba(255, 255, 255, .85);
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.nosotros-mv__icon svg {
+  display: block;
+}
+
+.nosotros-mv__desc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, .80);
+  margin: 40px 0 0;
+}
+
+/* ============================================
+   ¿Cómo Trabajamos? — Proceso
+   ============================================ */
+.nosotros-proceso {
+  background: #fff8f0;
+  padding: 80px 0 100px;
+}
+
+.nosotros-proceso__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.nosotros-proceso__title {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 42px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+.nosotros-proceso__desc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #555555;
+  margin: 0 0 50px;
+  max-width: 680px;
+}
+
+.nosotros-proceso__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.nosotros-proceso__card {
+  background: #ede9e1;
+  border-radius: 20px;
+  padding: 32px 28px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nosotros-proceso__number {
+  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-size: 48px;
+  font-weight: 900;
+  color: #1a1a1a;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.nosotros-proceso__card-title {
+  font-family: var(--font-body, sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.nosotros-proceso__card-desc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #555555;
+  margin: 0;
+}
+
+/* ============================================
+   Clientes — Logos (Nosotros)
+   ============================================ */
+.nosotros-clientes {
+  background: #fff8f0;
+  padding: 34px 0 36px;
+}
+
+.nosotros-clientes .clients__row {
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  gap: 34px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nosotros-clientes .logo {
+  height: 30px;
+  min-width: 120px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #1a1c22;
+  opacity: .9;
+}
+
+.nosotros-clientes .logo--bcp {
+  color: #0f4ccf;
+  position: relative;
+}
+
+.nosotros-clientes .logo--bcp::before {
+  content: "›";
+  color: var(--accent, #ff6a00);
+  font-weight: 900;
+  margin-right: 6px;
+}
+
+.nosotros-clientes .logo--ipsos {
+  background: linear-gradient(135deg, #2635c8, #00c2b3);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* ============================================
+   Responsive — Hero Nosotros
+   ============================================ */
+@media (max-width: 768px) {
+  .nosotros-hero {
+    padding: 60px 0 70px;
+  }
+  .nosotros-hero__title {
+    font-size: 36px;
+    letter-spacing: 1.5px;
+  }
+  .nosotros-hero__desc {
+    font-size: 14px;
+    max-width: 420px;
+  }
+
+  .nosotros-imagen {
+    margin-top: -60px;
+    padding: 0 0 60px;
+  }
+  .nosotros-imagen::before {
+    top: 60px;
+  }
+  .nosotros-imagen__wrap {
+    border-radius: 16px;
+  }
+
+  .nosotros-descripcion {
+    padding: 48px 0 60px;
+  }
+  .nosotros-descripcion__text {
+    font-size: 16px;
+  }
+
+  /* Historia */
+  .nosotros-historia {
+    padding: 60px 0 80px;
+    border-radius: 30px 30px 30px 30px;
+  }
+  .nosotros-historia__title {
+    font-size: 20px;
+    margin-bottom: 36px;
+  }
+  .nosotros-historia__card {
+    max-width: 380px;
+    padding: 28px 28px 32px;
+    min-height: 270px;
+  }
+  .nosotros-historia__slide-title {
+    font-size: 22px;
+  }
+  .nosotros-historia__bg-year--prev,
+  .nosotros-historia__bg-year--next,
+  .nosotros-historia__bg-year--far {
+    font-size: clamp(120px, 18vw, 220px);
+  }
+
+  /* Misión y Visión */
+  .nosotros-mv {
+    padding: 0 0 60px;
+  }
+  .nosotros-mv__grid {
+    gap: 24px;
+  }
+  .nosotros-mv__card {
+    padding: 32px 32px 36px;
+    min-height: 280px;
+    border-radius: 20px;
+  }
+  .nosotros-mv__title {
+    font-size: 26px;
+  }
+  .nosotros-mv__icon svg {
+    width: 44px;
+    height: 44px;
+  }
+  .nosotros-mv__desc {
+    font-size: 14px;
+    margin-top: 32px;
+  }
+
+  /* ¿Cómo Trabajamos? */
+  .nosotros-proceso {
+    padding: 60px 0 80px;
+  }
+  .nosotros-proceso__title {
+    font-size: 34px;
+  }
+  .nosotros-proceso__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .nosotros-proceso__number {
+    font-size: 40px;
+  }
+  .nosotros-proceso__card {
+    border-radius: 16px;
+    padding: 28px 24px 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .nosotros-hero {
+    padding: 45px 0 55px;
+  }
+  .nosotros-hero__title {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  .nosotros-hero__desc {
+    font-size: 13px;
+    max-width: 320px;
+  }
+
+  .nosotros-imagen {
+    margin-top: -40px;
+    padding: 0 0 48px;
+  }
+  .nosotros-imagen::before {
+    top: 40px;
+  }
+  .nosotros-imagen__wrap {
+    border-radius: 14px;
+    aspect-ratio: 16 / 9;
+  }
+
+  .nosotros-descripcion {
+    padding: 36px 0 48px;
+  }
+  .nosotros-descripcion__text {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Historia */
+  .nosotros-historia {
+    padding: 48px 0 60px;
+    border-radius: 24px 24px 24px 24px;
+  }
+  .nosotros-historia__title {
+    font-size: 17px;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+  }
+  .nosotros-historia__card {
+    max-width: 100%;
+    padding: 24px 22px 28px;
+    min-height: 250px;
+    border-radius: 16px;
+  }
+  .nosotros-historia__slide-title {
+    font-size: 20px;
+  }
+  .nosotros-historia__slide-desc {
+    font-size: 13px;
+  }
+  .nosotros-historia__nav {
+    top: 22px;
+    right: 20px;
+  }
+  .nosotros-historia__arrow {
+    width: 32px;
+    height: 32px;
+  }
+  .nosotros-historia__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+  .nosotros-historia__bg-year--prev,
+  .nosotros-historia__bg-year--next,
+  .nosotros-historia__bg-year--far {
+    font-size: clamp(100px, 25vw, 160px);
+  }
+  .nosotros-historia__bg-year--far {
+    display: none;
+  }
+
+  /* Misión y Visión */
+  .nosotros-mv {
+    padding: 0 0 48px;
+  }
+  .nosotros-mv__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .nosotros-mv__card {
+    padding: 28px 24px 32px;
+    min-height: auto;
+    border-radius: 18px;
+  }
+  .nosotros-mv__title {
+    font-size: 22px;
+    letter-spacing: 1.5px;
+  }
+  .nosotros-mv__icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  .nosotros-mv__desc {
+    font-size: 13px;
+    margin-top: 24px;
+  }
+
+  /* ¿Cómo Trabajamos? */
+  .nosotros-proceso {
+    padding: 48px 0 60px;
+  }
+  .nosotros-proceso__title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  .nosotros-proceso__desc {
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+  .nosotros-proceso__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .nosotros-proceso__number {
+    font-size: 36px;
+    margin-bottom: 14px;
+  }
+  .nosotros-proceso__card {
+    border-radius: 14px;
+    padding: 24px 22px 28px;
+  }
+  .nosotros-proceso__card-title {
+    font-size: 15px;
+  }
+  .nosotros-proceso__card-desc {
+    font-size: 13px;
+  }
+
+  /* Clientes */
+  .nosotros-clientes .clients__row {
+    gap: 18px;
+  }
+}
+
+/* ============================================
+   CTA Final — "¿Listo para comenzar?"
+   ============================================ */
+.prod-cta {
+  background: #F5F1E8;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.prod-cta__card {
+  background: #EDE8DD;
+  border-radius: 28px;
+  padding: 70px 40px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.prod-cta__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: #1a1000;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.prod-cta__text {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  max-width: 460px;
+}
+
+.prod-cta__buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botones oscuros CTA */
+.btn-cta-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 28px;
+  border-radius: 999px;
+  background: #2E1A0E;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .25s ease, transform .2s ease;
+  border: none;
+}
+
+.btn-cta-dark:hover {
+  background: #1a0e05;
+  transform: translateY(-2px);
+}
+
+.btn-cta-dark__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  flex-shrink: 0;
+}
+
+/* ---- CTA Responsive ---- */
+@media (max-width: 980px) {
+  .prod-cta__title {
+    font-size: 28px;
+  }
+  .prod-cta__card {
+    padding: 50px 30px 60px;
+  }
+}
+
+@media (max-width: 520px) {
+  .prod-cta {
+    padding: 50px 0;
+  }
+  .prod-cta__card {
+    padding: 40px 20px 50px;
+    border-radius: 20px;
+  }
+  .prod-cta__title {
+    font-size: 24px;
+  }
+  .prod-cta__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}

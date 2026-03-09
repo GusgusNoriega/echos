@@ -1,0 +1,645 @@
+/* ============================================
+   Proyectos (página) — proyectos-page.css
+   ============================================ */
+
+/* ---- Header estático ---- */
+.proyectos-header {
+  position: relative;
+  background: #0b0c10;
+}
+
+/* ---- Nav active (por si no viene de productos.css) ---- */
+.nav--active {
+  color: #FF6A00 !important;
+}
+
+/* ---- Hero Proyectos ---- */
+.proyectos-hero {
+  position: relative;
+  overflow: hidden;
+  background: #0b0c10;
+  padding: 80px 0 100px;
+  text-align: center;
+}
+
+.proyectos-hero__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px 600px at 20% 70%, rgba(180, 90, 20, .40), transparent 60%),
+    radial-gradient(500px 400px at 25% 60%, rgba(255, 106, 0, .22), transparent 55%),
+    radial-gradient(400px 300px at 80% 30%, rgba(120, 60, 10, .15), transparent 50%),
+    linear-gradient(180deg, #0b0c10 0%, #100e0c 50%, #0b0c10 100%);
+  z-index: 0;
+}
+
+.proyectos-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.proyectos-hero__title {
+  margin: 0 0 20px 0;
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.1;
+  font-style: italic;
+}
+
+.proyectos-hero__accent {
+  color: var(--accent, #ff6a00);
+}
+
+.proyectos-hero__desc {
+  margin: 0 auto;
+  color: rgba(255, 255, 255, .55);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* ============================================
+   Los Más Destacados — Slider
+   ============================================ */
+.destacados {
+  padding: 60px 0 70px;
+  background: var(--bg, #F6F1E8);
+}
+
+/* ---- Header: título + flechas ---- */
+.destacados__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.destacados__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink, #0d0e10);
+  line-height: 1.1;
+}
+
+.destacados__arrows {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.destacados__arrow {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--ink, #0d0e10);
+  transition: opacity .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.destacados__arrow:hover {
+  opacity: .6;
+}
+
+.destacados__arrow--prev {
+  color: #b0b0b0;
+}
+
+/* ---- Viewport / Track ---- */
+.destacados__viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.destacados__track {
+  display: flex;
+  gap: 24px;
+  transition: transform .45s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+}
+
+/* ---- Card ---- */
+.destacados__card {
+  flex: 0 0 calc((100% - 24px) / 2);
+  min-width: 0;
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 11;
+}
+
+.destacados__img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 22px;
+  transition: transform .4s ease;
+}
+
+.destacados__card:hover .destacados__img {
+  transform: scale(1.03);
+}
+
+/* ---- Info bar (bottom overlay) ---- */
+.destacados__info {
+  position: absolute;
+  bottom: 14px;
+  left: 5%;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(199, 204, 223, .85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 14px;
+}
+
+.destacados__info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.destacados__name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: #111319;
+  letter-spacing: .2px;
+}
+
+.destacados__date {
+  font-size: 12px;
+  color: rgba(17, 19, 25, .55);
+  font-weight: 600;
+}
+
+.destacados__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: #111319;
+  text-decoration: none;
+  transition: background .2s;
+}
+
+.destacados__link:hover {
+  background: rgba(17, 19, 25, .08);
+}
+
+/* ---- Dots ---- */
+.destacados__dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.destacados__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 2px solid #111319;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background .2s;
+}
+
+.destacados__dot.is-active {
+  background: #111319;
+}
+
+/* ============================================
+   Últimos Proyectos — Grid con Filtros
+   ============================================ */
+.ultimos-proyectos {
+  padding: 80px 0 90px;
+  background: var(--bg, #F6F1E8);
+}
+
+/* ---- Título ---- */
+.ultimos-proyectos__title {
+  margin: 0 0 36px 0;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink, #0d0e10);
+  line-height: 1.1;
+  text-align: center;
+}
+
+/* ---- Filtros ---- */
+.ultimos-proyectos__filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto 48px;
+  background: #fff;
+  border: 1.5px solid #d5d5d5;
+  border-radius: 999px;
+  padding: 6px 8px;
+  width: fit-content;
+}
+
+.ultimos-proyectos__filter {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: all .25s ease;
+  white-space: nowrap;
+}
+
+.ultimos-proyectos__filter:hover {
+  color: #333;
+}
+
+.ultimos-proyectos__filter.is-active {
+  color: #111319;
+  background: #fff;
+  border-color: #111319;
+}
+
+/* ---- Grid ---- */
+.ultimos-proyectos__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+/* ---- Card ---- */
+.up-card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+}
+
+.up-card__img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform .4s ease;
+}
+
+.up-card:hover .up-card__img {
+  transform: scale(1.04);
+}
+
+/* ---- Badge (top-right) ---- */
+.up-card__badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #fff;
+  color: #111319;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 18px;
+  border-radius: 999px;
+  letter-spacing: .3px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,.10);
+}
+
+/* ---- Info bar (bottom overlay) ---- */
+.up-card__info {
+  position: absolute;
+  bottom: 14px;
+  left: 5%;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(199, 204, 223, .80);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 14px;
+  z-index: 2;
+}
+
+.up-card__info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.up-card__name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: #111319;
+  letter-spacing: .2px;
+}
+
+.up-card__date {
+  font-size: 12px;
+  color: rgba(17, 19, 25, .55);
+  font-weight: 600;
+}
+
+.up-card__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  color: #111319;
+  text-decoration: none;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+
+.up-card__link:hover {
+  background: rgba(17, 19, 25, .08);
+}
+
+/* ---- Animación de filtro ---- */
+.up-card.is-hidden {
+  display: none;
+}
+
+.up-card.is-showing {
+  animation: upCardFadeIn .4s ease forwards;
+}
+
+@keyframes upCardFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .proyectos-hero {
+    padding: 60px 0 70px;
+  }
+  .proyectos-hero__title {
+    font-size: 36px;
+    letter-spacing: 1.5px;
+  }
+  .proyectos-hero__desc {
+    font-size: 14px;
+    max-width: 420px;
+  }
+
+  /* Destacados */
+  .destacados {
+    padding: 40px 0 50px;
+  }
+  .destacados__title {
+    font-size: 26px;
+  }
+  .destacados__card {
+    flex: 0 0 100%;
+    aspect-ratio: 16 / 11;
+  }
+  .destacados__track {
+    gap: 16px;
+  }
+
+  /* Últimos Proyectos */
+  .ultimos-proyectos {
+    padding: 50px 0 60px;
+  }
+  .ultimos-proyectos__title {
+    font-size: 30px;
+    margin-bottom: 28px;
+  }
+  .ultimos-proyectos__filters {
+    margin-bottom: 32px;
+    padding: 4px 6px;
+  }
+  .ultimos-proyectos__filter {
+    font-size: 13px;
+    padding: 8px 18px;
+  }
+  .ultimos-proyectos__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .up-card {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+@media (max-width: 520px) {
+  .proyectos-hero {
+    padding: 45px 0 55px;
+  }
+  .proyectos-hero__title {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  .proyectos-hero__desc {
+    font-size: 13px;
+    max-width: 320px;
+  }
+
+  /* Destacados */
+  .destacados {
+    padding: 32px 0 40px;
+  }
+  .destacados__title {
+    font-size: 22px;
+  }
+  .destacados__head {
+    margin-bottom: 20px;
+  }
+  .destacados__info {
+    padding: 10px 14px;
+  }
+  .destacados__name {
+    font-size: 13px;
+  }
+  .destacados__date {
+    font-size: 11px;
+  }
+
+  /* Últimos Proyectos */
+  .ultimos-proyectos {
+    padding: 40px 0 48px;
+  }
+  .ultimos-proyectos__title {
+    font-size: 24px;
+    margin-bottom: 22px;
+  }
+  .ultimos-proyectos__filters {
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+    border-radius: 16px;
+    gap: 4px;
+    padding: 6px;
+  }
+  .ultimos-proyectos__filter {
+    font-size: 12px;
+    padding: 7px 14px;
+  }
+  .up-card__name {
+    font-size: 14px;
+  }
+  .up-card__date {
+    font-size: 11px;
+  }
+  .up-card__info {
+    padding: 10px 14px;
+  }
+  .up-card__badge {
+    font-size: 11px;
+    padding: 5px 14px;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* ============================================
+   CTA Final — "¿Listo para comenzar?"
+   ============================================ */
+.prod-cta {
+  background: #F5F1E8;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.prod-cta__card {
+  background: #EDE8DD;
+  border-radius: 28px;
+  padding: 70px 40px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.prod-cta__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: #1a1000;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.prod-cta__text {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  max-width: 460px;
+}
+
+.prod-cta__buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botones oscuros CTA */
+.btn-cta-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 28px;
+  border-radius: 999px;
+  background: #2E1A0E;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .25s ease, transform .2s ease;
+  border: none;
+}
+
+.btn-cta-dark:hover {
+  background: #1a0e05;
+  transform: translateY(-2px);
+}
+
+.btn-cta-dark__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  flex-shrink: 0;
+}
+
+/* ---- CTA Responsive ---- */
+@media (max-width: 980px) {
+  .prod-cta__title {
+    font-size: 28px;
+  }
+  .prod-cta__card {
+    padding: 50px 30px 60px;
+  }
+}
+
+@media (max-width: 520px) {
+  .prod-cta {
+    padding: 50px 0;
+  }
+  .prod-cta__card {
+    padding: 40px 20px 50px;
+    border-radius: 20px;
+  }
+  .prod-cta__title {
+    font-size: 24px;
+  }
+  .prod-cta__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}

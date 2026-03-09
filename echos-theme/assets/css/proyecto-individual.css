@@ -1,0 +1,939 @@
+/**
+ * Proyecto Individual — Estilos
+ *
+ * @package Echos
+ */
+
+/* ---- Header estático ---- */
+.proyecto-ind-header {
+  position: relative;
+  background: #0b0c10;
+}
+
+/* ============================================
+   Hero — Proyecto Individual
+   ============================================ */
+.proy-ind-hero {
+  position: relative;
+  overflow: hidden;
+  background: #0b0c10;
+  padding: 80px 0 100px;
+  text-align: center;
+}
+
+.proy-ind-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Overlay oscuro + degradado sobre la imagen */
+.proy-ind-hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px 600px at 20% 70%, rgba(180, 90, 20, .40), transparent 60%),
+    radial-gradient(500px 400px at 25% 60%, rgba(255, 106, 0, .22), transparent 55%),
+    radial-gradient(400px 300px at 80% 30%, rgba(120, 60, 10, .15), transparent 50%),
+    linear-gradient(180deg, rgba(11,12,16,.85) 0%, rgba(16,14,12,.80) 50%, rgba(11,12,16,.90) 100%);
+  z-index: 1;
+}
+
+.proy-ind-hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.proy-ind-hero__title {
+  margin: 0 0 20px 0;
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.1;
+  font-style: italic;
+}
+
+.proy-ind-hero__accent {
+  color: var(--accent, #ff6a00);
+}
+
+.proy-ind-hero__desc {
+  margin: 0 auto;
+  color: rgba(255, 255, 255, .55);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* ============================================
+   Detalle — Proyecto Individual
+   ============================================ */
+.proy-ind-detalle {
+  background: #fff8f0;
+  padding: 60px 0 80px;
+}
+
+.proy-ind-detalle__inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* -- Meta: Etiqueta + Fecha -- */
+.proy-ind-detalle__meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.proy-ind-detalle__tag {
+  display: inline-block;
+  padding: 6px 20px;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.proy-ind-detalle__date {
+  font-size: 14px;
+  color: #5a5a5a;
+  letter-spacing: 0.2px;
+}
+
+/* -- Título -- */
+.proy-ind-detalle__title {
+  font-family: var(--font-display, 'Arial Black', sans-serif);
+  font-size: 36px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  line-height: 1.2;
+  margin: 0 0 28px 0;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* -- Separador naranja -- */
+.proy-ind-detalle__sep {
+  border: none;
+  height: 3px;
+  background: #ff6a00;
+  margin: 0 0 32px 0;
+}
+
+/* -- Párrafos -- */
+.proy-ind-detalle__text {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #3a3a3a;
+  margin: 0 0 28px 0;
+}
+
+/* -- Blockquote destacado -- */
+.proy-ind-detalle__highlight {
+  margin: 0 0 28px 0;
+  padding: 0 0 0 20px;
+  border-left: 4px solid #ff6a00;
+}
+
+.proy-ind-detalle__highlight p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #1a1a1a;
+  font-weight: 700;
+  margin: 0;
+  text-align: justify;
+}
+
+/* -- CTA botón -- */
+.proy-ind-detalle__cta-wrap {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.proy-ind-detalle__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #ff6a00;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 36px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background .25s ease, transform .2s ease;
+}
+
+.proy-ind-detalle__cta:hover {
+  background: #e55e00;
+  transform: translateY(-2px);
+}
+
+.proy-ind-detalle__cta-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ============================================
+   Video — Proyecto Individual
+   ============================================ */
+.proy-ind-video {
+  background: #fff8f0;
+  padding: 0 0 80px;
+}
+
+.proy-ind-video__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.proy-ind-video__wrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 16 / 7;
+  background: #0b0c10;
+}
+
+.proy-ind-video__thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.proy-ind-video__wrapper:hover .proy-ind-video__thumb {
+  transform: scale(1.03);
+}
+
+/* Overlay oscuro sutil */
+.proy-ind-video__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+.proy-ind-video__wrapper:hover .proy-ind-video__overlay {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Botón play centrado */
+.proy-ind-video__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.proy-ind-video__play svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.35));
+}
+
+.proy-ind-video__wrapper:hover .proy-ind-video__play {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Estado activo: video embebido */
+.proy-ind-video__wrapper.is-playing {
+  cursor: default;
+}
+
+.proy-ind-video__wrapper.is-playing .proy-ind-video__thumb,
+.proy-ind-video__wrapper.is-playing .proy-ind-video__overlay,
+.proy-ind-video__wrapper.is-playing .proy-ind-video__play {
+  display: none;
+}
+
+.proy-ind-video__wrapper.is-playing iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ============================================
+   Galería de Imágenes — Proyecto Individual
+   ============================================ */
+.proy-ind-galeria {
+  background: #fff8f0;
+  padding: 0 0 80px;
+}
+
+.proy-ind-galeria__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.proy-ind-galeria__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.proy-ind-galeria__card {
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: #0b0c10;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.proy-ind-galeria__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.proy-ind-galeria__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.proy-ind-galeria__card:hover .proy-ind-galeria__img {
+  transform: scale(1.04);
+}
+
+/* ============================================
+   Productos Utilizados — Proyecto Individual
+   ============================================ */
+.proy-ind-productos {
+  background: #fff8f0;
+  padding: 60px 0 80px;
+}
+
+.proy-ind-productos__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* -- Título -- */
+.proy-ind-productos__title {
+  font-family: var(--font-display, 'Arial Black', sans-serif);
+  font-size: 36px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  text-align: center;
+  margin: 0 0 48px 0;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
+}
+
+/* -- Grid de Cards -- */
+.proy-ind-productos__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+/* -- Card -- */
+.proy-ind-productos__card {
+  background: #111111;
+  border-radius: 20px;
+  padding: 32px 36px 36px;
+  color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.proy-ind-productos__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* -- Card Header -- */
+.proy-ind-productos__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.proy-ind-productos__card-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.proy-ind-productos__card-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.proy-ind-productos__card-arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* -- Card Body -- */
+.proy-ind-productos__card-subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+}
+
+.proy-ind-productos__card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.proy-ind-productos__card-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+}
+
+.proy-ind-productos__card-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+}
+
+/* ============================================
+   Conoce Otros Proyectos — Slider
+   ============================================ */
+.proy-ind-otros {
+  background: #fff8f0;
+  padding: 60px 0 100px;
+}
+
+.proy-ind-otros__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* -- Título -- */
+.proy-ind-otros__title {
+  font-family: var(--font-display, 'Arial Black', sans-serif);
+  font-size: 36px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  text-align: center;
+  margin: 0 0 36px 0;
+  letter-spacing: 1.5px;
+  line-height: 1.2;
+}
+
+/* -- Navegación flechas -- */
+.proy-ind-otros__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.proy-ind-otros__arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+  padding: 8px 4px;
+  transition: opacity 0.25s ease;
+  font-family: inherit;
+}
+
+.proy-ind-otros__arrow:hover {
+  opacity: 0.6;
+}
+
+.proy-ind-otros__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.proy-ind-otros__arrow svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* -- Viewport y Track del slider -- */
+.proy-ind-otros__viewport {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.proy-ind-otros__track {
+  display: flex;
+  gap: 28px;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* -- Card -- */
+.proy-ind-otros__card {
+  flex: 0 0 calc((100% - 28px) / 2);
+  min-width: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0d1b3e;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.proy-ind-otros__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* -- Card imagen wrapper -- */
+.proy-ind-otros__card-img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3.5;
+  overflow: hidden;
+}
+
+.proy-ind-otros__card-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.proy-ind-otros__card:hover .proy-ind-otros__card-img {
+  transform: scale(1.04);
+}
+
+/* -- Badge categoría -- */
+.proy-ind-otros__card-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 18px;
+  border-radius: 50px;
+  letter-spacing: 0.3px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* -- Card info (parte inferior) -- */
+.proy-ind-otros__card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(235, 235, 240, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin: 0 12px 12px;
+  border-radius: 14px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.proy-ind-otros__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.proy-ind-otros__card-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.proy-ind-otros__card-date {
+  font-size: 13px;
+  color: #5a5a5a;
+  line-height: 1.4;
+}
+
+.proy-ind-otros__card-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.proy-ind-otros__card-link svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .proy-ind-hero {
+    padding: 60px 0 70px;
+  }
+  .proy-ind-hero__title {
+    font-size: 36px;
+    letter-spacing: 1.5px;
+  }
+  .proy-ind-hero__desc {
+    font-size: 14px;
+    max-width: 420px;
+  }
+
+  .proy-ind-detalle {
+    padding: 45px 0 60px;
+  }
+  .proy-ind-detalle__title {
+    font-size: 28px;
+  }
+
+  .proy-ind-video {
+    padding: 0 0 60px;
+  }
+  .proy-ind-video__wrapper {
+    border-radius: 16px;
+  }
+  .proy-ind-video__play {
+    width: 64px;
+    height: 64px;
+  }
+
+  .proy-ind-galeria {
+    padding: 0 0 60px;
+  }
+  .proy-ind-galeria__grid {
+    gap: 20px;
+  }
+  .proy-ind-galeria__card {
+    border-radius: 16px;
+  }
+
+  .proy-ind-productos {
+    padding: 45px 0 60px;
+  }
+  .proy-ind-productos__title {
+    font-size: 28px;
+    margin-bottom: 36px;
+  }
+  .proy-ind-productos__grid {
+    gap: 24px;
+  }
+  .proy-ind-productos__card {
+    padding: 28px 28px 32px;
+    border-radius: 16px;
+  }
+
+  /* Otros proyectos slider */
+  .proy-ind-otros {
+    padding: 45px 0 70px;
+  }
+  .proy-ind-otros__title {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+  .proy-ind-otros__nav {
+    margin-bottom: 24px;
+  }
+  .proy-ind-otros__arrow {
+    font-size: 16px;
+    gap: 8px;
+  }
+  .proy-ind-otros__arrow svg {
+    width: 24px;
+    height: 24px;
+  }
+  .proy-ind-otros__viewport {
+    border-radius: 16px;
+  }
+  .proy-ind-otros__card {
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .proy-ind-hero {
+    padding: 45px 0 55px;
+  }
+  .proy-ind-hero__title {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  .proy-ind-hero__desc {
+    font-size: 13px;
+    max-width: 320px;
+  }
+
+  .proy-ind-detalle {
+    padding: 32px 0 48px;
+  }
+  .proy-ind-detalle__title {
+    font-size: 22px;
+  }
+  .proy-ind-detalle__meta {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .proy-ind-detalle__cta {
+    padding: 14px 28px;
+    font-size: 14px;
+  }
+
+  .proy-ind-video {
+    padding: 0 0 48px;
+  }
+  .proy-ind-video__wrapper {
+    border-radius: 12px;
+    aspect-ratio: 16 / 9;
+  }
+  .proy-ind-video__play {
+    width: 52px;
+    height: 52px;
+  }
+
+  .proy-ind-galeria {
+    padding: 0 0 48px;
+  }
+  .proy-ind-galeria__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .proy-ind-galeria__card {
+    border-radius: 14px;
+  }
+
+  .proy-ind-productos {
+    padding: 32px 0 48px;
+  }
+  .proy-ind-productos__title {
+    font-size: 22px;
+    margin-bottom: 28px;
+  }
+  .proy-ind-productos__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .proy-ind-productos__card {
+    padding: 24px 24px 28px;
+    border-radius: 14px;
+  }
+  .proy-ind-productos__card-name {
+    font-size: 18px;
+  }
+  .proy-ind-productos__card-subtitle {
+    font-size: 16px;
+  }
+  .proy-ind-productos__card-list li {
+    font-size: 13px;
+  }
+
+  /* Otros proyectos slider */
+  .proy-ind-otros {
+    padding: 32px 0 56px;
+  }
+  .proy-ind-otros__title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .proy-ind-otros__nav {
+    margin-bottom: 20px;
+  }
+  .proy-ind-otros__arrow {
+    font-size: 14px;
+    gap: 6px;
+  }
+  .proy-ind-otros__arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+  .proy-ind-otros__track {
+    gap: 16px;
+  }
+  .proy-ind-otros__card {
+    flex: 0 0 100%;
+    border-radius: 14px;
+  }
+  .proy-ind-otros__viewport {
+    border-radius: 14px;
+  }
+  .proy-ind-otros__card-badge {
+    font-size: 12px;
+    padding: 5px 14px;
+    top: 12px;
+    right: 12px;
+  }
+  .proy-ind-otros__card-info {
+    padding: 12px 16px;
+    margin: 0 10px 10px;
+    border-radius: 12px;
+  }
+  .proy-ind-otros__card-name {
+    font-size: 14px;
+  }
+  .proy-ind-otros__card-date {
+    font-size: 12px;
+  }
+}
+
+/* ============================================
+   CTA Final — "¿Listo para comenzar?"
+   ============================================ */
+.prod-cta {
+  background: #F5F1E8;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.prod-cta__card {
+  background: #EDE8DD;
+  border-radius: 28px;
+  padding: 70px 40px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.prod-cta__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: #1a1000;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.prod-cta__text {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  max-width: 460px;
+}
+
+.prod-cta__buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Botones oscuros CTA */
+.btn-cta-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 28px;
+  border-radius: 999px;
+  background: #2E1A0E;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .25s ease, transform .2s ease;
+  border: none;
+}
+
+.btn-cta-dark:hover {
+  background: #1a0e05;
+  transform: translateY(-2px);
+}
+
+.btn-cta-dark__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  flex-shrink: 0;
+}
+
+/* ---- CTA Responsive ---- */
+@media (max-width: 980px) {
+  .prod-cta__title {
+    font-size: 28px;
+  }
+  .prod-cta__card {
+    padding: 50px 30px 60px;
+  }
+}
+
+@media (max-width: 520px) {
+  .prod-cta {
+    padding: 50px 0;
+  }
+  .prod-cta__card {
+    padding: 40px 20px 50px;
+    border-radius: 20px;
+  }
+  .prod-cta__title {
+    font-size: 24px;
+  }
+  .prod-cta__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}

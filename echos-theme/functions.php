@@ -99,6 +99,26 @@ function echos_enqueue_assets() {
         wp_enqueue_style( 'echos-srv3', $theme_uri . '/assets/css/servicios-3.css', array( 'echos-base' ), $version );
     }
 
+    if ( is_page_template( 'page-templates/template-proyectos.php' ) ) {
+        wp_enqueue_style( 'echos-proyectos-page', $theme_uri . '/assets/css/proyectos-page.css', array( 'echos-base' ), $version );
+        wp_enqueue_script( 'echos-proyectos-js', $theme_uri . '/assets/js/proyectos.js', array(), $version, true );
+    }
+
+    if ( is_page_template( 'page-templates/template-proyecto-individual.php' ) ) {
+        wp_enqueue_style( 'echos-proyecto-individual', $theme_uri . '/assets/css/proyecto-individual.css', array( 'echos-base' ), $version );
+        wp_enqueue_script( 'echos-proyecto-individual-js', $theme_uri . '/assets/js/proyecto-individual.js', array(), $version, true );
+    }
+
+    if ( is_page_template( 'page-templates/template-nosotros.php' ) ) {
+        wp_enqueue_style( 'echos-nosotros', $theme_uri . '/assets/css/nosotros.css', array( 'echos-base' ), $version );
+        wp_enqueue_script( 'echos-nosotros-js', $theme_uri . '/assets/js/nosotros.js', array(), $version, true );
+    }
+
+    if ( is_page_template( 'page-templates/template-contacto.php' ) ) {
+        wp_enqueue_style( 'echos-contacto', $theme_uri . '/assets/css/contacto.css', array( 'echos-base' ), $version );
+        wp_enqueue_script( 'echos-contacto-js', $theme_uri . '/assets/js/contacto.js', array(), $version, true );
+    }
+
     // ── JavaScript ──
     // app.js solo en la página de inicio
     if ( is_page_template( 'page-templates/template-inicio.php' ) || is_front_page() ) {
