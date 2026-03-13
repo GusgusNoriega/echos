@@ -1,180 +1,214 @@
 <?php
 /**
  * Template Name: Productos
- * Description: Listado de productos ECHOS.
+ * Description: Listado administrable de productos ECHOS.
  *
  * @package Echos
  */
 
 get_header();
 
-$img  = get_template_directory_uri() . '/assets/img/inicio/';
-$home = esc_url( home_url( '/' ) );
+$page_id = get_queried_object_id();
+$data    = echos_product_get_listing_data( $page_id );
+
+$home       = esc_url( home_url( '/' ) );
+$topbar_cta = trim( (string) ( $data['topbar_cta_url'] ?? '' ) );
+$topbar_cta = '' !== $topbar_cta ? $topbar_cta : $home . '#contacto';
+
+$current_category = isset( $_GET['categoria'] ) ? sanitize_title( wp_unslash( $_GET['categoria'] ) ) : '';
+$current_search   = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';
+$current_order    = isset( $_GET['orden'] ) ? sanitize_key( wp_unslash( $_GET['orden'] ) ) : 'recent';
+
+$order_map = array(
+	'recent'    => array(
+		'orderby' => 'date',
+		'order'   => 'DESC',
+	),
+	'old'       => array(
+		'orderby' => 'date',
+		'order'   => 'ASC',
+	),
+	'name_asc'  => array(
+		'orderby' => 'title',
+		'order'   => 'ASC',
+	),
+	'name_desc' => array(
+		'orderby' => 'title',
+		'order'   => 'DESC',
+	),
+);
+
+if ( ! isset( $order_map[ $current_order ] ) ) {
+	$current_order = 'recent';
+}
+
+$paged = max(
+	1,
+	absint( get_query_var( 'paged' ) ),
+	absint( get_query_var( 'page' ) ),
+	isset( $_GET['paged'] ) ? absint( wp_unslash( $_GET['paged'] ) ) : 0
+);
+
+$per_page = max( 1, absint( $data['listing']['per_page'] ?? 12 ) );
+
+$query_args = array(
+	'post_type'      => 'producto',
+	'post_status'    => 'publish',
+	'posts_per_page' => $per_page,
+	'paged'          => $paged,
+	'orderby'        => $order_map[ $current_order ]['orderby'],
+	'order'          => $order_map[ $current_order ]['order'],
+);
+
+if ( '' !== $current_search ) {
+	$query_args['s'] = $current_search;
+}
+
+if ( '' !== $current_category ) {
+	$term = get_term_by( 'slug', $current_category, 'categoria_producto' );
+	if ( $term instanceof WP_Term ) {
+		$query_args['tax_query'] = array(
+			array(
+				'taxonomy' => 'categoria_producto',
+				'field'    => 'slug',
+				'terms'    => $current_category,
+			),
+		);
+	} else {
+		$current_category = '';
+	}
+}
+
+$products_query = new WP_Query( $query_args );
+
+$categories = get_terms(
+	array(
+		'taxonomy'   => 'categoria_producto',
+		'hide_empty' => false,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	)
+);
+
+$filters = is_array( $data['filters'] ?? null ) ? $data['filters'] : array();
 ?>
 
-  <!-- TOPBAR / NAVEGACIÓN -->
-  <header class="prod-header">
-    <div class="topbar topbar--static">
-      <div class="container topbar__inner">
-        <a class="brand" href="<?php echo $home; ?>">
-          <img class="brand__logo" src="<?php echo $img; ?>logo.png" alt="ECHOS" />
-          <span class="sr-only">ECHOS — Infraestructura para eventos</span>
-        </a>
+<header class="prod-header">
+	<?php get_template_part( 'template-parts/topbar', null, array( 'modifier' => 'topbar--static', 'cta_url' => $topbar_cta ) ); ?>
+</header>
 
-        <nav class="nav">
-          <a href="<?php echo $home; ?>#servicios">Servicios</a>
-          <a href="<?php echo get_permalink(); ?>" class="nav--active">Productos</a>
-          <a href="<?php echo $home; ?>#proyectos">Proyectos</a>
-          <a href="<?php echo $home; ?>#conocenos">Conócenos</a>
-        </nav>
+<section class="productos-hero">
+	<div class="productos-hero__bg" aria-hidden="true"></div>
+	<div class="container productos-hero__inner">
+		<h1 class="productos-hero__title"><?php echo esc_html( (string) ( $data['hero']['title'] ?? __( 'NUESTROS PRODUCTOS', 'echos' ) ) ); ?></h1>
+		<p class="productos-hero__desc"><?php echo esc_html( (string) ( $data['hero']['description'] ?? '' ) ); ?></p>
+	</div>
+</section>
 
-        <a class="cta" href="<?php echo $home; ?>#contacto">
-          <span>Cotiza tu proyecto</span>
-          <span class="cta__icon" aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
-  </header>
+<section class="productos-grid-section">
+	<div class="container">
+		<form class="productos-filters" method="get" action="<?php echo esc_url( get_permalink( $page_id ) ); ?>">
+			<div class="productos-filters__row">
+				<div class="productos-filters__field">
+					<label for="productos-filter-categoria"><?php esc_html_e( 'Categoria', 'echos' ); ?></label>
+					<select id="productos-filter-categoria" name="categoria">
+						<option value=""><?php echo esc_html( (string) ( $filters['all_categories_label'] ?? __( 'Todas las categorias', 'echos' ) ) ); ?></option>
+						<?php foreach ( $categories as $category ) : ?>
+							<?php if ( ! $category instanceof WP_Term ) { continue; } ?>
+							<option value="<?php echo esc_attr( $category->slug ); ?>" <?php selected( $current_category, $category->slug ); ?>>
+								<?php echo esc_html( $category->name ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
 
-  <!-- TÍTULO DE SECCIÓN -->
-  <section class="productos-hero">
-    <div class="productos-hero__bg" aria-hidden="true"></div>
-    <div class="container productos-hero__inner">
-      <h1 class="productos-hero__title">NUESTROS PRODUCTOS</h1>
-      <p class="productos-hero__desc">
-        Descubre nuestra línea completa de soluciones tecnológicas para eventos y espectáculos.
-      </p>
-    </div>
-  </section>
+				<div class="productos-filters__field productos-filters__field--search">
+					<label for="productos-filter-q"><?php esc_html_e( 'Buscar', 'echos' ); ?></label>
+					<input id="productos-filter-q" type="search" name="q" value="<?php echo esc_attr( $current_search ); ?>" placeholder="<?php echo esc_attr( (string) ( $filters['search_placeholder'] ?? __( 'Buscar producto...', 'echos' ) ) ); ?>" />
+				</div>
 
-  <!-- GRID DE PRODUCTOS -->
-  <section class="productos-grid-section">
-    <div class="container">
-      <div class="productos-grid">
+				<div class="productos-filters__field">
+					<label for="productos-filter-order"><?php esc_html_e( 'Ordenar', 'echos' ); ?></label>
+					<select id="productos-filter-order" name="orden">
+						<option value="recent" <?php selected( $current_order, 'recent' ); ?>><?php echo esc_html( (string) ( $filters['order_recent_label'] ?? __( 'Mas recientes', 'echos' ) ) ); ?></option>
+						<option value="old" <?php selected( $current_order, 'old' ); ?>><?php echo esc_html( (string) ( $filters['order_old_label'] ?? __( 'Mas antiguos', 'echos' ) ) ); ?></option>
+						<option value="name_asc" <?php selected( $current_order, 'name_asc' ); ?>><?php echo esc_html( (string) ( $filters['order_name_asc_label'] ?? __( 'Nombre (A-Z)', 'echos' ) ) ); ?></option>
+						<option value="name_desc" <?php selected( $current_order, 'name_desc' ); ?>><?php echo esc_html( (string) ( $filters['order_name_desc_label'] ?? __( 'Nombre (Z-A)', 'echos' ) ) ); ?></option>
+					</select>
+				</div>
 
-        <!-- Card 1 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Esfera Kinetic" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Esfera Kinetic</strong>
-              <p>Esfera cinética interactiva que se expande, gira y fluye con animaciones LED.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+				<div class="productos-filters__actions">
+					<button type="submit" class="productos-filters__btn productos-filters__btn--submit"><?php echo esc_html( (string) ( $filters['submit_label'] ?? __( 'Filtrar', 'echos' ) ) ); ?></button>
+					<a class="productos-filters__btn productos-filters__btn--reset" href="<?php echo esc_url( get_permalink( $page_id ) ); ?>"><?php echo esc_html( (string) ( $filters['reset_label'] ?? __( 'Limpiar', 'echos' ) ) ); ?></a>
+				</div>
+			</div>
+		</form>
 
-        <!-- Card 2 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Sistema Trust Aluminio" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Sistema Trust Aluminio</strong>
-              <p>Estructura modular de aluminio para montajes escénicos de gran formato.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+		<?php if ( $products_query->have_posts() ) : ?>
+			<div class="productos-grid">
+				<?php
+				while ( $products_query->have_posts() ) :
+					$products_query->the_post();
 
-        <!-- Card 3 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Panel LED" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Panel LED</strong>
-              <p>Pantallas LED de alta resolución ideales para conciertos y eventos corporativos.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+					$product_id = get_the_ID();
+					$product    = echos_product_get_data( $product_id );
+					$image      = echos_product_resolve_image_url( get_the_post_thumbnail_url( $product_id, 'full' ), get_template_directory_uri() . '/assets/img/inicio/baner1.jpg' );
+					$title      = get_the_title( $product_id );
+					$summary    = echos_product_get_card_summary( $product_id, $product );
+					?>
+					<a href="<?php the_permalink(); ?>" class="producto-card">
+						<img src="<?php echo esc_url( $image ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="producto-card__img" />
+						<div class="producto-card__info">
+							<div class="producto-card__text">
+								<strong><?php echo esc_html( $title ); ?></strong>
+								<p><?php echo esc_html( $summary ); ?></p>
+							</div>
+							<span class="producto-card__btn" aria-hidden="true">+</span>
+						</div>
+					</a>
+				<?php endwhile; ?>
+			</div>
+		<?php else : ?>
+			<div class="productos-empty">
+				<h3 class="productos-empty__title"><?php echo esc_html( (string) ( $data['listing']['empty_title'] ?? __( 'No encontramos productos', 'echos' ) ) ); ?></h3>
+				<p class="productos-empty__text"><?php echo esc_html( (string) ( $data['listing']['empty_text'] ?? '' ) ); ?></p>
+			</div>
+		<?php endif; ?>
 
-        <!-- Card 4 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Pantalla Holográfica" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Pantalla Holográfica</strong>
-              <p>Tecnología holográfica transparente para experiencias inmersivas y futuristas.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+		<?php
+		$pagination_links = paginate_links(
+			array(
+				'base'      => str_replace( 999999999, '%#%', esc_url_raw( get_pagenum_link( 999999999 ) ) ),
+				'format'    => '?paged=%#%',
+				'current'   => $paged,
+				'total'     => max( 1, (int) $products_query->max_num_pages ),
+				'type'      => 'array',
+				'prev_text' => '&larr;',
+				'next_text' => '&rarr;',
+				'add_args'  => array_filter(
+					array(
+						'categoria' => $current_category,
+						'q'         => $current_search,
+						'orden'     => $current_order,
+					)
+				),
+			)
+		);
 
-        <!-- Card 5 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Iluminación Robótica" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Iluminación Robótica</strong>
-              <p>Cabezas móviles y luminarias inteligentes con control DMX de alta precisión.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+		if ( is_array( $pagination_links ) && count( $pagination_links ) > 1 ) :
+			?>
+			<nav class="productos-pagination" aria-label="<?php esc_attr_e( 'Paginacion de productos', 'echos' ); ?>">
+				<?php foreach ( $pagination_links as $page_link ) : ?>
+					<span class="productos-pagination__item"><?php echo wp_kses_post( $page_link ); ?></span>
+				<?php endforeach; ?>
+			</nav>
+		<?php endif; ?>
 
-        <!-- Card 6 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Sistema de Audio" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Sistema de Audio</strong>
-              <p>Equipos de sonido profesional line array para cobertura de alta fidelidad.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
+		<?php wp_reset_postdata(); ?>
+	</div>
+</section>
 
-        <!-- Card 7 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Piso LED Interactivo" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Piso LED Interactivo</strong>
-              <p>Superficie LED con sensores de presión para experiencias interactivas únicas.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
-
-        <!-- Card 8 -->
-        <a href="#" class="producto-card">
-          <img src="<?php echo $img; ?>baner1.jpg" alt="Mapping Proyección" class="producto-card__img" />
-          <div class="producto-card__info">
-            <div class="producto-card__text">
-              <strong>Mapping Proyección</strong>
-              <p>Video mapping sobre superficies arquitectónicas con proyectores de alta potencia.</p>
-            </div>
-            <span class="producto-card__btn" aria-label="Ver producto">+</span>
-          </div>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="productos-cta">
-    <div class="container">
-      <div class="productos-cta__card">
-        <h2 class="productos-cta__title">¿LISTO PARA COMENZAR?</h2>
-        <p class="productos-cta__text">Todo gran proyecto comienza con una conversación.</p>
-        <div class="productos-cta__buttons">
-          <a class="btn-cta-dark" href="https://wa.me/" target="_blank" rel="noopener">
-            <span>Conversemos ahora</span>
-            <span class="btn-cta-dark__icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.932 1.396 5.608L.05 23.708a.6.6 0 00.735.728L6.53 22.64A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.56 9.56 0 01-5.175-1.516l-.372-.222-3.843.985 1.028-3.752-.243-.387A9.56 9.56 0 012.4 12c0-5.302 4.298-9.6 9.6-9.6s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6z"/></svg>
-            </span>
-          </a>
-          <a class="btn-cta-dark" href="mailto:contacto@echosperu.com.pe" target="_blank" rel="noopener">
-            <span>echosperu.com.pe</span>
-            <span class="btn-cta-dark__icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<?php echos_product_render_final_cta( (array) ( $data['final_cta'] ?? array() ), 'productos' ); ?>
 
 <?php
 get_footer();

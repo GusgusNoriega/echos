@@ -1,8 +1,8 @@
 /* ========================================
-   ECHOS — Sidebar Menu + Hamburger Button
+   ECHOS Ã¢â‚¬" Sidebar Menu + Hamburger Button
    ======================================== */
 
-/* ── Hamburger Button (fijo inferior izquierdo) ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Hamburger Button (fijo inferior izquierdo) Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-hamburger {
   position: fixed;
   bottom: 32px;
@@ -59,7 +59,7 @@
 .echos-hamburger__bar:nth-child(2) { top: 50%; transform: translateY(-50%); }
 .echos-hamburger__bar:nth-child(3) { bottom: 0; }
 
-/* Animación a "X" cuando está abierto */
+/* AnimaciÃƒÂ³n a "X" cuando estÃƒÂ¡ abierto */
 .echos-hamburger.is-active .echos-hamburger__bar:nth-child(1) {
   top: 50%;
   transform: translateY(-50%) rotate(45deg);
@@ -76,7 +76,7 @@
   transform: translateY(-50%) rotate(-45deg);
 }
 
-/* ── Backdrop ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Backdrop Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-sidebar-backdrop {
   position: fixed;
   inset: 0;
@@ -94,7 +94,7 @@
   visibility: visible;
 }
 
-/* ── Sidebar Panel ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Sidebar Panel Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-sidebar {
   position: fixed;
   top: 0;
@@ -118,7 +118,7 @@
   transform: translateX(0);
 }
 
-/* ── Sidebar Header ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Sidebar Header Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-sidebar__header {
   display: flex;
   align-items: center;
@@ -148,14 +148,14 @@
   color: #ff5c00;
 }
 
-/* ── Sidebar Nav ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Sidebar Nav Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-sidebar__nav {
   flex: 1;
   padding: 20px 0;
   overflow-y: auto;
 }
 
-/* Reset del menú de WP */
+/* Reset del menÃƒÂº de WP */
 .echos-sidebar__nav ul {
   list-style: none;
   margin: 0;
@@ -173,7 +173,7 @@
   padding: 16px 28px;
   color: #fff;
   text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
@@ -189,7 +189,7 @@
   padding-left: 36px;
 }
 
-/* Indicador de sub-menú (flecha) */
+/* Indicador de sub-menÃƒÂº (flecha) */
 .echos-sidebar__nav li.menu-item-has-children > a {
   position: relative;
   padding-right: 52px;
@@ -225,7 +225,7 @@
   color: #ff5c00;
 }
 
-/* Sub-menú */
+/* Sub-menÃƒÂº */
 .echos-sidebar__nav ul ul {
   max-height: 0;
   overflow: hidden;
@@ -250,7 +250,7 @@
   padding: 12px 28px 12px 48px;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 500;
   font-size: 0.85rem;
   letter-spacing: 0.3px;
@@ -289,7 +289,7 @@
   background: #ff5c00;
 }
 
-/* Sub-sub-menú (nivel 3) */
+/* Sub-sub-menÃƒÂº (nivel 3) */
 .echos-sidebar__nav ul ul ul a {
   padding-left: 68px;
 }
@@ -304,7 +304,7 @@
   padding-left: 76px;
 }
 
-/* ── Sidebar Footer ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Sidebar Footer Ã¢"â‚¬Ã¢"â‚¬ */
 .echos-sidebar__footer {
   padding: 20px 28px 28px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -320,7 +320,7 @@
   background: #ff5c00;
   color: #fff;
   text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
@@ -335,8 +335,15 @@
 }
 
 .echos-sidebar__cta-arrow {
-  font-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.2s;
+}
+
+.echos-sidebar__cta-arrow .echos-arrow-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .echos-sidebar__cta:hover .echos-sidebar__cta-arrow {
@@ -371,12 +378,12 @@
   background: rgba(255, 92, 0, 0.08);
 }
 
-/* ── Body lock cuando sidebar está abierto ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Body lock cuando sidebar estÃƒÂ¡ abierto Ã¢"â‚¬Ã¢"â‚¬ */
 body.echos-sidebar--lock {
   overflow: hidden;
 }
 
-/* ── Responsive ── */
+/* Ã¢"â‚¬Ã¢"â‚¬ Responsive Ã¢"â‚¬Ã¢"â‚¬ */
 @media (max-width: 480px) {
   .echos-hamburger {
     bottom: 20px;
@@ -417,3 +424,26 @@ body.echos-sidebar--lock {
     padding: 16px 20px 24px;
   }
 }
+
+/* Tablet/mobile toggle overrides */
+.echos-hamburger,
+.echos-sidebar,
+.echos-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .echos-hamburger {
+    display: flex;
+  }
+
+  .echos-sidebar {
+    display: flex;
+  }
+
+  .echos-sidebar-backdrop {
+    display: block;
+  }
+}
+
+

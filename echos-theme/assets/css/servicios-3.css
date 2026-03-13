@@ -1,4 +1,4 @@
-/* ================================
+﻿/* ================================
    Servicios-1 : Hero Infraestructura
    ================================ */
 
@@ -54,7 +54,7 @@
   gap: 18px;
 }
 
-/* Título – bold italic */
+/* TÃ­tulo â€“ bold italic */
 .srv-hero__title {
   margin: 0;
   font-family: var(--font-display);
@@ -67,7 +67,7 @@
   line-height: 1;
 }
 
-/* Descripción */
+/* DescripciÃ³n */
 .srv-hero__desc {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
@@ -76,7 +76,7 @@
   max-width: 640px;
 }
 
-/* ---------- Botón "Ver portafolio" ---------- */
+/* ---------- BotÃ³n "Ver portafolio" ---------- */
 .srv-hero__btn {
   display: inline-flex;
   align-items: center;
@@ -125,7 +125,7 @@
 }
 
 /* ================================
-   Servicios-3 : Sección Descripción
+   Servicios-3 : SecciÃ³n DescripciÃ³n
    ================================ */
 
 .srv-description {
@@ -172,7 +172,7 @@
 }
 
 /* ================================
-   Servicios-1 : Sección Productos
+   Servicios-1 : SecciÃ³n Productos
    ================================ */
 
 .srv-products {
@@ -182,7 +182,7 @@
   padding: 80px 0 70px;
 }
 
-/* Decoraciones geométricas en las esquinas */
+/* Decoraciones geomÃ©tricas en las esquinas */
 .srv-products__deco {
   position: absolute;
   width: 220px;
@@ -248,7 +248,7 @@
   padding: 0 40px;
 }
 
-/* Título */
+/* TÃ­tulo */
 .srv-products__title {
   margin: 0 0 18px;
   font-family: var(--font-display);
@@ -262,7 +262,7 @@
   line-height: 1.1;
 }
 
-/* Subtítulo */
+/* SubtÃ­tulo */
 .srv-products__subtitle {
   margin: 0 auto 48px;
   max-width: 620px;
@@ -334,7 +334,7 @@
   flex-shrink: 0;
 }
 
-/* Botón CTA */
+/* BotÃ³n CTA */
 .srv-products__cta-wrap {
   display: flex;
   justify-content: center;
@@ -366,7 +366,7 @@
 }
 
 /* ================================
-   Servicios-3 : Ficha Técnica
+   Servicios-3 : Ficha TÃ©cnica
    ================================ */
 
 .srv-ficha {
@@ -486,7 +486,7 @@
   padding: 0 40px;
 }
 
-/* Header: título + flechas */
+/* Header: tÃ­tulo + flechas */
 .srv-featured__header {
   display: flex;
   align-items: flex-start;
@@ -514,7 +514,7 @@
   max-width: 560px;
 }
 
-/* Flechas de navegación */
+/* Flechas de navegaciÃ³n */
 .srv-featured__nav {
   display: flex;
   gap: 12px;
@@ -579,7 +579,7 @@
   transform: scale(1.05);
 }
 
-/* Badge (categoría) */
+/* Badge (categorÃ­a) */
 .srv-featured__badge {
   position: absolute;
   top: 16px;
@@ -595,7 +595,7 @@
   z-index: 2;
 }
 
-/* Info inferior de la card — posición absoluta dentro de la imagen */
+/* Info inferior de la card â€” posiciÃ³n absoluta dentro de la imagen */
 .srv-featured__card-info {
   position: absolute;
   bottom: 14px;
@@ -811,7 +811,7 @@
   transform: translateY(-2px);
 }
 
-/* Navegación: flechas + dots */
+/* NavegaciÃ³n: flechas + dots */
 .srv-additional__nav {
   display: flex;
   align-items: center;
@@ -1086,7 +1086,7 @@
 
 .srv-certifications__card-title {
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 18px;
   color: #0b0c10;
@@ -1152,7 +1152,7 @@
   transform: translateY(-4px);
 }
 
-/* Fondo con patrón geométrico y glow naranja */
+/* Fondo con patrÃ³n geomÃ©trico y glow naranja */
 .srv-other__card-bg {
   position: absolute;
   inset: 0;
@@ -1160,7 +1160,7 @@
   pointer-events: none;
 }
 
-/* Iluminación - patrón de red/constelación */
+/* IluminaciÃ³n - patrÃ³n de red/constelaciÃ³n */
 .srv-other__card-bg--iluminacion {
   background:
     radial-gradient(ellipse at 20% 90%, rgba(255, 120, 0, 0.45) 0%, transparent 55%),
@@ -1190,13 +1190,13 @@
   position: absolute;
   inset: 0;
   background-image:
-    /* líneas de conexión simuladas */
+    /* lÃ­neas de conexiÃ³n simuladas */
     linear-gradient(32deg, transparent 49.5%, rgba(255, 120, 50, 0.15) 49.5%, rgba(255, 120, 50, 0.15) 50.5%, transparent 50.5%),
     linear-gradient(145deg, transparent 49.5%, rgba(255, 120, 50, 0.12) 49.5%, rgba(255, 120, 50, 0.12) 50.5%, transparent 50.5%),
     linear-gradient(78deg, transparent 49.5%, rgba(255, 120, 50, 0.1) 49.5%, rgba(255, 120, 50, 0.1) 50.5%, transparent 50.5%);
 }
 
-/* Stands - patrón de estructura/stand */
+/* Stands - patrÃ³n de estructura/stand */
 .srv-other__card-bg--stands {
   background:
     radial-gradient(ellipse at 80% 90%, rgba(255, 120, 0, 0.45) 0%, transparent 55%),
@@ -1660,3 +1660,4 @@
     font-size: 14px;
   }
 }
+

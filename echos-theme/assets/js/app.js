@@ -97,7 +97,9 @@ const next = document.getElementById("projNext");
 function scrollByCard(dir){
   if (!rail) return;
   const card = rail.querySelector(".proj-card");
-  const step = (card?.offsetWidth || 270) + 16;
+  const railStyles = window.getComputedStyle(rail);
+  const gap = parseFloat(railStyles.columnGap || railStyles.gap || "0") || 0;
+  const step = (card?.getBoundingClientRect().width || 270) + gap;
   rail.scrollBy({ left: dir * step, behavior: "smooth" });
 }
 if (prev && next && rail){
@@ -133,6 +135,7 @@ if (rail){
 ------------------------------ */
 const tabs = [...document.querySelectorAll(".tab")];
 const servicio = document.getElementById("servicioElegido");
+const defaultService = tabs[0] ? (tabs[0].dataset.service || tabs[0].textContent.trim()) : "";
 
 if (tabs.length && servicio){
   tabs.forEach(t => {
@@ -160,7 +163,7 @@ if (form){
     );
 
     form.reset();
-    if (servicio) servicio.value = "Infraestructura";
+    if (servicio) servicio.value = defaultService;
     tabs.forEach((x,i)=>x.classList.toggle("is-active", i===0));
   });
 }

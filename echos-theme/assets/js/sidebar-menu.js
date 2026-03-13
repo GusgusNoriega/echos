@@ -1,20 +1,28 @@
 /**
  * ECHOS Sidebar Menu
- * - Toggle sidebar con botón hamburguesa (inferior izquierdo)
- * - Sub-menús acordeón
- * - Cierre con backdrop, botón X, tecla Escape
- * - Bloqueo de scroll del body
+ * - Toggle sidebar with hamburger button
+ * - Accordion submenus
+ * - Close with backdrop, close button, or Escape
+ * - Lock body scroll while open
  */
 (() => {
-  const sidebar   = document.getElementById('echosSidebar');
-  const backdrop  = document.getElementById('echosSidebarBackdrop');
+  const MOBILE_BREAKPOINT = 980;
+  const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+
+  const sidebar = document.getElementById('echosSidebar');
+  const backdrop = document.getElementById('echosSidebarBackdrop');
   const hamburger = document.getElementById('echosHamburger');
-  const closeBtn  = document.getElementById('echosSidebarClose');
+  const closeBtn = document.getElementById('echosSidebarClose');
 
-  if (!sidebar || !hamburger) return;
+  if (!sidebar || !backdrop || !hamburger) return;
 
-  /* ── Abrir / Cerrar ── */
+  function isMobileNavEnabled() {
+    return mediaQuery.matches;
+  }
+
   function openSidebar() {
+    if (!isMobileNavEnabled()) return;
+
     sidebar.classList.add('is-open');
     backdrop.classList.add('is-visible');
     hamburger.classList.add('is-active');
@@ -35,78 +43,88 @@
   function toggleSidebar() {
     if (sidebar.classList.contains('is-open')) {
       closeSidebar();
-    } else {
-      openSidebar();
+      return;
+    }
+
+    openSidebar();
+  }
+
+  function handleDesktopTransition() {
+    if (!isMobileNavEnabled()) {
+      closeSidebar();
     }
   }
 
-  /* ── Event Listeners ── */
-  hamburger.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  if (typeof mediaQuery.addEventListener === 'function') {
+    mediaQuery.addEventListener('change', handleDesktopTransition);
+  } else if (typeof mediaQuery.addListener === 'function') {
+    mediaQuery.addListener(handleDesktopTransition);
+  }
+
+  // Safety fallback for older browsers and orientation changes.
+  window.addEventListener('resize', handleDesktopTransition);
+
+  hamburger.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     toggleSidebar();
   });
 
   if (closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
+    closeBtn.addEventListener('click', (event) => {
+      event.preventDefault();
       closeSidebar();
     });
   }
 
-  if (backdrop) {
-    backdrop.addEventListener('click', closeSidebar);
-  }
+  backdrop.addEventListener('click', closeSidebar);
 
-  // Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && sidebar.classList.contains('is-open')) {
       closeSidebar();
     }
   });
 
-  /* ── Sub-menú toggle (acordeón) ── */
   const submenuToggles = sidebar.querySelectorAll('.echos-submenu-toggle');
 
   submenuToggles.forEach((toggle) => {
-    toggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    toggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
       const parentLi = toggle.closest('li');
-      const submenu  = parentLi.querySelector(':scope > ul');
+      const submenu = parentLi ? parentLi.querySelector(':scope > ul') : null;
 
       if (!submenu) return;
 
-      const isExpanded = submenu.classList.contains('is-expanded');
-
-      // Cerrar todos los sub-menús hermanos (acordeón)
       const siblings = parentLi.parentElement.querySelectorAll(':scope > li > ul.is-expanded');
       siblings.forEach((sibling) => {
-        if (sibling !== submenu) {
-          sibling.classList.remove('is-expanded');
-          const siblingToggle = sibling.parentElement.querySelector(':scope > a .echos-submenu-toggle');
-          if (siblingToggle) siblingToggle.classList.remove('is-expanded');
+        if (sibling === submenu) return;
+
+        sibling.classList.remove('is-expanded');
+
+        const siblingToggle = sibling.parentElement.querySelector(':scope > a .echos-submenu-toggle');
+        if (siblingToggle) {
+          siblingToggle.classList.remove('is-expanded');
         }
       });
 
-      // Toggle actual
       submenu.classList.toggle('is-expanded');
       toggle.classList.toggle('is-expanded');
     });
   });
 
-  /* ── Cerrar sidebar al hacer click en un link (mobile) ── */
-  const menuLinks = sidebar.querySelectorAll('a:not(.echos-submenu-toggle)');
+  const menuLinks = sidebar.querySelectorAll('a');
   menuLinks.forEach((link) => {
     link.addEventListener('click', () => {
-      // Solo cerrar si no tiene sub-menú
       const parentLi = link.closest('li');
       if (parentLi && parentLi.classList.contains('menu-item-has-children')) {
-        // No cerrar, solo toggle submenu
         return;
       }
+
       closeSidebar();
     });
   });
+
+  handleDesktopTransition();
 })();

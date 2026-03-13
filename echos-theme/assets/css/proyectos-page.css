@@ -1,8 +1,8 @@
 /* ============================================
-   Proyectos (página) — proyectos-page.css
+   Proyectos (pÃƒÆ’Ã‚Â¡gina) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â proyectos-page.css
    ============================================ */
 
-/* ---- Header estático ---- */
+/* ---- Header estÃƒÆ’Ã‚Â¡tico ---- */
 .proyectos-header {
   position: relative;
   background: #0b0c10;
@@ -16,39 +16,53 @@
 /* ---- Hero Proyectos ---- */
 .proyectos-hero {
   position: relative;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background: #0b0c10;
-  padding: 80px 0 100px;
   text-align: center;
 }
 
 .proyectos-hero__bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(700px 600px at 20% 70%, rgba(180, 90, 20, .40), transparent 60%),
-    radial-gradient(500px 400px at 25% 60%, rgba(255, 106, 0, .22), transparent 55%),
-    radial-gradient(400px 300px at 80% 30%, rgba(120, 60, 10, .15), transparent 50%),
-    linear-gradient(180deg, #0b0c10 0%, #100e0c 50%, #0b0c10 100%);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
   z-index: 0;
+}
+
+.proyectos-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 1;
 }
 
 .proyectos-hero__inner {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 720px;
   margin: 0 auto;
+  padding: 100px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .proyectos-hero__title {
-  margin: 0 0 20px 0;
+  margin: 0;
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: clamp(38px, 5vw, 60px);
   font-weight: 900;
   letter-spacing: 2px;
   color: #ffffff;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1;
   font-style: italic;
 }
 
@@ -57,22 +71,22 @@
 }
 
 .proyectos-hero__desc {
-  margin: 0 auto;
-  color: rgba(255, 255, 255, .55);
+  margin: 0;
+  color: rgba(255, 255, 255, .6);
   font-size: 15px;
-  line-height: 1.7;
-  max-width: 540px;
+  line-height: 1.6;
+  max-width: 640px;
 }
 
 /* ============================================
-   Los Más Destacados — Slider
+   Los MÃƒÆ’Ã‚Â¡s Destacados ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Slider
    ============================================ */
 .destacados {
   padding: 60px 0 70px;
   background: var(--bg, #F6F1E8);
 }
 
-/* ---- Header: título + flechas ---- */
+/* ---- Header: tÃƒÆ’Ã‚Â­tulo + flechas ---- */
 .destacados__head {
   display: flex;
   align-items: center;
@@ -231,14 +245,14 @@
 }
 
 /* ============================================
-   Últimos Proyectos — Grid con Filtros
+   ÃƒÆ’Ã…Â¡ltimos Proyectos ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Grid con Filtros
    ============================================ */
 .ultimos-proyectos {
   padding: 80px 0 90px;
   background: var(--bg, #F6F1E8);
 }
 
-/* ---- Título ---- */
+/* ---- TÃƒÆ’Ã‚Â­tulo ---- */
 .ultimos-proyectos__title {
   margin: 0 0 36px 0;
   font-family: var(--font-display);
@@ -390,7 +404,7 @@
   background: rgba(17, 19, 25, .08);
 }
 
-/* ---- Animación de filtro ---- */
+/* ---- AnimaciÃƒÆ’Ã‚Â³n de filtro ---- */
 .up-card.is-hidden {
   display: none;
 }
@@ -415,15 +429,18 @@
    ============================================ */
 @media (max-width: 768px) {
   .proyectos-hero {
-    padding: 60px 0 70px;
+    min-height: 460px;
+  }
+  .proyectos-hero__inner {
+    padding: 88px 22px 72px;
   }
   .proyectos-hero__title {
-    font-size: 36px;
+    font-size: clamp(34px, 6vw, 48px);
     letter-spacing: 1.5px;
   }
   .proyectos-hero__desc {
     font-size: 14px;
-    max-width: 420px;
+    max-width: 520px;
   }
 
   /* Destacados */
@@ -441,7 +458,7 @@
     gap: 16px;
   }
 
-  /* Últimos Proyectos */
+  /* ÃƒÆ’Ã…Â¡ltimos Proyectos */
   .ultimos-proyectos {
     padding: 50px 0 60px;
   }
@@ -468,10 +485,13 @@
 
 @media (max-width: 520px) {
   .proyectos-hero {
-    padding: 45px 0 55px;
+    min-height: 420px;
+  }
+  .proyectos-hero__inner {
+    padding: 76px 18px 60px;
   }
   .proyectos-hero__title {
-    font-size: 28px;
+    font-size: clamp(28px, 8vw, 36px);
     letter-spacing: 1px;
   }
   .proyectos-hero__desc {
@@ -499,7 +519,7 @@
     font-size: 11px;
   }
 
-  /* Últimos Proyectos */
+  /* ÃƒÆ’Ã…Â¡ltimos Proyectos */
   .ultimos-proyectos {
     padding: 40px 0 48px;
   }
@@ -536,7 +556,7 @@
 }
 
 /* ============================================
-   CTA Final — "¿Listo para comenzar?"
+   CTA Final ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â "Ãƒâ€šÃ‚Â¿Listo para comenzar?"
    ============================================ */
 .prod-cta {
   background: #F5F1E8;
@@ -641,5 +661,97 @@
   .prod-cta__buttons {
     flex-direction: column;
     align-items: center;
+  }
+}
+
+/* ============================================
+   Proyectos list: server-side filters + pagination
+   ============================================ */
+.ultimos-proyectos__filter {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ultimos-proyectos__empty {
+  background: #ffffff;
+  border: 1.5px solid #d9d0c5;
+  border-radius: 22px;
+  padding: 40px 28px;
+  text-align: center;
+}
+
+.ultimos-proyectos__empty-title {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.2;
+  color: #1a1a1a;
+  text-transform: uppercase;
+}
+
+.ultimos-proyectos__empty-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #5a5a5a;
+}
+
+.proyectos-pagination {
+  margin-top: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.proyectos-pagination__item .page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid #d5d5d5;
+  background: #ffffff;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all .2s ease;
+}
+
+.proyectos-pagination__item .page-numbers:hover {
+  border-color: #111319;
+}
+
+.proyectos-pagination__item .page-numbers.current {
+  background: #111319;
+  border-color: #111319;
+  color: #ffffff;
+}
+
+@media (max-width: 520px) {
+  .ultimos-proyectos__empty {
+    padding: 28px 18px;
+  }
+
+  .ultimos-proyectos__empty-title {
+    font-size: 22px;
+  }
+
+  .proyectos-pagination {
+    margin-top: 30px;
+  }
+
+  .proyectos-pagination__item .page-numbers {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
   }
 }

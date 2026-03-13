@@ -1,341 +1,230 @@
 <?php
 /**
  * Template Name: Proyectos
- * Description: Página de proyectos ECHOS.
+ * Description: Listado administrable de proyectos ECHOS.
  *
  * @package Echos
  */
 
 get_header();
 
-$img  = get_template_directory_uri() . '/assets/img/inicio/';
-$home = esc_url( home_url( '/' ) );
+$page_id = get_queried_object_id();
+$data    = echos_project_get_listing_data( $page_id );
+
+$home       = esc_url( home_url( '/' ) );
+$topbar_cta = trim( (string) ( $data['topbar_cta_url'] ?? '' ) );
+$topbar_cta = '' !== $topbar_cta ? $topbar_cta : $home . '#contacto';
+
+$current_category = isset( $_GET['categoria'] ) ? sanitize_title( wp_unslash( $_GET['categoria'] ) ) : '';
+
+$paged = max(
+	1,
+	absint( get_query_var( 'paged' ) ),
+	absint( get_query_var( 'page' ) ),
+	isset( $_GET['paged'] ) ? absint( wp_unslash( $_GET['paged'] ) ) : 0
+);
+
+$per_page = max( 1, absint( $data['listing']['per_page'] ?? 9 ) );
+
+$query_args = array(
+	'post_type'      => 'proyecto',
+	'post_status'    => 'publish',
+	'posts_per_page' => $per_page,
+	'paged'          => $paged,
+	'orderby'        => 'date',
+	'order'          => 'DESC',
+);
+
+if ( '' !== $current_category ) {
+	$term = get_term_by( 'slug', $current_category, 'categoria_proyecto' );
+	if ( $term instanceof WP_Term ) {
+		$query_args['tax_query'] = array(
+			array(
+				'taxonomy' => 'categoria_proyecto',
+				'field'    => 'slug',
+				'terms'    => $current_category,
+			),
+		);
+	} else {
+		$current_category = '';
+	}
+}
+
+$projects_query = new WP_Query( $query_args );
+
+$categories = get_terms(
+	array(
+		'taxonomy'   => 'categoria_proyecto',
+		'hide_empty' => true,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	)
+);
+
+$featured_limit = max( 1, absint( $data['featured']['items_limit'] ?? 6 ) );
+$featured_posts = echos_project_get_featured_projects( $featured_limit );
+
+$hero_bg_image = echos_project_resolve_image_url( ( $data['hero']['background_image'] ?? '' ), get_template_directory_uri() . '/assets/img/inicio/baner1.jpg' );
+$hero_title    = (string) ( $data['hero']['title'] ?? __( 'NUESTROS PROYECTOS', 'echos' ) );
+$hero_desc     = (string) ( $data['hero']['description'] ?? '' );
+
+$featured_title = (string) ( $data['featured']['title'] ?? __( 'LOS MAS DESTACADOS', 'echos' ) );
+
+$listing_title      = (string) ( $data['listing']['title'] ?? __( 'ULTIMOS PROYECTOS', 'echos' ) );
+$all_filter_label   = (string) ( $data['listing']['all_filter_label'] ?? __( 'Todos', 'echos' ) );
+$empty_title        = (string) ( $data['listing']['empty_title'] ?? __( 'No encontramos proyectos', 'echos' ) );
+$empty_text         = (string) ( $data['listing']['empty_text'] ?? '' );
+$default_image      = get_template_directory_uri() . '/assets/img/inicio/baner1.jpg';
+$listing_base_url   = get_permalink( $page_id );
 ?>
 
-  <!-- TOPBAR / NAVEGACIÓN -->
-  <header class="proyectos-header">
-    <div class="topbar topbar--static">
-      <div class="container topbar__inner">
-        <a class="brand" href="<?php echo $home; ?>">
-          <img class="brand__logo" src="<?php echo $img; ?>logo.png" alt="ECHOS" />
-          <span class="sr-only">ECHOS — Infraestructura para eventos</span>
-        </a>
+<header class="proyectos-header">
+	<?php get_template_part( 'template-parts/topbar', null, array( 'modifier' => 'topbar--static', 'cta_url' => $topbar_cta ) ); ?>
+</header>
 
-        <nav class="nav">
-          <a href="<?php echo $home; ?>#servicios">Servicios</a>
-          <a href="<?php echo get_permalink(); ?>" class="nav--active">Proyectos</a>
-          <a href="<?php echo $home; ?>#conocenos">Conócenos</a>
-        </nav>
+<section class="proyectos-hero">
+	<div class="proyectos-hero__bg" aria-hidden="true" style="background-image:url('<?php echo esc_url( $hero_bg_image ); ?>')"></div>
+	<div class="proyectos-hero__overlay" aria-hidden="true"></div>
+	<div class="container proyectos-hero__inner">
+		<h1 class="proyectos-hero__title"><?php echo esc_html( $hero_title ); ?></h1>
+		<p class="proyectos-hero__desc"><?php echo esc_html( $hero_desc ); ?></p>
+	</div>
+</section>
 
-        <a class="cta" href="<?php echo $home; ?>#contacto">
-          <span>Cotiza tu proyecto</span>
-          <span class="cta__icon" aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
-  </header>
+<?php if ( ! empty( $featured_posts ) ) : ?>
+	<section class="destacados">
+		<div class="container">
+			<div class="destacados__head">
+				<h2 class="destacados__title"><?php echo esc_html( $featured_title ); ?></h2>
+				<div class="destacados__arrows">
+					<button class="destacados__arrow destacados__arrow--prev" type="button" aria-label="<?php esc_attr_e( 'Anterior', 'echos' ); ?>">
+						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+					</button>
+					<button class="destacados__arrow destacados__arrow--next" type="button" aria-label="<?php esc_attr_e( 'Siguiente', 'echos' ); ?>">
+						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+					</button>
+				</div>
+			</div>
 
-  <!-- HERO: NUESTROS PROYECTOS -->
-  <section class="proyectos-hero">
-    <div class="proyectos-hero__bg" aria-hidden="true"></div>
-    <div class="container proyectos-hero__inner">
-      <h1 class="proyectos-hero__title">
-        NUESTROS <span class="proyectos-hero__accent">PROYECTOS</span>
-      </h1>
-      <p class="proyectos-hero__desc">
-        Lorem ipsum dolor sit amet consectetur. Viverra amet semper sed quam
-        lobortis lacus sit. Nulla id massa eget massa.
-      </p>
-    </div>
-  </section>
+			<div class="destacados__viewport">
+				<div class="destacados__track">
+					<?php foreach ( $featured_posts as $featured_post ) : ?>
+						<?php
+						if ( ! $featured_post instanceof WP_Post ) {
+							continue;
+						}
 
-  <!-- LOS MÁS DESTACADOS — slider -->
-  <section class="destacados">
-    <div class="container">
-      <div class="destacados__head">
-        <h2 class="destacados__title">LOS MAS DESTACADOS</h2>
-        <div class="destacados__arrows">
-          <button class="destacados__arrow destacados__arrow--prev" type="button" aria-label="Anterior">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          </button>
-          <button class="destacados__arrow destacados__arrow--next" type="button" aria-label="Siguiente">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </div>
+						$featured_id    = $featured_post->ID;
+						$featured_image = echos_project_resolve_image_url( get_the_post_thumbnail_url( $featured_id, 'full' ), $default_image );
+						$featured_title_item = get_the_title( $featured_id );
+						$featured_date  = get_the_date( 'd \\d\\e F, Y', $featured_id );
+						?>
+						<div class="destacados__card">
+							<div class="destacados__img" style="background-image:url('<?php echo esc_url( $featured_image ); ?>')"></div>
+							<div class="destacados__info">
+								<div class="destacados__info-text">
+									<span class="destacados__name"><?php echo esc_html( $featured_title_item ); ?></span>
+									<span class="destacados__date"><?php echo esc_html( $featured_date ); ?></span>
+								</div>
+								<a href="<?php echo esc_url( get_permalink( $featured_id ) ); ?>" class="destacados__link" aria-label="<?php esc_attr_e( 'Ver proyecto', 'echos' ); ?>">
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+								</a>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
 
-      <div class="destacados__viewport">
-        <div class="destacados__track">
+			<div class="destacados__dots"></div>
+		</div>
+	</section>
+<?php endif; ?>
 
-          <!-- Card 1 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">BCP Lanzamiento</span>
-                <span class="destacados__date">05 de junio, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+<section class="ultimos-proyectos" id="ultimos-proyectos">
+	<div class="container">
+		<h2 class="ultimos-proyectos__title"><?php echo esc_html( $listing_title ); ?></h2>
 
-          <!-- Card 2 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">BCP Lanzamiento</span>
-                <span class="destacados__date">05 de junio, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+		<?php if ( ! empty( $categories ) ) : ?>
+			<div class="ultimos-proyectos__filters">
+				<a class="ultimos-proyectos__filter <?php echo '' === $current_category ? 'is-active' : ''; ?>" href="<?php echo esc_url( $listing_base_url ); ?>">
+					<?php echo esc_html( $all_filter_label ); ?>
+				</a>
+				<?php foreach ( $categories as $category ) : ?>
+					<?php if ( ! $category instanceof WP_Term ) { continue; } ?>
+					<a class="ultimos-proyectos__filter <?php echo $current_category === $category->slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'categoria', $category->slug, $listing_base_url ) ); ?>">
+						<?php echo esc_html( $category->name ); ?>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
 
-          <!-- Card 3 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">Evento Corporativo</span>
-                <span class="destacados__date">12 de mayo, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+		<?php if ( $projects_query->have_posts() ) : ?>
+			<div class="ultimos-proyectos__grid">
+				<?php
+				while ( $projects_query->have_posts() ) :
+					$projects_query->the_post();
 
-          <!-- Card 4 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">Evento Corporativo</span>
-                <span class="destacados__date">12 de mayo, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+					$project_id   = get_the_ID();
+					$project_data = echos_project_get_data( $project_id );
+					$image        = echos_project_resolve_image_url( get_the_post_thumbnail_url( $project_id, 'full' ), $default_image );
+					$badge        = echos_project_get_card_badge( $project_id, $project_data );
+					$title        = get_the_title( $project_id );
+					$date         = get_the_date( 'd \\d\\e F, Y', $project_id );
+					?>
+					<article class="up-card">
+						<div class="up-card__img" style="background-image:url('<?php echo esc_url( $image ); ?>')"></div>
+						<span class="up-card__badge"><?php echo esc_html( $badge ); ?></span>
+						<div class="up-card__info">
+							<div class="up-card__info-text">
+								<span class="up-card__name"><?php echo esc_html( $title ); ?></span>
+								<span class="up-card__date"><?php echo esc_html( $date ); ?></span>
+							</div>
+							<a href="<?php the_permalink(); ?>" class="up-card__link" aria-label="<?php esc_attr_e( 'Ver proyecto', 'echos' ); ?>">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+							</a>
+						</div>
+					</article>
+				<?php endwhile; ?>
+			</div>
+		<?php else : ?>
+			<div class="ultimos-proyectos__empty">
+				<h3 class="ultimos-proyectos__empty-title"><?php echo esc_html( $empty_title ); ?></h3>
+				<p class="ultimos-proyectos__empty-text"><?php echo esc_html( $empty_text ); ?></p>
+			</div>
+		<?php endif; ?>
 
-          <!-- Card 5 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">Feria Internacional</span>
-                <span class="destacados__date">28 de abril, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+		<?php
+		$pagination_links = paginate_links(
+			array(
+				'base'      => str_replace( 999999999, '%#%', esc_url_raw( get_pagenum_link( 999999999 ) ) ),
+				'format'    => '?paged=%#%',
+				'current'   => $paged,
+				'total'     => max( 1, (int) $projects_query->max_num_pages ),
+				'type'      => 'array',
+				'prev_text' => '&larr;',
+				'next_text' => '&rarr;',
+				'add_args'  => array_filter(
+					array(
+						'categoria' => $current_category,
+					)
+				),
+			)
+		);
 
-          <!-- Card 6 -->
-          <div class="destacados__card">
-            <div class="destacados__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-            <div class="destacados__info">
-              <div class="destacados__info-text">
-                <span class="destacados__name">Feria Internacional</span>
-                <span class="destacados__date">28 de abril, 2025</span>
-              </div>
-              <a href="#" class="destacados__link" aria-label="Ver proyecto">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-            </div>
-          </div>
+		if ( is_array( $pagination_links ) && count( $pagination_links ) > 1 ) :
+			?>
+			<nav class="proyectos-pagination" aria-label="<?php esc_attr_e( 'Paginacion de proyectos', 'echos' ); ?>">
+				<?php foreach ( $pagination_links as $page_link ) : ?>
+					<span class="proyectos-pagination__item"><?php echo wp_kses_post( $page_link ); ?></span>
+				<?php endforeach; ?>
+			</nav>
+		<?php endif; ?>
 
-        </div>
-      </div>
+		<?php wp_reset_postdata(); ?>
+	</div>
+</section>
 
-      <div class="destacados__dots"></div>
-    </div>
-  </section>
-
-  <!-- ÚLTIMOS PROYECTOS — grid con filtros -->
-  <section class="ultimos-proyectos">
-    <div class="container">
-      <h2 class="ultimos-proyectos__title">ULTIMOS PROYECTOS</h2>
-
-      <!-- Filtros -->
-      <div class="ultimos-proyectos__filters">
-        <button class="ultimos-proyectos__filter is-active" data-filter="todos" type="button">Todos</button>
-        <button class="ultimos-proyectos__filter" data-filter="eventos" type="button">Eventos</button>
-        <button class="ultimos-proyectos__filter" data-filter="entretenimiento" type="button">Entretenimiento</button>
-        <button class="ultimos-proyectos__filter" data-filter="corporativo" type="button">Corporativo</button>
-      </div>
-
-      <!-- Grid de cards -->
-      <div class="ultimos-proyectos__grid">
-
-        <!-- Card 1 -->
-        <article class="up-card" data-category="eventos">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Eventos</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">BCP Lanzamiento</span>
-              <span class="up-card__date">05 de junio, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="up-card" data-category="entretenimiento">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Entretenimiento</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">BCP Lanzamiento</span>
-              <span class="up-card__date">05 de junio, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="up-card" data-category="eventos">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Eventos</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Ecoferia Madre Tierra</span>
-              <span class="up-card__date">05 de junio, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 4 -->
-        <article class="up-card" data-category="corporativo">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Corporativo</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Congreso Anual</span>
-              <span class="up-card__date">15 de mayo, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 5 -->
-        <article class="up-card" data-category="eventos">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Eventos</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Festival de Luces</span>
-              <span class="up-card__date">20 de abril, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 6 -->
-        <article class="up-card" data-category="entretenimiento">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Entretenimiento</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Show Musical</span>
-              <span class="up-card__date">10 de abril, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 7 -->
-        <article class="up-card" data-category="corporativo">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Corporativo</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Lanzamiento Producto</span>
-              <span class="up-card__date">01 de marzo, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 8 -->
-        <article class="up-card" data-category="eventos">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Eventos</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Gala Benéfica</span>
-              <span class="up-card__date">15 de febrero, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- Card 9 -->
-        <article class="up-card" data-category="entretenimiento">
-          <div class="up-card__img" style="background-image:url('<?php echo $img; ?>baner1.jpg')"></div>
-          <span class="up-card__badge">Entretenimiento</span>
-          <div class="up-card__info">
-            <div class="up-card__info-text">
-              <span class="up-card__name">Concierto Sinfónico</span>
-              <span class="up-card__date">28 de enero, 2025</span>
-            </div>
-            <a href="#" class="up-card__link" aria-label="Ver proyecto">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </article>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="prod-cta">
-    <div class="container">
-      <div class="prod-cta__card">
-        <h2 class="prod-cta__title">¿LISTO PARA COMENZAR?</h2>
-        <p class="prod-cta__text">Todo gran proyecto comienza con una conversación.</p>
-        <div class="prod-cta__buttons">
-          <a class="btn-cta-dark" href="https://wa.me/" target="_blank" rel="noopener">
-            <span>Conversemos ahora</span>
-            <span class="btn-cta-dark__icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.932 1.396 5.608L.05 23.708a.6.6 0 00.735.728L6.53 22.64A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.56 9.56 0 01-5.175-1.516l-.372-.222-3.843.985 1.028-3.752-.243-.387A9.56 9.56 0 012.4 12c0-5.302 4.298-9.6 9.6-9.6s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6z"/></svg>
-            </span>
-          </a>
-          <a class="btn-cta-dark" href="mailto:contacto@echosperu.com.pe" target="_blank" rel="noopener">
-            <span>echosperu.com.pe</span>
-            <span class="btn-cta-dark__icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<?php echos_product_render_final_cta( (array) ( $data['final_cta'] ?? array() ), 'prod' ); ?>
 
 <?php
 get_footer();

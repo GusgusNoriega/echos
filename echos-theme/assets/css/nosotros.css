@@ -181,7 +181,7 @@
 }
 
 .nosotros-historia__bg-year {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-weight: 900;
   font-style: italic;
   color: rgba(255, 255, 255, .06);
@@ -225,7 +225,7 @@
 }
 
 .nosotros-historia__title {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 24px;
   font-weight: 900;
   font-style: italic;
@@ -257,7 +257,7 @@
   justify-content: center;
   background: #ffffff;
   color: #1a1a1a;
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 13px;
   font-weight: 700;
   padding: 5px 14px;
@@ -312,7 +312,7 @@
 }
 
 .nosotros-historia__slide-title {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 26px;
   font-weight: 800;
   font-style: italic;
@@ -379,7 +379,7 @@
 }
 
 .nosotros-mv__title {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 32px;
   font-weight: 900;
   font-style: italic;
@@ -424,7 +424,7 @@
 }
 
 .nosotros-proceso__title {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 42px;
   font-weight: 900;
   font-style: italic;
@@ -459,7 +459,7 @@
 }
 
 .nosotros-proceso__number {
-  font-family: var(--font-display, 'Montserrat', sans-serif);
+  font-family: var(--font-display, var(--font-sans));
   font-size: 48px;
   font-weight: 900;
   color: #1a1a1a;
@@ -882,3 +882,6 @@
     align-items: center;
   }
 }
+
+
+

@@ -107,3 +107,36 @@ Para que la página de inicio se muestre automáticamente:
 - Las rutas de imágenes usan `get_template_directory_uri()` para ser compatibles con WordPress.
 - El tema no es administrable (no usa ACF ni campos personalizados), el contenido está directamente en los templates.
 - Para modificar textos o imágenes, edita directamente los archivos PHP de los templates.
+
+---
+
+## Home Administrable (Nuevo)
+
+La plantilla `Inicio` ahora es administrable desde el editor de la pagina (metabox **Inicio: Secciones Administrables**).
+
+### Secciones que puedes editar
+
+- Hero (CTA + slides)
+- Clientes (titulo, subtitulo, logos)
+- Conocenos
+- Proyectos (cards + boton)
+- Servicios (items + boton)
+- Contacto (textos, tabs y placeholders)
+
+### Nueva estructura modular
+
+- `inc/home/defaults.php`: valores por defecto de la portada
+- `inc/home/data.php`: merge entre defaults y datos guardados
+- `inc/admin/home-metabox.php`: UI de administracion y guardado seguro
+- `template-parts/home/section-*.php`: render por seccion
+- `assets/js/admin-home-sections.js`: repetidores + selector de imagen en admin
+- `assets/css/admin-home-sections.css`: estilos del metabox
+
+### Escalar a futuras vistas
+
+Para hacer otra vista administrable, replica este patron:
+
+1. Crea `inc/<vista>/defaults.php` y `inc/<vista>/data.php`.
+2. Crea `inc/admin/<vista>-metabox.php`.
+3. Divide el template en `template-parts/<vista>/section-*.php`.
+4. Carga todo con `require_once` desde `functions.php`.
