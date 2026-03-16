@@ -198,6 +198,9 @@ require_once get_template_directory() . '/inc/admin/product-metabox.php';
 require_once get_template_directory() . '/inc/project/defaults.php';
 require_once get_template_directory() . '/inc/project/data.php';
 require_once get_template_directory() . '/inc/admin/project-metabox.php';
+require_once get_template_directory() . '/inc/footer/defaults.php';
+require_once get_template_directory() . '/inc/footer/data.php';
+require_once get_template_directory() . '/inc/admin/footer-options.php';
 require_once get_template_directory() . '/inc/content-types.php';
 
 /* -------------------------------------------------------

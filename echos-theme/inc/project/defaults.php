@@ -42,8 +42,9 @@ function echos_project_default_single_sections() {
 			'thumbnail_alt' => 'Video del proyecto',
 		),
 		'used_products' => array(
-			'title' => 'Productos utilizados',
-			'items' => array(
+			'title'                => 'Productos utilizados',
+			'selected_product_ids' => array(),
+			'items'                => array(
 				array(
 					'name'     => 'Esferas kinetic',
 					'features' => array(
@@ -59,26 +60,6 @@ function echos_project_default_single_sections() {
 						'Senal control HDMI - DVI - Madrix 5.',
 						'Alto brillo para eventos indoor y outdoor.',
 					),
-				),
-			),
-		),
-		'gallery'       => array(
-			'items' => array(
-				array(
-					'image' => $default_image,
-					'alt'   => 'Galeria del proyecto',
-				),
-				array(
-					'image' => $default_image,
-					'alt'   => 'Galeria del proyecto',
-				),
-				array(
-					'image' => $default_image,
-					'alt'   => 'Galeria del proyecto',
-				),
-				array(
-					'image' => $default_image,
-					'alt'   => 'Galeria del proyecto',
 				),
 			),
 		),

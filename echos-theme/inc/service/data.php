@@ -172,3 +172,134 @@ function echos_service_resolve_image_url( $value, $fallback = '' ) {
 function echos_service_multiline_text( $text ) {
 	return nl2br( esc_html( (string) $text ) );
 }
+
+/**
+ * Returns sanitized term slugs assigned to a post.
+ *
+ * @param int    $post_id  Post ID.
+ * @param string $taxonomy Taxonomy name.
+ * @return array
+ */
+function echos_service_get_term_slugs( $post_id, $taxonomy ) {
+	$post_id  = absint( $post_id );
+	$taxonomy = sanitize_key( (string) $taxonomy );
+
+	if ( ! $post_id || '' === $taxonomy ) {
+		return array();
+	}
+
+	$terms = wp_get_post_terms(
+		$post_id,
+		$taxonomy,
+		array(
+			'fields' => 'slugs',
+		)
+	);
+
+	if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+		return array();
+	}
+
+	$slugs = array();
+	foreach ( $terms as $term_slug ) {
+		$slug = sanitize_title( (string) $term_slug );
+		if ( '' !== $slug ) {
+			$slugs[] = $slug;
+		}
+	}
+
+	if ( empty( $slugs ) ) {
+		return array();
+	}
+
+	return array_values( array_unique( $slugs ) );
+}
+
+/**
+ * Returns term IDs from a target taxonomy that match source post term slugs.
+ *
+ * @param int    $post_id          Source post ID.
+ * @param string $source_taxonomy  Source taxonomy.
+ * @param string $target_taxonomy  Target taxonomy.
+ * @return array
+ */
+function echos_service_get_matching_term_ids_by_slug( $post_id, $source_taxonomy, $target_taxonomy ) {
+	$source_slugs = echos_service_get_term_slugs( $post_id, $source_taxonomy );
+	if ( empty( $source_slugs ) ) {
+		return array();
+	}
+
+	$target_terms = get_terms(
+		array(
+			'taxonomy'   => sanitize_key( (string) $target_taxonomy ),
+			'hide_empty' => false,
+			'slug'       => $source_slugs,
+			'fields'     => 'ids',
+		)
+	);
+
+	if ( is_wp_error( $target_terms ) || ! is_array( $target_terms ) ) {
+		return array();
+	}
+
+	$ids = array();
+	foreach ( $target_terms as $term_id ) {
+		$id = absint( $term_id );
+		if ( $id ) {
+			$ids[] = $id;
+		}
+	}
+
+	if ( empty( $ids ) ) {
+		return array();
+	}
+
+	return array_values( array_unique( $ids ) );
+}
+
+/**
+ * Resolves service layout variant from template slug.
+ *
+ * @param int $post_id Post ID.
+ * @return string
+ */
+function echos_service_get_variant_from_template( $post_id ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		return 'infraestructura';
+	}
+
+	$template = get_page_template_slug( $post_id );
+	$map      = array(
+		'page-templates/template-servicios-infraestructura.php' => 'infraestructura',
+		'page-templates/template-servicios-iluminacion.php'     => 'iluminacion',
+		'page-templates/template-servicios-stands.php'          => 'stands',
+	);
+
+	return isset( $map[ $template ] ) ? $map[ $template ] : 'infraestructura';
+}
+
+/**
+ * Returns a short description fallback from excerpt/content.
+ *
+ * @param int $post_id Post ID.
+ * @return string
+ */
+function echos_service_get_post_summary( $post_id ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	$excerpt = trim( (string) get_the_excerpt( $post_id ) );
+	if ( '' !== $excerpt ) {
+		return $excerpt;
+	}
+
+	$content = get_post_field( 'post_content', $post_id );
+	if ( ! is_string( $content ) ) {
+		return '';
+	}
+
+	return wp_trim_words( wp_strip_all_tags( $content ), 22, '...' );
+}

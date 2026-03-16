@@ -24,7 +24,8 @@ get_template_part(
 	'template-parts/service/layout',
 	$variant,
 	array(
-		'service' => $data,
+		'service'    => $data,
+		'service_id' => $post_id,
 	)
 );
 

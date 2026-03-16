@@ -792,10 +792,28 @@ h1, h2, h3, h4, h5, h6,
   border: 1px solid rgba(255,255,255,.12);
   background: rgba(255,255,255,.04);
   font-size: 10px;
+  transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.soc:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.14);
+}
+.soc__icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:0;
+}
+.soc__icon svg{
+  width: 14px;
+  height: 14px;
+  display:block;
 }
 .footer__links{
   display:flex;
   gap: 40px;
+  flex-wrap: wrap;
 }
 .col{
   display:flex;
@@ -819,6 +837,10 @@ h1, h2, h3, h4, h5, h6,
 .footer__brand{
   padding: 8px 22px 26px 22px;
   position: relative;
+}
+.footer__brand-link{
+  display:block;
+  line-height:0;
 }
 .mega-logo{
   height: 120px;
@@ -2015,6 +2037,16 @@ body.home .soc {
   font-size: 10px;
   padding: 0;
   opacity: 1;
+}
+
+body.home .soc:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+body.home .soc__icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 body.home .footer__links {

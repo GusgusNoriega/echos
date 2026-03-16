@@ -163,6 +163,7 @@ function echos_service_default_data() {
 			'products'       => array(
 				'title'    => 'PRODUCTOS',
 				'subtitle' => 'Equipamiento de ultima generacion y servicios integrales para eventos de cualquier escala.',
+				'selected_product_ids' => array(),
 				'items'    => $products_six,
 				'cta_text' => 'Cotizar servicio',
 				'cta_url'  => '#contacto',
@@ -220,6 +221,7 @@ function echos_service_default_data() {
 			'products'       => array(
 				'title'    => 'PRODUCTOS',
 				'subtitle' => 'Equipamiento de ultima generacion y servicios integrales para eventos de cualquier escala.',
+				'selected_product_ids' => array(),
 				'items'    => $products_six,
 				'cta_text' => 'Cotizar servicio',
 				'cta_url'  => '#contacto',
@@ -281,6 +283,7 @@ function echos_service_default_data() {
 			'products'          => array(
 				'title'    => 'PRODUCTOS',
 				'subtitle' => 'Equipamiento de ultima generacion y servicios integrales para eventos de cualquier escala.',
+				'selected_product_ids' => array(),
 				'items'    => $products_three,
 				'cta_text' => 'Cotizar servicio',
 				'cta_url'  => '#contacto',

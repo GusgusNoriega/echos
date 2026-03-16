@@ -1,40 +1,77 @@
+<?php
+$footer_data  = echos_footer_get_data();
+$social_links = echos_footer_normalize_social_links( isset( $footer_data['social_links'] ) ? $footer_data['social_links'] : array() );
+$columns      = echos_footer_normalize_columns( isset( $footer_data['columns'] ) ? $footer_data['columns'] : array() );
+
+$social_label = isset( $footer_data['social_label'] ) ? (string) $footer_data['social_label'] : '';
+$brand_image  = isset( $footer_data['brand_image'] ) ? (string) $footer_data['brand_image'] : '';
+$brand_alt    = isset( $footer_data['brand_image_alt'] ) ? (string) $footer_data['brand_image_alt'] : 'ECHOS Logo';
+$brand_link   = isset( $footer_data['brand_image_link'] ) ? (string) $footer_data['brand_image_link'] : '';
+?>
+
 <footer class="footer">
-  <div class="container">
-    <div class="footer__panel">
-      <div class="footer__top">
-        <div class="footer__social">
-          <div class="footer__label">Siguenos en nuestras<br />redes sociales!</div>
-          <div class="footer__icons" aria-label="Redes sociales">
-            <a href="#" class="soc" aria-label="Instagram">IG</a>
-            <a href="#" class="soc" aria-label="Facebook">FB</a>
-            <a href="#" class="soc" aria-label="TikTok">TT</a>
-            <a href="#" class="soc" aria-label="LinkedIn">IN</a>
-          </div>
-        </div>
+	<div class="container">
+		<div class="footer__panel">
+			<div class="footer__top">
+				<div class="footer__social">
+					<div class="footer__label"><?php echo wp_kses_post( echos_footer_multiline_text( $social_label ) ); ?></div>
+					<div class="footer__icons" aria-label="<?php esc_attr_e( 'Redes sociales', 'echos' ); ?>">
+						<?php foreach ( $social_links as $social ) : ?>
+							<?php
+							$platform = isset( $social['platform'] ) ? (string) $social['platform'] : 'custom';
+							$url      = isset( $social['url'] ) ? (string) $social['url'] : '#';
+							$label    = isset( $social['label'] ) ? (string) $social['label'] : echos_footer_default_social_label( $platform );
+							?>
+							<a href="<?php echo esc_url( $url ); ?>" class="soc" aria-label="<?php echo esc_attr( $label ); ?>">
+								<span class="soc__icon" aria-hidden="true">
+									<?php echo echos_footer_get_social_icon_markup( $platform ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</span>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
 
-        <div class="footer__links">
-          <div class="col">
-            <div class="col__title">ECHOS</div>
-            <a href="<?php echo esc_url( home_url( '/' ) ); ?>#clientes">Productos</a>
-            <a href="<?php echo esc_url( home_url( '/' ) ); ?>#servicios">Servicios</a>
-            <a href="<?php echo esc_url( home_url( '/' ) ); ?>#proyectos">Proyectos</a>
-            <a href="<?php echo esc_url( home_url( '/' ) ); ?>#conocenos">Conocenos</a>
-          </div>
-          <div class="col">
-            <div class="col__title">Legal</div>
-            <a href="#">Politicas de privacidad</a>
-            <a href="#">Terminos y condiciones</a>
-          </div>
-        </div>
-      </div>
+				<div class="footer__links">
+					<?php foreach ( $columns as $column ) : ?>
+						<?php
+						$title = isset( $column['title'] ) ? (string) $column['title'] : '';
+						$links = isset( $column['links'] ) && is_array( $column['links'] ) ? $column['links'] : array();
+						?>
+						<div class="col">
+							<?php if ( '' !== trim( $title ) ) : ?>
+								<div class="col__title"><?php echo esc_html( $title ); ?></div>
+							<?php endif; ?>
 
-      <div class="footer__brand" aria-hidden="true">
-        <div class="mega-logo">
-          <img src="<?php echo echos_asset( 'img/inicio/logo-footer.png' ); ?>" class="logo-footer" alt="ECHOS Logo" />
-        </div>
-      </div>
-    </div>
-  </div>
+							<?php foreach ( $links as $link ) : ?>
+								<?php
+								$link_label = isset( $link['label'] ) ? (string) $link['label'] : '';
+								$link_url   = isset( $link['url'] ) ? (string) $link['url'] : '#';
+								if ( '' === trim( $link_label ) ) {
+									continue;
+								}
+								?>
+								<a href="<?php echo esc_url( $link_url ); ?>"><?php echo esc_html( $link_label ); ?></a>
+							<?php endforeach; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+
+			<div class="footer__brand">
+				<div class="mega-logo">
+					<?php if ( '' !== trim( $brand_image ) ) : ?>
+						<?php if ( '' !== trim( $brand_link ) ) : ?>
+							<a class="footer__brand-link" href="<?php echo esc_url( $brand_link ); ?>">
+								<img src="<?php echo esc_url( $brand_image ); ?>" class="logo-footer" alt="<?php echo esc_attr( $brand_alt ); ?>" />
+							</a>
+						<?php else : ?>
+							<img src="<?php echo esc_url( $brand_image ); ?>" class="logo-footer" alt="<?php echo esc_attr( $brand_alt ); ?>" />
+						<?php endif; ?>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</div>
 </footer>
 
 <!-- POPUP -->

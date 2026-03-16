@@ -168,3 +168,72 @@
     initOtrosSlider();
   }
 })();
+
+/**
+ * Productos utilizados - Reveal on scroll
+ *
+ * By default each card shows the product image.
+ * Desktop: reveal on mouse hover.
+ * Mobile: reveal on scroll when each card enters viewport.
+ *
+ * @package Echos
+ */
+(function () {
+  'use strict';
+
+  function initUsedProductsReveal() {
+    var items = document.querySelectorAll('.proy-ind-productos__item');
+    if (!items.length) return;
+
+    var hasHoverPointer =
+      window.matchMedia &&
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    // Desktop: reveal only while the mouse is over the card.
+    if (hasHoverPointer) {
+      items.forEach(function (item) {
+        item.addEventListener('mouseenter', function () {
+          item.classList.add('is-revealed');
+        });
+
+        item.addEventListener('mouseleave', function () {
+          item.classList.remove('is-revealed');
+        });
+      });
+
+      return;
+    }
+
+    // Mobile/tablet: reveal while scrolling page (card entering viewport).
+    if (!('IntersectionObserver' in window)) {
+      return;
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+
+          if (entry.intersectionRatio >= 0.4) {
+            entry.target.classList.add('is-revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: [0.2, 0.4, 0.65],
+        rootMargin: '0px 0px -10% 0px',
+      }
+    );
+
+    items.forEach(function (item) {
+      observer.observe(item);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initUsedProductsReveal);
+  } else {
+    initUsedProductsReveal();
+  }
+})();

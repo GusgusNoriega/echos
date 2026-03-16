@@ -97,9 +97,9 @@ function echos_service_render_admin_metabox( $post ) {
 		</p>
 		<p><strong><?php esc_html_e( 'Plantilla activa:', 'echos' ); ?></strong> <?php echo esc_html( $active_label ); ?></p>
 
-		<?php echos_service_admin_render_variant_infraestructura( $data ); ?>
-		<?php echos_service_admin_render_variant_iluminacion( $data ); ?>
-		<?php echos_service_admin_render_variant_stands( $data ); ?>
+		<?php echos_service_admin_render_variant_infraestructura( $data, $post->ID ); ?>
+		<?php echos_service_admin_render_variant_iluminacion( $data, $post->ID ); ?>
+		<?php echos_service_admin_render_variant_stands( $data, $post->ID ); ?>
 	</div>
 	<?php
 }
@@ -107,10 +107,11 @@ function echos_service_render_admin_metabox( $post ) {
 /**
  * Renders infraestructura panel.
  *
- * @param array $data Current data.
+ * @param array $data    Current data.
+ * @param int   $post_id Current post ID.
  * @return void
  */
-function echos_service_admin_render_variant_infraestructura( $data ) {
+function echos_service_admin_render_variant_infraestructura( $data, $post_id = 0 ) {
 	$variant = 'infraestructura';
 	?>
 	<details class="echos-home-admin__section" open>
@@ -118,7 +119,7 @@ function echos_service_admin_render_variant_infraestructura( $data ) {
 		<div class="echos-home-admin__section-body">
 			<?php echos_service_admin_render_hero_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_infra_systems_fields( $data, $variant ); ?>
-			<?php echos_service_admin_render_products_fields( $data, $variant ); ?>
+			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_certifications_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_other_services_fields( $data, $variant ); ?>
@@ -131,10 +132,11 @@ function echos_service_admin_render_variant_infraestructura( $data ) {
 /**
  * Renders iluminacion panel.
  *
- * @param array $data Current data.
+ * @param array $data    Current data.
+ * @param int   $post_id Current post ID.
  * @return void
  */
-function echos_service_admin_render_variant_iluminacion( $data ) {
+function echos_service_admin_render_variant_iluminacion( $data, $post_id = 0 ) {
 	$variant = 'iluminacion';
 	?>
 	<details class="echos-home-admin__section">
@@ -142,7 +144,7 @@ function echos_service_admin_render_variant_iluminacion( $data ) {
 		<div class="echos-home-admin__section-body">
 			<?php echos_service_admin_render_hero_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_iluminacion_systems_fields( $data, $variant ); ?>
-			<?php echos_service_admin_render_products_fields( $data, $variant ); ?>
+			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
 			<?php echos_service_admin_render_iluminacion_additional_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_other_services_fields( $data, $variant ); ?>
@@ -155,10 +157,11 @@ function echos_service_admin_render_variant_iluminacion( $data ) {
 /**
  * Renders stands panel.
  *
- * @param array $data Current data.
+ * @param array $data    Current data.
+ * @param int   $post_id Current post ID.
  * @return void
  */
-function echos_service_admin_render_variant_stands( $data ) {
+function echos_service_admin_render_variant_stands( $data, $post_id = 0 ) {
 	$variant = 'stands';
 	?>
 	<details class="echos-home-admin__section">
@@ -167,7 +170,7 @@ function echos_service_admin_render_variant_stands( $data ) {
 			<?php echos_service_admin_render_hero_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_stands_description_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_stands_ficha_fields( $data, $variant ); ?>
-			<?php echos_service_admin_render_products_fields( $data, $variant ); ?>
+			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_stands_additional_slider_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_stands_furniture_fields( $data, $variant ); ?>
@@ -339,9 +342,10 @@ function echos_service_admin_render_iluminacion_systems_fields( $data, $variant 
  *
  * @param array  $data    Current data.
  * @param string $variant Variant key.
+ * @param int    $post_id Current post ID.
  * @return void
  */
-function echos_service_admin_render_products_fields( $data, $variant ) {
+function echos_service_admin_render_products_fields( $data, $variant, $post_id = 0 ) {
 	echo '<h4>' . esc_html__( 'Productos', 'echos' ) . '</h4>';
 
 	echos_service_admin_render_single_field(
@@ -378,9 +382,12 @@ function echos_service_admin_render_products_fields( $data, $variant ) {
 		)
 	);
 
+	$selected_products = echos_service_admin_get_nested_value( $data, array( $variant, 'products', 'selected_product_ids' ), array() );
+	echos_service_admin_render_products_selector( $variant, $post_id, $selected_products );
+
 	echos_service_admin_render_repeater(
 		array(
-			'title'      => __( 'Cards de producto', 'echos' ),
+			'title'      => __( 'Cards de producto (respaldo manual)', 'echos' ),
 			'item_label' => __( 'Producto', 'echos' ),
 			'add_label'  => __( 'Agregar producto', 'echos' ),
 			'name_path'  => array( $variant, 'products', 'items' ),
@@ -417,6 +424,153 @@ function echos_service_admin_render_products_fields( $data, $variant ) {
 				),
 			),
 		)
+	);
+
+	echo '<p class="description">' . esc_html__( 'Estas cards solo se usan si no hay productos CPT seleccionados o no existen productos publicados que coincidan.', 'echos' ) . '</p>';
+}
+
+/**
+ * Renders selector of related products for a service.
+ *
+ * @param string $variant      Variant key.
+ * @param int    $post_id      Service post ID.
+ * @param array  $selected_ids Selected product IDs.
+ * @return void
+ */
+function echos_service_admin_render_products_selector( $variant, $post_id, $selected_ids ) {
+	$selected_ids = is_array( $selected_ids ) ? array_values( array_unique( array_map( 'absint', $selected_ids ) ) ) : array();
+	$selector     = echos_service_admin_get_product_selector_data( $post_id, $selected_ids );
+	$name         = echos_service_admin_build_name( array( $variant, 'products', 'selected_product_ids' ) ) . '[]';
+
+	echo '<div class="echos-home-field">';
+	echo '<label class="echos-home-field__label">' . esc_html__( 'Productos relacionados (CPT)', 'echos' ) . '</label>';
+
+	if ( $selector['is_filtered'] ) {
+		if ( $selector['has_matches'] ) {
+			echo '<p class="description">' . esc_html__( 'Se muestran solo productos cuya categoria coincide (por slug) con las categorias del servicio actual.', 'echos' ) . '</p>';
+		} else {
+			echo '<p class="description">' . esc_html__( 'No se encontraron categorias de producto equivalentes a las categorias del servicio. Ajusta categorias para habilitar coincidencias.', 'echos' ) . '</p>';
+		}
+	} else {
+		echo '<p class="description">' . esc_html__( 'Este servicio no tiene categorias asignadas; se muestran todos los productos publicados.', 'echos' ) . '</p>';
+	}
+
+	if ( empty( $selector['products'] ) ) {
+		echo '<p><em>' . esc_html__( 'No hay productos disponibles para seleccionar.', 'echos' ) . '</em></p>';
+		echo '</div>';
+		return;
+	}
+
+	echo '<div class="echos-home-choices">';
+	foreach ( $selector['products'] as $product_post ) {
+		if ( ! $product_post instanceof WP_Post ) {
+			continue;
+		}
+
+		$product_id = (int) $product_post->ID;
+		$title      = get_the_title( $product_id );
+		$terms      = wp_get_post_terms(
+			$product_id,
+			'categoria_producto',
+			array(
+				'fields' => 'names',
+			)
+		);
+		$term_label = '';
+		if ( is_array( $terms ) && ! empty( $terms ) ) {
+			$term_label = implode( ', ', array_map( 'sanitize_text_field', $terms ) );
+		}
+
+		echo '<label class="echos-home-choice">';
+		echo '<input type="checkbox" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $product_id ) . '" ' . checked( in_array( $product_id, $selected_ids, true ), true, false ) . ' />';
+		echo '<span class="echos-home-choice__label">';
+		echo '<strong>' . esc_html( $title ) . '</strong>';
+		if ( '' !== $term_label ) {
+			echo '<small>' . esc_html( $term_label ) . '</small>';
+		}
+		echo '</span>';
+		echo '</label>';
+	}
+	echo '</div>';
+	echo '</div>';
+}
+
+/**
+ * Gets product options for selector UI.
+ *
+ * @param int   $post_id      Service post ID.
+ * @param array $selected_ids Selected product IDs.
+ * @return array
+ */
+function echos_service_admin_get_product_selector_data( $post_id, $selected_ids = array() ) {
+	$post_id      = absint( $post_id );
+	$selected_ids = is_array( $selected_ids ) ? array_values( array_unique( array_filter( array_map( 'absint', $selected_ids ) ) ) ) : array();
+
+	$service_slugs      = echos_service_get_term_slugs( $post_id, 'categoria_servicio' );
+	$matching_product_terms = echos_service_get_matching_term_ids_by_slug( $post_id, 'categoria_servicio', 'categoria_producto' );
+	$is_filtered        = ! empty( $service_slugs );
+	$has_matches        = ! empty( $matching_product_terms );
+
+	$args = array(
+		'post_type'      => 'producto',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'title',
+		'order'          => 'ASC',
+	);
+
+	if ( $is_filtered ) {
+		if ( $has_matches ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'categoria_producto',
+					'field'    => 'term_id',
+					'terms'    => $matching_product_terms,
+				),
+			);
+		} else {
+			$args['post__in'] = array( 0 );
+		}
+	}
+
+	$products = get_posts( $args );
+	if ( ! is_array( $products ) ) {
+		$products = array();
+	}
+
+	if ( ! empty( $selected_ids ) ) {
+		$selected_posts = get_posts(
+			array(
+				'post_type'      => 'producto',
+				'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+				'posts_per_page' => -1,
+				'post__in'       => $selected_ids,
+				'orderby'        => 'post__in',
+			)
+		);
+
+		if ( is_array( $selected_posts ) && ! empty( $selected_posts ) ) {
+			$indexed = array();
+			foreach ( $products as $product_post ) {
+				if ( $product_post instanceof WP_Post ) {
+					$indexed[ (int) $product_post->ID ] = $product_post;
+				}
+			}
+
+			foreach ( $selected_posts as $product_post ) {
+				if ( $product_post instanceof WP_Post ) {
+					$indexed[ (int) $product_post->ID ] = $product_post;
+				}
+			}
+
+			$products = array_values( $indexed );
+		}
+	}
+
+	return array(
+		'products'    => $products,
+		'is_filtered' => $is_filtered,
+		'has_matches' => $has_matches,
 	);
 }
 
@@ -1289,11 +1443,15 @@ function echos_service_admin_schema() {
 	);
 
 	$products_schema = array(
-		'title'    => 'text',
-		'subtitle' => 'textarea',
-		'cta_text' => 'text',
-		'cta_url'  => 'url',
-		'items'    => array(
+		'title'                => 'text',
+		'subtitle'             => 'textarea',
+		'cta_text'             => 'text',
+		'cta_url'              => 'url',
+		'selected_product_ids' => array(
+			'type'      => 'ids',
+			'post_type' => 'producto',
+		),
+		'items'                => array(
 			'_type'  => 'repeater',
 			'fields' => array(
 				'image' => 'url',
@@ -1516,6 +1674,13 @@ function echos_service_admin_sanitize_by_schema( $data, $schema ) {
 		$value = isset( $data[ $key ] ) ? $data[ $key ] : '';
 		$value = echos_service_admin_sanitize_scalar( $value, $rule );
 
+		if ( is_array( $value ) ) {
+			if ( ! empty( $value ) ) {
+				$clean[ $key ] = $value;
+			}
+			continue;
+		}
+
 		if ( '' !== $value ) {
 			$clean[ $key ] = $value;
 		}
@@ -1527,12 +1692,45 @@ function echos_service_admin_sanitize_by_schema( $data, $schema ) {
 /**
  * Sanitizes scalar values.
  *
- * @param mixed        $value Scalar value.
+ * @param mixed        $value Raw value.
  * @param string|array $rule  Rule.
- * @return string
+ * @return mixed
  */
 function echos_service_admin_sanitize_scalar( $value, $rule ) {
 	$type = is_array( $rule ) && isset( $rule['type'] ) ? $rule['type'] : $rule;
+
+	if ( 'ids' === $type ) {
+		$values = is_array( $value ) ? $value : array( $value );
+		$ids    = array();
+
+		$allowed_post_type = '';
+		if ( is_array( $rule ) && isset( $rule['post_type'] ) ) {
+			$allowed_post_type = sanitize_key( (string) $rule['post_type'] );
+		}
+
+		foreach ( $values as $maybe_id ) {
+			if ( ! is_scalar( $maybe_id ) ) {
+				continue;
+			}
+
+			$id = absint( $maybe_id );
+			if ( ! $id ) {
+				continue;
+			}
+
+			if ( '' !== $allowed_post_type && $allowed_post_type !== get_post_type( $id ) ) {
+				continue;
+			}
+
+			$ids[] = $id;
+		}
+
+		if ( empty( $ids ) ) {
+			return array();
+		}
+
+		return array_values( array_unique( $ids ) );
+	}
 
 	if ( ! is_scalar( $value ) ) {
 		$value = '';

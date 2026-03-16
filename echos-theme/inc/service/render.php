@@ -192,15 +192,250 @@ function echos_service_render_ficha( $ficha ) {
 }
 
 /**
+ * Normalizes post IDs and optionally validates post type.
+ *
+ * @param mixed  $values    Raw values.
+ * @param string $post_type Optional post type.
+ * @return array
+ */
+function echos_service_normalize_post_ids( $values, $post_type = '' ) {
+	$values = is_array( $values ) ? $values : array( $values );
+	$ids    = array();
+
+	foreach ( $values as $value ) {
+		if ( ! is_scalar( $value ) ) {
+			continue;
+		}
+
+		$id = absint( $value );
+		if ( ! $id ) {
+			continue;
+		}
+
+		if ( '' !== $post_type && $post_type !== get_post_type( $id ) ) {
+			continue;
+		}
+
+		$ids[] = $id;
+	}
+
+	if ( empty( $ids ) ) {
+		return array();
+	}
+
+	return array_values( array_unique( $ids ) );
+}
+
+/**
+ * Resolves current service post ID.
+ *
+ * @param int $service_id Optional service ID.
+ * @return int
+ */
+function echos_service_resolve_service_id( $service_id = 0 ) {
+	$service_id = absint( $service_id );
+	if ( $service_id ) {
+		return $service_id;
+	}
+
+	return absint( get_queried_object_id() );
+}
+
+/**
+ * Returns products from CPT for the current service.
+ *
+ * @param int   $service_id Service ID.
+ * @param array $products   Products section data.
+ * @return array
+ */
+function echos_service_get_products_from_cpt( $service_id, $products ) {
+	$selected_ids = echos_service_normalize_post_ids(
+		isset( $products['selected_product_ids'] ) ? $products['selected_product_ids'] : array(),
+		'producto'
+	);
+
+	if ( ! empty( $selected_ids ) ) {
+		$selected = get_posts(
+			array(
+				'post_type'      => 'producto',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'post__in'       => $selected_ids,
+				'orderby'        => 'post__in',
+			)
+		);
+
+		return is_array( $selected ) ? $selected : array();
+	}
+
+	$fallback_limit = isset( $products['items'] ) && is_array( $products['items'] ) ? count( $products['items'] ) : 0;
+	if ( $fallback_limit < 1 ) {
+		$fallback_limit = 6;
+	}
+	$fallback_limit = min( 12, max( 1, $fallback_limit ) );
+
+	$args = array(
+		'post_type'      => 'producto',
+		'post_status'    => 'publish',
+		'posts_per_page' => $fallback_limit,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+	);
+
+	$service_terms  = echos_service_get_term_slugs( $service_id, 'categoria_servicio' );
+	$matching_terms = echos_service_get_matching_term_ids_by_slug( $service_id, 'categoria_servicio', 'categoria_producto' );
+
+	if ( ! empty( $service_terms ) && empty( $matching_terms ) ) {
+		return array();
+	}
+
+	if ( ! empty( $matching_terms ) ) {
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'categoria_producto',
+				'field'    => 'term_id',
+				'terms'    => $matching_terms,
+			),
+		);
+	}
+
+	$posts = get_posts( $args );
+	return is_array( $posts ) ? $posts : array();
+}
+
+/**
+ * Returns featured projects from CPT for a service.
+ *
+ * @param int $service_id Service ID.
+ * @param int $limit      Max items.
+ * @return array
+ */
+function echos_service_get_featured_projects_from_cpt( $service_id, $limit = 6 ) {
+	$limit      = min( 12, max( 1, absint( $limit ) ) );
+	$collected  = array();
+	$collected_ids = array();
+	$service_project_terms = echos_service_get_matching_term_ids_by_slug( $service_id, 'categoria_servicio', 'categoria_proyecto' );
+
+	$query_steps = array(
+		array(
+			'featured' => true,
+			'terms'    => $service_project_terms,
+		),
+		array(
+			'featured' => true,
+			'terms'    => array(),
+		),
+		array(
+			'featured' => false,
+			'terms'    => $service_project_terms,
+		),
+		array(
+			'featured' => false,
+			'terms'    => array(),
+		),
+	);
+
+	foreach ( $query_steps as $step ) {
+		$remaining = $limit - count( $collected );
+		if ( $remaining <= 0 ) {
+			break;
+		}
+
+		$args = array(
+			'post_type'      => 'proyecto',
+			'post_status'    => 'publish',
+			'posts_per_page' => $remaining,
+			'post__not_in'   => $collected_ids,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		);
+
+		if ( ! empty( $step['featured'] ) ) {
+			$args['meta_key']   = '_echos_project_is_featured';
+			$args['meta_value'] = 'yes';
+		}
+
+		if ( ! empty( $step['terms'] ) ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'categoria_proyecto',
+					'field'    => 'term_id',
+					'terms'    => $step['terms'],
+				),
+			);
+		}
+
+		$batch = get_posts( $args );
+		if ( ! is_array( $batch ) || empty( $batch ) ) {
+			continue;
+		}
+
+		foreach ( $batch as $project_post ) {
+			if ( ! $project_post instanceof WP_Post ) {
+				continue;
+			}
+
+			$project_id = (int) $project_post->ID;
+			if ( in_array( $project_id, $collected_ids, true ) ) {
+				continue;
+			}
+
+			$collected[]    = $project_post;
+			$collected_ids[] = $project_id;
+
+			if ( count( $collected ) >= $limit ) {
+				break 2;
+			}
+		}
+	}
+
+	return $collected;
+}
+
+/**
  * Renders products section.
  *
- * @param array $products Products data.
+ * @param array $products   Products data.
+ * @param int   $service_id Current service ID.
  * @return void
  */
-function echos_service_render_products( $products ) {
-	$items    = isset( $products['items'] ) && is_array( $products['items'] ) ? $products['items'] : array();
-	$img_base = get_template_directory_uri() . '/assets/img/inicio/';
-	$fallback = $img_base . 'baner1.jpg';
+function echos_service_render_products( $products, $service_id = 0 ) {
+	$img_base    = get_template_directory_uri() . '/assets/img/inicio/';
+	$fallback    = $img_base . 'baner1.jpg';
+	$service_id  = echos_service_resolve_service_id( $service_id );
+	$manual_items = isset( $products['items'] ) && is_array( $products['items'] ) ? $products['items'] : array();
+	$items       = array();
+
+	$cpt_products = echos_service_get_products_from_cpt( $service_id, $products );
+	if ( ! empty( $cpt_products ) ) {
+		foreach ( $cpt_products as $product_post ) {
+			if ( ! $product_post instanceof WP_Post ) {
+				continue;
+			}
+
+			$product_id = (int) $product_post->ID;
+			$image      = echos_service_resolve_image_url( get_the_post_thumbnail_url( $product_id, 'full' ), $fallback );
+			$title      = get_the_title( $product_id );
+			$thumb_id   = get_post_thumbnail_id( $product_id );
+			$alt        = $thumb_id ? trim( (string) get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ) ) : '';
+
+			if ( '' === $alt ) {
+				$alt = $title;
+			}
+
+			$items[] = array(
+				'image' => $image,
+				'alt'   => $alt,
+				'label' => $title,
+				'url'   => get_permalink( $product_id ),
+				'icon'  => 'external',
+			);
+		}
+	}
+
+	if ( empty( $items ) ) {
+		$items = $manual_items;
+	}
 	?>
 	<section class="srv-products">
 		<div class="srv-products__deco srv-products__deco--tl" aria-hidden="true"></div>
@@ -260,13 +495,44 @@ function echos_service_render_products( $products ) {
 /**
  * Renders featured projects section.
  *
- * @param array $featured Featured data.
+ * @param array $featured   Featured data.
+ * @param int   $service_id Current service ID.
  * @return void
  */
-function echos_service_render_featured( $featured ) {
-	$cards    = isset( $featured['cards'] ) && is_array( $featured['cards'] ) ? $featured['cards'] : array();
-	$img_base = get_template_directory_uri() . '/assets/img/inicio/';
-	$fallback = $img_base . 'baner1.jpg';
+function echos_service_render_featured( $featured, $service_id = 0 ) {
+	$manual_cards = isset( $featured['cards'] ) && is_array( $featured['cards'] ) ? $featured['cards'] : array();
+	$img_base     = get_template_directory_uri() . '/assets/img/inicio/';
+	$fallback     = $img_base . 'baner1.jpg';
+	$service_id   = echos_service_resolve_service_id( $service_id );
+	$limit        = count( $manual_cards );
+	$cards        = array();
+
+	if ( $limit < 1 ) {
+		$limit = 6;
+	}
+
+	$cpt_projects = echos_service_get_featured_projects_from_cpt( $service_id, $limit );
+	if ( ! empty( $cpt_projects ) ) {
+		foreach ( $cpt_projects as $project_post ) {
+			if ( ! $project_post instanceof WP_Post ) {
+				continue;
+			}
+
+			$project_id = (int) $project_post->ID;
+			$data       = echos_project_get_data( $project_id );
+			$cards[]    = array(
+				'image' => echos_service_resolve_image_url( get_the_post_thumbnail_url( $project_id, 'full' ), $fallback ),
+				'name'  => get_the_title( $project_id ),
+				'date'  => get_the_date( 'd \\d\\e F, Y', $project_id ),
+				'badge' => echos_project_get_card_badge( $project_id, $data ),
+				'url'   => get_permalink( $project_id ),
+			);
+		}
+	}
+
+	if ( empty( $cards ) ) {
+		$cards = $manual_cards;
+	}
 	?>
 	<section class="srv-featured" id="portafolio">
 		<div class="srv-featured__inner">
@@ -514,13 +780,121 @@ function echos_service_render_furniture( $furniture ) {
 }
 
 /**
+ * Returns related service posts for "other services" section.
+ *
+ * @param int $service_id Current service ID.
+ * @param int $limit      Max items.
+ * @return array
+ */
+function echos_service_get_other_services_from_cpt( $service_id, $limit = 2 ) {
+	$service_id = absint( $service_id );
+	$limit      = max( 1, min( 8, absint( $limit ) ) );
+	$items      = array();
+	$exclude    = array( $service_id );
+
+	$term_ids = wp_get_post_terms(
+		$service_id,
+		'categoria_servicio',
+		array(
+			'fields' => 'ids',
+		)
+	);
+
+	if ( ! is_wp_error( $term_ids ) && ! empty( $term_ids ) ) {
+		$by_term = get_posts(
+			array(
+				'post_type'      => 'servicio',
+				'post_status'    => 'publish',
+				'posts_per_page' => $limit,
+				'post__not_in'   => $exclude,
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'categoria_servicio',
+						'field'    => 'term_id',
+						'terms'    => $term_ids,
+					),
+				),
+			)
+		);
+
+		if ( is_array( $by_term ) && ! empty( $by_term ) ) {
+			$items = $by_term;
+			foreach ( $by_term as $service_post ) {
+				if ( $service_post instanceof WP_Post ) {
+					$exclude[] = (int) $service_post->ID;
+				}
+			}
+		}
+	}
+
+	$remaining = $limit - count( $items );
+	if ( $remaining > 0 ) {
+		$fallback = get_posts(
+			array(
+				'post_type'      => 'servicio',
+				'post_status'    => 'publish',
+				'posts_per_page' => $remaining,
+				'post__not_in'   => $exclude,
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+			)
+		);
+
+		if ( is_array( $fallback ) && ! empty( $fallback ) ) {
+			$items = array_merge( $items, $fallback );
+		}
+	}
+
+	return $items;
+}
+
+/**
  * Renders other services section.
  *
- * @param array $other Other services data.
+ * @param array $other      Other services data.
+ * @param int   $service_id Current service ID.
  * @return void
  */
-function echos_service_render_other_services( $other ) {
-	$items = isset( $other['items'] ) && is_array( $other['items'] ) ? $other['items'] : array();
+function echos_service_render_other_services( $other, $service_id = 0 ) {
+	$service_id   = echos_service_resolve_service_id( $service_id );
+	$manual_items = isset( $other['items'] ) && is_array( $other['items'] ) ? $other['items'] : array();
+	$items        = array();
+	$limit        = count( $manual_items );
+
+	if ( $limit < 1 ) {
+		$limit = 2;
+	}
+
+	$related_services = echos_service_get_other_services_from_cpt( $service_id, $limit );
+	if ( ! empty( $related_services ) ) {
+		foreach ( $related_services as $service_post ) {
+			if ( ! $service_post instanceof WP_Post ) {
+				continue;
+			}
+
+			$related_id      = (int) $service_post->ID;
+			$related_variant = echos_service_get_variant_from_template( $related_id );
+			$related_data    = echos_service_get_variant_data( $related_id, $related_variant );
+			$description     = trim( (string) ( $related_data['hero']['description'] ?? '' ) );
+
+			if ( '' === $description ) {
+				$description = echos_service_get_post_summary( $related_id );
+			}
+
+			$items[] = array(
+				'title'       => get_the_title( $related_id ),
+				'description' => $description,
+				'url'         => get_permalink( $related_id ),
+				'bg_variant'  => 'stands' === $related_variant ? 'stands' : 'iluminacion',
+			);
+		}
+	}
+
+	if ( empty( $items ) ) {
+		$items = $manual_items;
+	}
 	?>
 	<section class="srv-other">
 		<div class="srv-other__inner">

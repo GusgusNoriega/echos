@@ -102,13 +102,10 @@ if ( '' === $video_thumb_alt ) {
 
 $used_products       = is_array( $data['used_products'] ?? null ) ? $data['used_products'] : array();
 $used_products_title = trim( (string) ( $used_products['title'] ?? '' ) );
-$used_products_items = is_array( $used_products['items'] ?? null ) ? $used_products['items'] : array();
+$used_products_items = echos_project_get_used_products_items( $project_id, $data );
 if ( '' === $used_products_title ) {
 	$used_products_title = __( 'Productos utilizados', 'echos' );
 }
-
-$gallery       = is_array( $data['gallery'] ?? null ) ? $data['gallery'] : array();
-$gallery_items = is_array( $gallery['items'] ?? null ) ? $gallery['items'] : array();
 
 $related_data  = is_array( $data['related'] ?? null ) ? $data['related'] : array();
 $related_title = trim( (string) ( $related_data['title'] ?? '' ) );
@@ -196,13 +193,24 @@ $final_cta = is_array( $data['final_cta'] ?? null ) ? $data['final_cta'] : array
 					if ( ! is_array( $item ) ) {
 						continue;
 					}
-					$item_name = trim( (string) ( $item['name'] ?? '' ) );
-					$features  = array();
+					$item_name  = trim( (string) ( $item['name'] ?? '' ) );
+					$item_url   = trim( (string) ( $item['url'] ?? '' ) );
+					$item_image = echos_project_resolve_image_url( ( $item['image'] ?? '' ), $default_image );
+					$item_alt   = trim( (string) ( $item['image_alt'] ?? '' ) );
+					$features   = array();
+
+					if ( '' === $item_name ) {
+						$item_name = __( 'Producto', 'echos' );
+					}
+
+					if ( '' === $item_alt ) {
+						$item_alt = $item_name;
+					}
 
 					if ( isset( $item['features'] ) && is_array( $item['features'] ) ) {
 						foreach ( $item['features'] as $feature ) {
 							if ( is_array( $feature ) ) {
-								$feature = $feature['text'] ?? '';
+								$feature = $feature['title'] ?? ( $feature['text'] ?? '' );
 							}
 							$feature_text = trim( (string) $feature );
 							if ( '' !== $feature_text ) {
@@ -215,51 +223,44 @@ $final_cta = is_array( $data['final_cta'] ?? null ) ? $data['final_cta'] : array
 						continue;
 					}
 					?>
-					<div class="proy-ind-productos__card">
-						<div class="proy-ind-productos__card-header">
-							<span class="proy-ind-productos__card-name"><?php echo esc_html( $item_name ); ?></span>
-							<span class="proy-ind-productos__card-arrow" aria-hidden="true">
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-									<line x1="7" y1="17" x2="17" y2="7"/>
-									<polyline points="7 7 17 7 17 17"/>
-								</svg>
-							</span>
+					<article class="proy-ind-productos__item">
+						<div class="proy-ind-productos__image-wrap">
+							<img class="proy-ind-productos__image" src="<?php echo esc_url( $item_image ); ?>" alt="<?php echo esc_attr( $item_alt ); ?>" loading="lazy" />
+							<span class="proy-ind-productos__image-overlay" aria-hidden="true"></span>
 						</div>
-						<?php if ( ! empty( $features ) ) : ?>
-							<div class="proy-ind-productos__card-body">
-								<h3 class="proy-ind-productos__card-subtitle"><?php esc_html_e( 'Caracteristicas', 'echos' ); ?></h3>
-								<ul class="proy-ind-productos__card-list">
-									<?php foreach ( $features as $feature_text ) : ?>
-										<li><?php echo esc_html( $feature_text ); ?></li>
-									<?php endforeach; ?>
-								</ul>
-							</div>
-						<?php endif; ?>
-					</div>
-				<?php endforeach; ?>
-			</div>
-		</div>
-	</section>
-<?php endif; ?>
 
-<?php if ( ! empty( $gallery_items ) ) : ?>
-	<section class="proy-ind-galeria">
-		<div class="container proy-ind-galeria__inner">
-			<div class="proy-ind-galeria__grid">
-				<?php foreach ( $gallery_items as $item ) : ?>
-					<?php
-					if ( ! is_array( $item ) ) {
-						continue;
-					}
-					$image = echos_project_resolve_image_url( ( $item['image'] ?? '' ), $default_image );
-					$alt   = trim( (string) ( $item['alt'] ?? '' ) );
-					if ( '' === $alt ) {
-						$alt = __( 'Galeria del proyecto', 'echos' );
-					}
-					?>
-					<div class="proy-ind-galeria__card">
-						<img class="proy-ind-galeria__img" src="<?php echo esc_url( $image ); ?>" alt="<?php echo esc_attr( $alt ); ?>" loading="lazy" />
-					</div>
+						<div class="proy-ind-productos__card">
+							<div class="proy-ind-productos__card-header">
+								<span class="proy-ind-productos__card-name"><?php echo esc_html( $item_name ); ?></span>
+								<?php if ( '' !== $item_url ) : ?>
+									<a class="proy-ind-productos__card-link" href="<?php echo esc_url( $item_url ); ?>" aria-label="<?php esc_attr_e( 'Ver producto', 'echos' ); ?>">
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<line x1="7" y1="17" x2="17" y2="7"/>
+											<polyline points="7 7 17 7 17 17"/>
+										</svg>
+									</a>
+								<?php else : ?>
+									<span class="proy-ind-productos__card-link" aria-hidden="true">
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<line x1="7" y1="17" x2="17" y2="7"/>
+											<polyline points="7 7 17 7 17 17"/>
+										</svg>
+									</span>
+								<?php endif; ?>
+							</div>
+
+							<?php if ( ! empty( $features ) ) : ?>
+								<div class="proy-ind-productos__card-body">
+									<h3 class="proy-ind-productos__card-subtitle"><?php esc_html_e( 'CARACTERISTICAS', 'echos' ); ?></h3>
+									<ul class="proy-ind-productos__card-list">
+										<?php foreach ( $features as $feature_text ) : ?>
+											<li><?php echo esc_html( $feature_text ); ?></li>
+										<?php endforeach; ?>
+									</ul>
+								</div>
+							<?php endif; ?>
+						</div>
+					</article>
 				<?php endforeach; ?>
 			</div>
 		</div>

@@ -118,16 +118,6 @@ function echos_project_admin_flatten_project_data( $data ) {
 		}
 	}
 
-	$gallery_lines = array();
-	if ( isset( $data['gallery']['items'] ) && is_array( $data['gallery']['items'] ) ) {
-		foreach ( $data['gallery']['items'] as $item ) {
-			if ( ! is_array( $item ) ) {
-				continue;
-			}
-			$gallery_lines[] = trim( (string) ( $item['image'] ?? '' ) ) . '|' . trim( (string) ( $item['alt'] ?? '' ) );
-		}
-	}
-
 	return array(
 		'hero_topbar_cta_url'       => (string) ( $data['hero']['topbar_cta_url'] ?? '' ),
 		'hero_title'                => (string) ( $data['hero']['title'] ?? '' ),
@@ -146,8 +136,8 @@ function echos_project_admin_flatten_project_data( $data ) {
 		'video_thumbnail'           => (string) ( $data['video']['thumbnail'] ?? '' ),
 		'video_thumbnail_alt'       => (string) ( $data['video']['thumbnail_alt'] ?? '' ),
 		'used_products_title'       => (string) ( $data['used_products']['title'] ?? '' ),
+		'used_products_selected_product_ids' => echos_project_normalize_selected_product_ids( $data['used_products']['selected_product_ids'] ?? array() ),
 		'used_products_items_lines' => implode( "\n", $used_products_items ),
-		'gallery_items_lines'       => implode( "\n", $gallery_lines ),
 		'related_title'             => (string) ( $data['related']['title'] ?? '' ),
 		'related_items_limit'       => (string) ( $data['related']['items_limit'] ?? '4' ),
 		'related_match_category'    => (string) ( $data['related']['match_category'] ?? 'yes' ),
@@ -161,6 +151,122 @@ function echos_project_admin_flatten_project_data( $data ) {
 		'final_cta_secondary_text'  => (string) ( $data['final_cta']['secondary_text'] ?? '' ),
 		'final_cta_secondary_url'   => (string) ( $data['final_cta']['secondary_url'] ?? '' ),
 	);
+}
+
+/**
+ * Gets product options for project selector UI.
+ *
+ * @param array $selected_ids Selected product IDs.
+ * @return array
+ */
+function echos_project_admin_get_product_selector_posts( $selected_ids = array() ) {
+	$selected_ids = echos_project_normalize_selected_product_ids( $selected_ids );
+	$products     = get_posts(
+		array(
+			'post_type'      => 'producto',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		)
+	);
+
+	if ( ! is_array( $products ) ) {
+		$products = array();
+	}
+
+	if ( empty( $selected_ids ) ) {
+		return $products;
+	}
+
+	$selected_posts = get_posts(
+		array(
+			'post_type'      => 'producto',
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+			'posts_per_page' => -1,
+			'post__in'       => $selected_ids,
+			'orderby'        => 'post__in',
+		)
+	);
+
+	if ( ! is_array( $selected_posts ) || empty( $selected_posts ) ) {
+		return $products;
+	}
+
+	$indexed = array();
+	foreach ( $products as $product_post ) {
+		if ( $product_post instanceof WP_Post ) {
+			$indexed[ (int) $product_post->ID ] = $product_post;
+		}
+	}
+
+	foreach ( $selected_posts as $product_post ) {
+		if ( $product_post instanceof WP_Post ) {
+			$indexed[ (int) $product_post->ID ] = $product_post;
+		}
+	}
+
+	return array_values( $indexed );
+}
+
+/**
+ * Renders products selector for project used-products section.
+ *
+ * @param array $selected_ids Selected product IDs.
+ * @return void
+ */
+function echos_project_admin_render_products_selector( $selected_ids ) {
+	$selected_ids = echos_project_normalize_selected_product_ids( $selected_ids );
+	$products     = echos_project_admin_get_product_selector_posts( $selected_ids );
+	$name         = 'echos_project_data[used_products_selected_product_ids][]';
+
+	echo '<tr>';
+	echo '<th scope="row"><label>' . esc_html__( 'Productos utilizados (CPT)', 'echos' ) . '</label></th>';
+	echo '<td>';
+	echo '<p class="description">' . esc_html__( 'Selecciona los productos reales del catalogo que se mostraran en esta seccion.', 'echos' ) . '</p>';
+
+	if ( empty( $products ) ) {
+		echo '<p><em>' . esc_html__( 'No hay productos disponibles para seleccionar.', 'echos' ) . '</em></p>';
+		echo '</td></tr>';
+		return;
+	}
+
+	echo '<div class="echos-home-choices">';
+
+	foreach ( $products as $product_post ) {
+		if ( ! $product_post instanceof WP_Post ) {
+			continue;
+		}
+
+		$product_id = (int) $product_post->ID;
+		$title      = get_the_title( $product_id );
+		$terms      = wp_get_post_terms(
+			$product_id,
+			'categoria_producto',
+			array(
+				'fields' => 'names',
+			)
+		);
+		$term_label = '';
+
+		if ( is_array( $terms ) && ! empty( $terms ) ) {
+			$term_label = implode( ', ', array_map( 'sanitize_text_field', $terms ) );
+		}
+
+		echo '<label class="echos-home-choice">';
+		echo '<input type="checkbox" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $product_id ) . '" ' . checked( in_array( $product_id, $selected_ids, true ), true, false ) . ' />';
+		echo '<span class="echos-home-choice__label">';
+		echo '<strong>' . esc_html( $title ) . '</strong>';
+		if ( '' !== $term_label ) {
+			echo '<small>' . esc_html( $term_label ) . '</small>';
+		}
+		echo '</span>';
+		echo '</label>';
+	}
+
+	echo '</div>';
+	echo '</td>';
+	echo '</tr>';
 }
 
 /**
@@ -197,9 +303,14 @@ function echos_project_render_admin_metabox( $post ) {
 	echos_project_admin_render_row( 'echos_project_data[video_thumbnail_alt]', __( 'Video thumbnail ALT', 'echos' ), $data['video_thumbnail_alt'] );
 
 	echos_project_admin_render_row( 'echos_project_data[used_products_title]', __( 'Productos utilizados titulo', 'echos' ), $data['used_products_title'] );
-	echos_project_admin_render_row( 'echos_project_data[used_products_items_lines]', __( 'Productos utilizados items', 'echos' ), $data['used_products_items_lines'], 'textarea', __( 'Una linea por tarjeta: Nombre|Caracteristica 1; Caracteristica 2; Caracteristica 3', 'echos' ) );
-
-	echos_project_admin_render_row( 'echos_project_data[gallery_items_lines]', __( 'Galeria imagenes', 'echos' ), $data['gallery_items_lines'], 'textarea', __( 'Una linea por imagen: URL|ALT', 'echos' ) );
+	echos_project_admin_render_products_selector( $data['used_products_selected_product_ids'] );
+	echos_project_admin_render_row(
+		'echos_project_data[used_products_items_lines]',
+		__( 'Productos utilizados items (respaldo manual)', 'echos' ),
+		$data['used_products_items_lines'],
+		'textarea',
+		__( 'Fallback si no seleccionas productos CPT. Una linea por tarjeta: Nombre|Caracteristica 1; Caracteristica 2; Caracteristica 3', 'echos' )
+	);
 
 	echos_project_admin_render_row( 'echos_project_data[related_title]', __( 'Relacionados titulo', 'echos' ), $data['related_title'] );
 	echos_project_admin_render_row( 'echos_project_data[related_items_limit]', __( 'Relacionados cantidad', 'echos' ), $data['related_items_limit'], 'number' );
@@ -264,45 +375,6 @@ function echos_project_render_listing_admin_metabox( $post ) {
 	echos_project_admin_render_row( 'echos_project_listing_data[final_cta_secondary_text]', __( 'CTA boton secundario texto', 'echos' ), (string) ( $data['final_cta']['secondary_text'] ?? '' ) );
 	echos_project_admin_render_row( 'echos_project_listing_data[final_cta_secondary_url]', __( 'CTA boton secundario URL', 'echos' ), (string) ( $data['final_cta']['secondary_url'] ?? '' ), 'url' );
 	echo '</tbody></table>';
-}
-
-/**
- * Parses lines with "left|right" format.
- *
- * @param string $text      Raw text.
- * @param string $left_key  Left key.
- * @param string $right_key Right key.
- * @return array
- */
-function echos_project_admin_parse_pair_lines( $text, $left_key, $right_key ) {
-	$rows  = preg_split( '/\r\n|\r|\n/', (string) $text );
-	$items = array();
-
-	if ( ! is_array( $rows ) ) {
-		return $items;
-	}
-
-	foreach ( $rows as $row ) {
-		$line = trim( (string) $row );
-		if ( '' === $line ) {
-			continue;
-		}
-
-		$parts = explode( '|', $line, 2 );
-		$left  = sanitize_text_field( trim( (string) $parts[0] ) );
-		$right = isset( $parts[1] ) ? sanitize_text_field( trim( (string) $parts[1] ) ) : '';
-
-		if ( '' === $left && '' === $right ) {
-			continue;
-		}
-
-		$items[] = array(
-			$left_key  => $left,
-			$right_key => $right,
-		);
-	}
-
-	return $items;
 }
 
 /**
@@ -448,11 +520,9 @@ function echos_project_save_admin_metabox( $post_id, $post ) {
 			'thumbnail_alt' => sanitize_text_field( $raw['video_thumbnail_alt'] ?? '' ),
 		),
 		'used_products' => array(
-			'title' => sanitize_text_field( $raw['used_products_title'] ?? '' ),
-			'items' => echos_project_admin_parse_used_products_lines( (string) ( $raw['used_products_items_lines'] ?? '' ) ),
-		),
-		'gallery'       => array(
-			'items' => echos_project_admin_parse_pair_lines( (string) ( $raw['gallery_items_lines'] ?? '' ), 'image', 'alt' ),
+			'title'                => sanitize_text_field( $raw['used_products_title'] ?? '' ),
+			'selected_product_ids' => echos_project_normalize_selected_product_ids( $raw['used_products_selected_product_ids'] ?? array() ),
+			'items'                => echos_project_admin_parse_used_products_lines( (string) ( $raw['used_products_items_lines'] ?? '' ) ),
 		),
 		'related'       => array(
 			'title'          => sanitize_text_field( $raw['related_title'] ?? '' ),

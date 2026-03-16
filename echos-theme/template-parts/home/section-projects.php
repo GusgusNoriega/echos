@@ -12,6 +12,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 $projects = isset( $args['projects'] ) && is_array( $args['projects'] ) ? $args['projects'] : array();
 $cards    = isset( $projects['cards'] ) && is_array( $projects['cards'] ) ? $projects['cards'] : array();
 $variants = array( 'blue', 'red', 'green', 'purple' );
+
+$default_image = get_template_directory_uri() . '/assets/img/inicio/baner1.jpg';
+$cards_limit   = ! empty( $cards ) ? count( $cards ) : 5;
+$cards_limit   = max( 1, min( 24, absint( $cards_limit ) ) );
+
+$project_posts = get_posts(
+	array(
+		'post_type'      => 'proyecto',
+		'post_status'    => 'publish',
+		'posts_per_page' => $cards_limit,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+	)
+);
+
+if ( ! empty( $project_posts ) ) {
+	$dynamic_cards = array();
+
+	foreach ( $project_posts as $index => $project_post ) {
+		if ( ! $project_post instanceof WP_Post ) {
+			continue;
+		}
+
+		$project_id   = $project_post->ID;
+		$project_data = function_exists( 'echos_project_get_data' ) ? echos_project_get_data( $project_id ) : array();
+		$image        = get_the_post_thumbnail_url( $project_id, 'full' );
+		$chip         = function_exists( 'echos_project_get_card_badge' ) ? echos_project_get_card_badge( $project_id, $project_data ) : __( 'Proyecto', 'echos' );
+
+		if ( '' === trim( (string) $image ) ) {
+			$image = $default_image;
+		}
+
+		$dynamic_cards[] = array(
+			'image'   => $image,
+			'chip'    => $chip,
+			'title'   => get_the_title( $project_id ),
+			'date'    => get_the_date( 'd \\d\\e F, Y', $project_id ),
+			'url'     => get_permalink( $project_id ),
+			'variant' => $variants[ $index % count( $variants ) ],
+		);
+	}
+
+	if ( ! empty( $dynamic_cards ) ) {
+		$cards = $dynamic_cards;
+	}
+}
+
+$cta_url = isset( $projects['cta_url'] ) ? trim( (string) $projects['cta_url'] ) : '';
+if ( '' === $cta_url || '#proyectos' === $cta_url ) {
+	$projects_page = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'publish',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'meta_key'       => '_wp_page_template',
+			'meta_value'     => 'page-templates/template-proyectos.php',
+		)
+	);
+
+	if ( ! empty( $projects_page ) ) {
+		$cta_url = get_permalink( (int) $projects_page[0] );
+	}
+}
+
+if ( '' === $cta_url ) {
+	$cta_url = '#proyectos';
+}
 ?>
 <section class="projects" id="proyectos">
 	<div class="container">
@@ -68,7 +136,7 @@ $variants = array( 'blue', 'red', 'green', 'purple' );
 		</div>
 
 		<div class="projects__cta">
-			<a class="btn btn--orange" href="<?php echo esc_url( isset( $projects['cta_url'] ) ? $projects['cta_url'] : '#proyectos' ); ?>">
+			<a class="btn btn--orange" href="<?php echo esc_url( $cta_url ); ?>">
 				<span><?php echo esc_html( isset( $projects['cta_text'] ) ? $projects['cta_text'] : '' ); ?></span>
 				<span class="btn__icon" aria-hidden="true">
 					<svg class="echos-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M13 5l7 7-7 7"/></svg>

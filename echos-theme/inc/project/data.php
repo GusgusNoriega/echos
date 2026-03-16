@@ -95,17 +95,33 @@ function echos_project_deep_merge( $defaults, $saved ) {
 	$template_item = isset( $defaults[0] ) && is_array( $defaults[0] ) ? $defaults[0] : null;
 	$normalized    = array();
 
+	if ( ! is_array( $template_item ) ) {
+		$scalar_items = array();
+
+		foreach ( $saved as $row ) {
+			if ( is_array( $row ) || null === $row ) {
+				continue;
+			}
+
+			if ( is_string( $row ) ) {
+				$row = trim( $row );
+				if ( '' === $row ) {
+					continue;
+				}
+			}
+
+			$scalar_items[] = $row;
+		}
+
+		return ! empty( $scalar_items ) ? $scalar_items : $defaults;
+	}
+
 	foreach ( $saved as $row ) {
 		if ( ! is_array( $row ) ) {
 			continue;
 		}
 
-		if ( is_array( $template_item ) ) {
-			$normalized[] = echos_project_deep_merge( $template_item, $row );
-			continue;
-		}
-
-		$normalized[] = $row;
+		$normalized[] = echos_project_deep_merge( $template_item, $row );
 	}
 
 	return ! empty( $normalized ) ? $normalized : $defaults;
@@ -381,4 +397,210 @@ function echos_project_get_related_projects( $project_id, $data = array() ) {
 	}
 
 	return get_posts( $base_args );
+}
+
+/**
+ * Normalizes selected product IDs.
+ *
+ * @param mixed $raw_ids Raw IDs.
+ * @return array
+ */
+function echos_project_normalize_selected_product_ids( $raw_ids ) {
+	$values = is_array( $raw_ids ) ? $raw_ids : array( $raw_ids );
+	$ids    = array();
+
+	foreach ( $values as $value ) {
+		if ( ! is_scalar( $value ) ) {
+			continue;
+		}
+
+		$product_id = absint( $value );
+		if ( ! $product_id ) {
+			continue;
+		}
+
+		if ( 'producto' !== get_post_type( $product_id ) ) {
+			continue;
+		}
+
+		$ids[] = $product_id;
+	}
+
+	if ( empty( $ids ) ) {
+		return array();
+	}
+
+	return array_values( array_unique( $ids ) );
+}
+
+/**
+ * Builds used-product features from product data.
+ *
+ * @param array $product_data Product data.
+ * @param int   $limit        Max features.
+ * @return array
+ */
+function echos_project_get_used_product_features( $product_data, $limit = 3 ) {
+	$limit    = max( 1, absint( $limit ) );
+	$features = array();
+	$specs    = is_array( $product_data['specs'] ?? null ) ? $product_data['specs'] : array();
+	$items    = is_array( $specs['items'] ?? null ) ? $specs['items'] : array();
+
+	foreach ( $items as $item ) {
+		if ( ! is_array( $item ) ) {
+			continue;
+		}
+
+		$feature = trim( (string) ( $item['title'] ?? '' ) );
+		if ( '' === $feature ) {
+			$feature = trim( (string) ( $item['text'] ?? '' ) );
+		}
+
+		if ( '' === $feature ) {
+			continue;
+		}
+
+		$features[] = $feature;
+		if ( count( $features ) >= $limit ) {
+			break;
+		}
+	}
+
+	return $features;
+}
+
+/**
+ * Builds one used-product item from a product post.
+ *
+ * @param WP_Post $product_post Product post.
+ * @return array
+ */
+function echos_project_build_used_product_item( $product_post ) {
+	if ( ! $product_post instanceof WP_Post ) {
+		return array();
+	}
+
+	$product_id = (int) $product_post->ID;
+	if ( ! $product_id || 'producto' !== get_post_type( $product_id ) ) {
+		return array();
+	}
+
+	$product_data = echos_product_get_data( $product_id );
+	$title        = trim( (string) get_the_title( $product_id ) );
+	$default_img  = get_template_directory_uri() . '/assets/img/inicio/baner1.jpg';
+	$thumb        = get_the_post_thumbnail_url( $product_id, 'full' );
+	$specs_image  = echos_product_resolve_image_url( ( $product_data['specs']['image'] ?? '' ), '' );
+	$hero_image   = echos_product_resolve_image_url( ( $product_data['hero']['image'] ?? '' ), '' );
+	$image        = echos_project_resolve_image_url( $thumb, '' );
+	$image        = echos_project_resolve_image_url( $image, $specs_image );
+	$image        = echos_project_resolve_image_url( $image, $hero_image );
+	$image        = echos_project_resolve_image_url( $image, $default_img );
+	$image_alt    = trim( (string) ( $product_data['specs']['image_alt'] ?? '' ) );
+
+	if ( '' === $image_alt ) {
+		$image_alt = trim( (string) ( $product_data['hero']['image_alt'] ?? '' ) );
+	}
+
+	if ( '' === $image_alt ) {
+		$image_alt = '' !== $title ? $title : __( 'Producto', 'echos' );
+	}
+
+	$features = echos_project_get_used_product_features( $product_data, 3 );
+	if ( empty( $features ) ) {
+		$summary = trim( (string) echos_product_get_card_summary( $product_id, $product_data ) );
+		if ( '' !== $summary ) {
+			$features[] = $summary;
+		}
+	}
+
+	return array(
+		'id'        => $product_id,
+		'name'      => $title,
+		'url'       => (string) get_permalink( $product_id ),
+		'image'     => $image,
+		'image_alt' => $image_alt,
+		'features' => $features,
+	);
+}
+
+/**
+ * Gets used products items for the project section.
+ *
+ * Priority:
+ * 1) Selected products from CPT.
+ * 2) Manual fallback rows from metabox.
+ *
+ * @param int   $project_id Project ID.
+ * @param array $data       Project data.
+ * @return array
+ */
+function echos_project_get_used_products_items( $project_id, $data = array() ) {
+	$project_id    = absint( $project_id );
+	if ( ! $project_id || 'proyecto' !== get_post_type( $project_id ) ) {
+		return array();
+	}
+
+	$used_products = is_array( $data['used_products'] ?? null ) ? $data['used_products'] : array();
+	$selected_ids  = echos_project_normalize_selected_product_ids( $used_products['selected_product_ids'] ?? array() );
+	$items         = array();
+
+	if ( ! empty( $selected_ids ) ) {
+		$selected_posts = get_posts(
+			array(
+				'post_type'      => 'producto',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'post__in'       => $selected_ids,
+				'orderby'        => 'post__in',
+			)
+		);
+
+		if ( is_array( $selected_posts ) ) {
+			foreach ( $selected_posts as $product_post ) {
+				$item = echos_project_build_used_product_item( $product_post );
+				if ( ! empty( $item ) ) {
+					$items[] = $item;
+				}
+			}
+		}
+	}
+
+	if ( ! empty( $items ) ) {
+		return $items;
+	}
+
+	$manual_items = is_array( $used_products['items'] ?? null ) ? $used_products['items'] : array();
+
+	foreach ( $manual_items as $item ) {
+		if ( ! is_array( $item ) ) {
+			continue;
+		}
+
+		$name     = trim( (string) ( $item['name'] ?? '' ) );
+		$features = array();
+
+		if ( isset( $item['features'] ) && is_array( $item['features'] ) ) {
+			foreach ( $item['features'] as $feature ) {
+				$feature_text = trim( (string) $feature );
+				if ( '' !== $feature_text ) {
+					$features[] = $feature_text;
+				}
+			}
+		}
+
+		if ( '' === $name && empty( $features ) ) {
+			continue;
+		}
+
+		$items[] = array(
+			'id'        => 0,
+			'name'      => $name,
+			'url'       => '',
+			'image'     => '',
+			'image_alt' => '' !== $name ? $name : __( 'Producto', 'echos' ),
+			'features' => $features,
+		);
+	}
+
+	return $items;
 }

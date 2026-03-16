@@ -15,7 +15,8 @@ get_template_part(
 	'template-parts/service/layout',
 	'stands',
 	array(
-		'service' => $data,
+		'service'    => $data,
+		'service_id' => get_queried_object_id(),
 	)
 );
 
