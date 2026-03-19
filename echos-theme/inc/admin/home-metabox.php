@@ -83,6 +83,13 @@ function echos_home_render_admin_metabox( $post ) {
 								'type'  => 'image',
 							),
 							array(
+								'key'         => 'video',
+								'label'       => __( 'Video de fondo (YouTube, opcional)', 'echos' ),
+								'type'        => 'url',
+								'placeholder' => 'https://www.youtube.com/watch?v=...',
+								'wide'        => true,
+							),
+							array(
 								'key'         => 'accent',
 								'label'       => __( 'Texto destacado', 'echos' ),
 								'type'        => 'text',
@@ -814,6 +821,7 @@ function echos_home_admin_schema() {
 				'_type'  => 'repeater',
 				'fields' => array(
 					'image'       => 'url',
+					'video'       => 'url',
 					'accent'      => 'text',
 					'title'       => 'textarea',
 					'description' => 'textarea',

@@ -7,6 +7,19 @@ $social_label = isset( $footer_data['social_label'] ) ? (string) $footer_data['s
 $brand_image  = isset( $footer_data['brand_image'] ) ? (string) $footer_data['brand_image'] : '';
 $brand_alt    = isset( $footer_data['brand_image_alt'] ) ? (string) $footer_data['brand_image_alt'] : 'ECHOS Logo';
 $brand_link   = isset( $footer_data['brand_image_link'] ) ? (string) $footer_data['brand_image_link'] : '';
+$popup_data   = function_exists( 'echos_popup_get_data' ) ? echos_popup_get_data() : array();
+$popup_show   = function_exists( 'echos_popup_should_render' ) ? echos_popup_should_render() : false;
+$popup_title  = isset( $popup_data['title'] ) ? (string) $popup_data['title'] : '';
+$popup_text   = isset( $popup_data['text'] ) ? (string) $popup_data['text'] : '';
+$popup_image  = isset( $popup_data['image'] ) ? (string) $popup_data['image'] : '';
+
+$brand_link_trimmed = trim( $brand_link );
+if ( '' !== $brand_link_trimmed ) {
+	$home_url = untrailingslashit( home_url( '/' ) );
+	if ( untrailingslashit( $brand_link_trimmed ) === $home_url ) {
+		$brand_link_trimmed = '';
+	}
+}
 ?>
 
 <footer class="footer">
@@ -60,8 +73,8 @@ $brand_link   = isset( $footer_data['brand_image_link'] ) ? (string) $footer_dat
 			<div class="footer__brand">
 				<div class="mega-logo">
 					<?php if ( '' !== trim( $brand_image ) ) : ?>
-						<?php if ( '' !== trim( $brand_link ) ) : ?>
-							<a class="footer__brand-link" href="<?php echo esc_url( $brand_link ); ?>">
+						<?php if ( '' !== $brand_link_trimmed ) : ?>
+							<a class="footer__brand-link" href="<?php echo esc_url( $brand_link_trimmed ); ?>">
 								<img src="<?php echo esc_url( $brand_image ); ?>" class="logo-footer" alt="<?php echo esc_attr( $brand_alt ); ?>" />
 							</a>
 						<?php else : ?>
@@ -74,55 +87,59 @@ $brand_link   = isset( $footer_data['brand_image_link'] ) ? (string) $footer_dat
 	</div>
 </footer>
 
-<!-- POPUP -->
-<section class="epopup" id="epopup" aria-hidden="true">
-  <div class="epopup__backdrop" data-epopup-close aria-hidden="true"></div>
+<?php if ( $popup_show ) : ?>
+	<!-- POPUP -->
+	<section class="epopup" id="epopup" aria-hidden="true">
+		<div class="epopup__backdrop" data-epopup-close aria-hidden="true"></div>
 
-  <div class="epopup__dialog" role="dialog" aria-modal="true" aria-labelledby="epopupTitle">
-    <button class="epopup__close" type="button" aria-label="Cerrar" data-epopup-close>
-      &times;
-    </button>
+		<div class="epopup__dialog" role="dialog" aria-modal="true" aria-labelledby="epopupTitle">
+			<button class="epopup__close" type="button" aria-label="Cerrar" data-epopup-close>
+				&times;
+			</button>
 
-    <div class="epopup__grid">
-      <div class="epopup__media" aria-hidden="true">
-        <img class="epopup__img" src="<?php echo echos_asset( 'img/popup/image-popup.jpg' ); ?>" alt="" loading="lazy" />
-      </div>
+			<div class="epopup__grid">
+				<div class="epopup__media" aria-hidden="true">
+					<img class="epopup__img" src="<?php echo esc_url( $popup_image ); ?>" alt="" loading="lazy" />
+				</div>
 
-      <div class="epopup__content">
-        <h2 class="epopup__title" id="epopupTitle">CONSIGUE UN 20%<br />DE DESCUENTO</h2>
-        <p class="epopup__text">
-          Lorem ipsum dolor sit amet consectetur. Gravida suspendisse quis a quis. Amet rutrum.
-        </p>
+				<div class="epopup__content">
+					<h2 class="epopup__title" id="epopupTitle"><?php echo wp_kses_post( echos_popup_multiline_text( $popup_title ) ); ?></h2>
+					<p class="epopup__text">
+						<?php echo wp_kses_post( echos_popup_multiline_text( $popup_text ) ); ?>
+					</p>
 
-        <form class="epopup__form" id="epopupForm" novalidate>
-          <label class="epopup__field">
-            <span class="sr-only">Nombre de empresa</span>
-            <input class="epopup__input" name="empresa" placeholder="Nombre de empresa" autocomplete="organization" required />
-          </label>
+					<form class="epopup__form" id="epopupForm" novalidate>
+						<label class="epopup__field">
+							<span class="sr-only">Nombre de empresa</span>
+							<input class="epopup__input" name="empresa" placeholder="Nombre de empresa" autocomplete="organization" required />
+						</label>
 
-          <label class="epopup__field">
-            <span class="sr-only">Correo electronico</span>
-            <input
-              class="epopup__input"
-              type="email"
-              name="email"
-              placeholder="Ingresa tu correo electronico"
-              autocomplete="email"
-              required
-            />
-          </label>
+						<label class="epopup__field">
+							<span class="sr-only">Correo electronico</span>
+							<input
+								class="epopup__input"
+								type="email"
+								name="email"
+								placeholder="Ingresa tu correo electronico"
+								autocomplete="email"
+								required
+							/>
+						</label>
 
-          <button class="epopup__btn" type="submit">
-            <span>Suscribirme</span>
-            <span class="epopup__btnIcon" aria-hidden="true">
-              <svg class="echos-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M13 5l7 7-7 7"/></svg>
-            </span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
+						<input type="hidden" name="form_source" value="popup_subscribe" />
+
+						<button class="epopup__btn" type="submit">
+							<span>Suscribirme</span>
+							<span class="epopup__btnIcon" aria-hidden="true">
+								<svg class="echos-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M13 5l7 7-7 7"/></svg>
+							</span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+<?php endif; ?>
 
 <?php get_template_part( 'template-parts/sidebar-menu' ); ?>
 

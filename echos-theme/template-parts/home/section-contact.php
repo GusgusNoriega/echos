@@ -20,13 +20,56 @@ if ( empty( $tabs ) ) {
 }
 
 $default_service = ! empty( $tabs[0]['value'] ) ? (string) $tabs[0]['value'] : (string) $tabs[0]['label'];
+$service_copy_defaults = array(
+	'infraestructura'       => array(
+		'title'       => 'Infraestructura para eventos',
+		'description' => 'Disenamos y montamos estructuras seguras y funcionales para eventos corporativos y sociales.',
+	),
+	'iluminacion'           => array(
+		'title'       => 'Iluminacion para experiencias',
+		'description' => 'Creamos ambientes visuales con diseno de luz, equipos profesionales y operacion tecnica.',
+	),
+	'iluminacion-inteligente' => array(
+		'title'       => 'Iluminacion inteligente',
+		'description' => 'Programamos soluciones de iluminacion dinamica para reforzar el concepto de cada evento.',
+	),
+	'stands'                => array(
+		'title'       => 'Stands para ferias',
+		'description' => 'Desarrollamos stands funcionales y atractivos para destacar tu marca en ferias y exposiciones.',
+	),
+	'stands-para-ferias'    => array(
+		'title'       => 'Stands para ferias',
+		'description' => 'Desarrollamos stands funcionales y atractivos para destacar tu marca en ferias y exposiciones.',
+	),
+);
+
+$resolve_service_copy = static function ( $value, $label ) use ( $service_copy_defaults ) {
+	$source = '' !== trim( (string) $value ) ? (string) $value : (string) $label;
+	$key    = sanitize_title( remove_accents( $source ) );
+
+	if ( isset( $service_copy_defaults[ $key ] ) ) {
+		return $service_copy_defaults[ $key ];
+	}
+
+	$label_clean = '' !== trim( (string) $label ) ? (string) $label : $source;
+
+	return array(
+		'title'       => sprintf( 'Servicio de %s', $label_clean ),
+		'description' => sprintf( 'Comparte los detalles de tu requerimiento de %s y te ayudaremos a planificarlo.', $label_clean ),
+	);
+};
+
+$default_label = isset( $tabs[0]['label'] ) ? (string) $tabs[0]['label'] : $default_service;
+$default_copy  = $resolve_service_copy( $default_service, $default_label );
+$initial_title = '' !== $default_copy['title'] ? $default_copy['title'] : ( isset( $contact['title'] ) ? (string) $contact['title'] : '' );
+$initial_text  = '' !== $default_copy['description'] ? $default_copy['description'] : ( isset( $contact['text'] ) ? (string) $contact['text'] : '' );
 ?>
 <section class="contact" id="contacto">
 	<div class="container">
 		<div class="contact__panel">
 			<div class="contact__left">
-				<h2 class="contact__title"><?php echo wp_kses_post( echos_home_multiline_text( isset( $contact['title'] ) ? $contact['title'] : '' ) ); ?></h2>
-				<p class="contact__text"><?php echo esc_html( isset( $contact['text'] ) ? $contact['text'] : '' ); ?></p>
+				<h2 class="contact__title js-home-service-title" data-home-service-title><?php echo wp_kses_post( echos_home_multiline_text( $initial_title ) ); ?></h2>
+				<p class="contact__text js-home-service-description" data-home-service-description><?php echo esc_html( $initial_text ); ?></p>
 
 				<div class="contact__actions">
 					<a class="pill pill--dark" href="<?php echo esc_url( isset( $contact['action_primary_url'] ) ? $contact['action_primary_url'] : '#' ); ?>">
@@ -53,8 +96,9 @@ $default_service = ! empty( $tabs[0]['value'] ) ? (string) $tabs[0]['value'] : (
 							<?php
 							$label = isset( $tab['label'] ) ? $tab['label'] : '';
 							$value = ! empty( $tab['value'] ) ? $tab['value'] : $label;
+							$copy  = $resolve_service_copy( $value, $label );
 							?>
-							<button class="tab <?php echo 0 === $index ? 'is-active' : ''; ?>" type="button" data-service="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></button>
+							<button class="tab <?php echo 0 === $index ? 'is-active' : ''; ?>" type="button" data-service="<?php echo esc_attr( $value ); ?>" data-service-title="<?php echo esc_attr( $copy['title'] ); ?>" data-service-description="<?php echo esc_attr( $copy['description'] ); ?>"><?php echo esc_html( $label ); ?></button>
 						<?php endforeach; ?>
 					</div>
 
@@ -65,6 +109,7 @@ $default_service = ! empty( $tabs[0]['value'] ) ? (string) $tabs[0]['value'] : (
 						<input class="input" name="telefono" placeholder="<?php echo esc_attr( isset( $contact['placeholder_phone'] ) ? $contact['placeholder_phone'] : 'Telefono' ); ?>" />
 						<textarea class="textarea" name="detalle" placeholder="<?php echo esc_attr( isset( $contact['placeholder_detail'] ) ? $contact['placeholder_detail'] : 'Cuentanos sobre su evento y necesidades especificas' ); ?>"></textarea>
 
+						<input type="hidden" name="form_source" value="home_contact" />
 						<input type="hidden" name="servicio" id="servicioElegido" value="<?php echo esc_attr( $default_service ); ?>" />
 
 						<div class="form__footer">

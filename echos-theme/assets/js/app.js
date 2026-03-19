@@ -3,7 +3,7 @@
  ------------------------------ */
 const hero = document.getElementById("hero");
 
-// Ahora el slider es scroll horizontal (touch/mouse) con scroll-snap.
+// Slider now uses horizontal scroll + snap.
 const viewport = document.getElementById("heroViewport");
 const slides = viewport ? [...viewport.querySelectorAll(".hero__slide")] : [];
 const dots = hero ? [...hero.querySelectorAll(".dot")] : [];
@@ -22,9 +22,8 @@ function scrollToSlide(index, behavior = "smooth"){
   if (!viewport || !slides.length) return;
   const i = (index + slides.length) % slides.length;
   current = i;
-  // Importante: NO usar scrollIntoView aquí porque puede hacer que el navegador
-  // haga scroll vertical de la página para “traer” el slide al viewport.
-  // En su lugar, movemos solo el scroll horizontal del contenedor.
+
+  // Do not use scrollIntoView here because it can move page vertically.
   const left = slides[i].offsetLeft;
   viewport.scrollTo({ left, behavior });
   setActiveDot(i);
@@ -38,7 +37,6 @@ function getNearestIndex(){
 }
 
 function onViewportScroll(){
-  // Throttle con rAF para evitar exceso de trabajo.
   if (raf) return;
   raf = window.requestAnimationFrame(() => {
     raf = 0;
@@ -52,7 +50,6 @@ function onViewportScroll(){
 
 function start(){
   stop();
-  // Autoplay opcional: solo si no está interactuando.
   timer = window.setInterval(() => {
     if (isUserInteracting) return;
     scrollToSlide(current + 1, "smooth");
@@ -64,7 +61,7 @@ function stop(){
   timer = null;
 }
 
-// Dots -> scroll a slide
+// Dots -> scroll to slide.
 dots.forEach((dot) => {
   dot.addEventListener("click", () => {
     const idx = Number(dot.dataset.slide);
@@ -73,7 +70,7 @@ dots.forEach((dot) => {
   });
 });
 
-// Scroll manual (touch/rueda/drag) -> actualizar dots
+// Manual scroll -> update dots.
 if (viewport){
   viewport.addEventListener("scroll", onViewportScroll, { passive: true });
   viewport.addEventListener("pointerdown", () => { isUserInteracting = true; });
@@ -83,7 +80,6 @@ if (viewport){
   viewport.addEventListener("mouseleave", () => { isUserInteracting = false; });
 }
 
-// init
 setActiveDot(0);
 start();
 
@@ -102,6 +98,7 @@ function scrollByCard(dir){
   const step = (card?.getBoundingClientRect().width || 270) + gap;
   rail.scrollBy({ left: dir * step, behavior: "smooth" });
 }
+
 if (prev && next && rail){
   prev.addEventListener("click", () => scrollByCard(-1));
   next.addEventListener("click", () => scrollByCard(1));
@@ -119,10 +116,12 @@ if (rail){
     startLeft = rail.scrollLeft;
     rail.classList.add("is-dragging");
   });
+
   window.addEventListener("mouseup", () => {
     isDown = false;
     rail.classList.remove("is-dragging");
   });
+
   rail.addEventListener("mousemove", (e) => {
     if (!isDown) return;
     const dx = e.pageX - startX;
@@ -136,34 +135,123 @@ if (rail){
 const tabs = [...document.querySelectorAll(".tab")];
 const servicio = document.getElementById("servicioElegido");
 const defaultService = tabs[0] ? (tabs[0].dataset.service || tabs[0].textContent.trim()) : "";
+const homeServiceTitle = document.querySelector("[data-home-service-title]");
+const homeServiceDescription = document.querySelector("[data-home-service-description]");
+const defaultServiceTitle = homeServiceTitle ? homeServiceTitle.textContent.trim() : "";
+const defaultServiceDescription = homeServiceDescription ? homeServiceDescription.textContent.trim() : "";
 
-if (tabs.length && servicio){
-  tabs.forEach(t => {
-    t.addEventListener("click", () => {
-      tabs.forEach(x => x.classList.remove("is-active"));
-      t.classList.add("is-active");
-      servicio.value = t.dataset.service || t.textContent.trim();
+function setActiveHomeService(tab){
+  if (!tab) return;
+
+  tabs.forEach((x) => x.classList.remove("is-active"));
+  tab.classList.add("is-active");
+
+  if (servicio){
+    servicio.value = tab.dataset.service || tab.textContent.trim();
+  }
+
+  if (homeServiceTitle){
+    homeServiceTitle.textContent = tab.dataset.serviceTitle || defaultServiceTitle;
+  }
+
+  if (homeServiceDescription){
+    homeServiceDescription.textContent = tab.dataset.serviceDescription || defaultServiceDescription;
+  }
+}
+
+if (tabs.length){
+  const activeTab = tabs.find((tab) => tab.classList.contains("is-active")) || tabs[0];
+  setActiveHomeService(activeTab);
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      setActiveHomeService(tab);
     });
   });
 }
 
 /* -----------------------------
-   Form submit demo
+   Form submit (AJAX -> WordPress)
 ------------------------------ */
 const form = document.getElementById("quoteForm");
 if (form){
-  form.addEventListener("submit", (e) => {
+  const config = window.echosFormsConfig || {};
+  const ajaxUrl = config.ajaxUrl || "/wp-admin/admin-ajax.php";
+  const nonce = config.nonce || "";
+  const messages = config.messages || {};
+  const submitButton = form.querySelector('button[type="submit"]');
+  const formLoading = window.echosFormLoading || null;
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (formLoading && formLoading.isLocked()){
+      return;
+    }
+
+    if (!form.checkValidity()){
+      if (typeof form.reportValidity === "function"){
+        form.reportValidity();
+      }
+      return;
+    }
+
     const data = new FormData(form);
-    const payload = Object.fromEntries(data.entries());
+    data.append("action", "echos_submit_form");
+    data.append("nonce", nonce);
+    data.append("page_url", window.location.href);
+    data.append("page_title", document.title || "");
 
-    // Demo UX: simula envío
-    alert(
-      `Datos enviados (demo)\n\nServicio: ${payload.servicio}\nNombre: ${payload.nombre}\nEmpresa: ${payload.empresa}\nEmail: ${payload.email}`
-    );
+    if (submitButton){
+      submitButton.disabled = true;
+    }
+    if (formLoading){
+      formLoading.lock();
+    }
 
-    form.reset();
-    if (servicio) servicio.value = defaultService;
-    tabs.forEach((x,i)=>x.classList.toggle("is-active", i===0));
+    try {
+      const response = await fetch(ajaxUrl, {
+        method: "POST",
+        body: data,
+        credentials: "same-origin",
+      });
+
+      let json = null;
+      try {
+        json = await response.json();
+      } catch (parseError) {
+        json = null;
+      }
+
+      if (!response.ok || !json || !json.success){
+        const errorMessage = json && json.data && json.data.message
+          ? json.data.message
+          : (messages.error || "No se pudo enviar el formulario.");
+        throw new Error(errorMessage);
+      }
+
+      const successMessage = json.data && json.data.message
+        ? json.data.message
+        : (messages.success || "Formulario enviado correctamente.");
+
+      alert(successMessage);
+
+      form.reset();
+      if (servicio) servicio.value = defaultService;
+      if (tabs.length){
+        setActiveHomeService(tabs[0]);
+      }
+    } catch (error) {
+      const fallback = messages.error || "No se pudo enviar el formulario.";
+      alert(error && error.message ? error.message : fallback);
+    } finally {
+      if (formLoading){
+        formLoading.unlock();
+      }
+      if (submitButton){
+        submitButton.disabled = false;
+      }
+    }
   });
 }
+

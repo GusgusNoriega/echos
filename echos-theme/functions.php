@@ -53,27 +53,43 @@ add_action( 'after_setup_theme', 'echos_theme_setup' );
 ------------------------------------------------------- */
 function echos_enqueue_assets() {
     $theme_uri = get_template_directory_uri();
+    $theme_dir = get_template_directory();
     $version   = wp_get_theme()->get( 'Version' );
+
+    $forms_loader_css_path    = $theme_dir . '/assets/css/forms-loader.css';
+    $forms_loader_css_version = file_exists( $forms_loader_css_path ) ? (string) filemtime( $forms_loader_css_path ) : $version;
+    wp_register_style(
+        'echos-forms-loader',
+        $theme_uri . '/assets/css/forms-loader.css',
+        array( 'echos-base' ),
+        $forms_loader_css_version
+    );
+
+    $forms_loader_js_path    = $theme_dir . '/assets/js/forms-loader.js';
+    $forms_loader_js_version = file_exists( $forms_loader_js_path ) ? (string) filemtime( $forms_loader_js_path ) : $version;
+    wp_register_script(
+        'echos-forms-loader',
+        $theme_uri . '/assets/js/forms-loader.js',
+        array(),
+        $forms_loader_js_version,
+        true
+    );
+
+    $fonts_css_path    = $theme_dir . '/assets/css/fonts.css';
+    $fonts_css_version = file_exists( $fonts_css_path ) ? (string) filemtime( $fonts_css_path ) : $version;
 
     // Local self-hosted fonts.
     wp_enqueue_style(
         'echos-fonts',
         $theme_uri . '/assets/css/fonts.css',
         array(),
-        $version
+        $fonts_css_version
     );
 
     wp_enqueue_style(
         'echos-base',
         $theme_uri . '/assets/css/styles.css',
         array( 'echos-fonts' ),
-        $version
-    );
-
-    wp_enqueue_style(
-        'echos-popup',
-        $theme_uri . '/assets/css/popup.css',
-        array( 'echos-base' ),
         $version
     );
 
@@ -114,18 +130,33 @@ function echos_enqueue_assets() {
 
     if ( is_page_template( 'page-templates/template-contacto.php' ) ) {
         wp_enqueue_style( 'echos-contacto', $theme_uri . '/assets/css/contacto.css', array( 'echos-base' ), $version );
-        wp_enqueue_script( 'echos-contacto-js', $theme_uri . '/assets/js/contacto.js', array(), $version, true );
+        $contact_js_path    = $theme_dir . '/assets/js/contacto.js';
+        $contact_js_version = file_exists( $contact_js_path ) ? (string) filemtime( $contact_js_path ) : $version;
+        wp_enqueue_script( 'echos-contacto-js', $theme_uri . '/assets/js/contacto.js', array( 'echos-forms-loader' ), $contact_js_version, true );
     }
 
     if ( is_page_template( 'page-templates/template-inicio.php' ) || is_front_page() ) {
-        wp_enqueue_script( 'echos-app', $theme_uri . '/assets/js/app.js', array(), $version, true );
+        $app_js_path    = $theme_dir . '/assets/js/app.js';
+        $app_js_version = file_exists( $app_js_path ) ? (string) filemtime( $app_js_path ) : $version;
+        wp_enqueue_script( 'echos-app', $theme_uri . '/assets/js/app.js', array( 'echos-forms-loader' ), $app_js_version, true );
     }
 
     if ( is_page_template( 'page-templates/template-producto.php' ) || is_singular( 'producto' ) ) {
         wp_enqueue_script( 'echos-producto', $theme_uri . '/assets/js/producto.js', array(), $version, true );
     }
 
-    wp_enqueue_script( 'echos-popup', $theme_uri . '/assets/js/popup.js', array(), $version, true );
+    if ( function_exists( 'echos_popup_should_render' ) && echos_popup_should_render() ) {
+        $popup_js_path    = $theme_dir . '/assets/js/popup.js';
+        $popup_js_version = file_exists( $popup_js_path ) ? (string) filemtime( $popup_js_path ) : $version;
+
+        wp_enqueue_style(
+            'echos-popup',
+            $theme_uri . '/assets/css/popup.css',
+            array( 'echos-base' ),
+            $version
+        );
+        wp_enqueue_script( 'echos-popup', $theme_uri . '/assets/js/popup.js', array( 'echos-forms-loader' ), $popup_js_version, true );
+    }
 
     wp_enqueue_style( 'echos-sidebar-menu', $theme_uri . '/assets/css/sidebar-menu.css', array( 'echos-base' ), $version );
     wp_enqueue_script( 'echos-sidebar-menu', $theme_uri . '/assets/js/sidebar-menu.js', array(), $version, true );
@@ -140,6 +171,27 @@ function echos_enqueue_assets() {
 
     if ( echos_is_template_active( 'page-templates/template-servicios-stands.php' ) ) {
         wp_enqueue_script( 'echos-srv3-js', $theme_uri . '/assets/js/servicios-3.js', array(), $version, true );
+    }
+
+    if ( function_exists( 'echos_forms_get_frontend_config' ) ) {
+        $forms_config = echos_forms_get_frontend_config();
+        $form_handles = array(
+            'echos-app',
+            'echos-contacto-js',
+            'echos-popup',
+        );
+        $has_form_script = false;
+
+        foreach ( $form_handles as $handle ) {
+            if ( wp_script_is( $handle, 'enqueued' ) ) {
+                $has_form_script = true;
+                wp_localize_script( $handle, 'echosFormsConfig', $forms_config );
+            }
+        }
+
+        if ( $has_form_script ) {
+            wp_enqueue_style( 'echos-forms-loader' );
+        }
     }
 }
 add_action( 'wp_enqueue_scripts', 'echos_enqueue_assets' );
@@ -201,6 +253,12 @@ require_once get_template_directory() . '/inc/admin/project-metabox.php';
 require_once get_template_directory() . '/inc/footer/defaults.php';
 require_once get_template_directory() . '/inc/footer/data.php';
 require_once get_template_directory() . '/inc/admin/footer-options.php';
+require_once get_template_directory() . '/inc/popup/defaults.php';
+require_once get_template_directory() . '/inc/popup/data.php';
+require_once get_template_directory() . '/inc/admin/popup-metabox.php';
+require_once get_template_directory() . '/inc/forms/defaults.php';
+require_once get_template_directory() . '/inc/forms/data.php';
+require_once get_template_directory() . '/inc/admin/forms-options.php';
 require_once get_template_directory() . '/inc/content-types.php';
 
 /* -------------------------------------------------------

@@ -146,6 +146,96 @@ function echos_home_resolve_image_url( $value, $fallback = '' ) {
 }
 
 /**
+ * Extracts YouTube video ID from common URL formats.
+ *
+ * @param string $value Raw URL or potential ID.
+ * @return string
+ */
+function echos_home_extract_youtube_id( $value ) {
+	$value = trim( (string) $value );
+
+	if ( '' === $value ) {
+		return '';
+	}
+
+	if ( preg_match( '/^[A-Za-z0-9_-]{11}$/', $value ) ) {
+		return $value;
+	}
+
+	$parts = wp_parse_url( $value );
+	if ( ! is_array( $parts ) ) {
+		return '';
+	}
+
+	$host = isset( $parts['host'] ) ? strtolower( (string) $parts['host'] ) : '';
+	$path = isset( $parts['path'] ) ? trim( (string) $parts['path'], '/' ) : '';
+
+	$query = array();
+	if ( ! empty( $parts['query'] ) ) {
+		parse_str( (string) $parts['query'], $query );
+	}
+
+	$video_id = '';
+
+	if ( '' !== $host && false !== strpos( $host, 'youtu.be' ) ) {
+		$segments = array_values( array_filter( explode( '/', $path ) ) );
+		$video_id = isset( $segments[0] ) ? (string) $segments[0] : '';
+	} elseif ( '' !== $host && ( false !== strpos( $host, 'youtube.com' ) || false !== strpos( $host, 'youtube-nocookie.com' ) ) ) {
+		if ( isset( $query['v'] ) ) {
+			$video_id = (string) $query['v'];
+		}
+
+		if ( '' === $video_id && '' !== $path ) {
+			$segments = array_values( array_filter( explode( '/', $path ) ) );
+
+			if ( isset( $segments[0], $segments[1] ) && in_array( $segments[0], array( 'embed', 'shorts', 'live', 'v' ), true ) ) {
+				$video_id = (string) $segments[1];
+			}
+		}
+	}
+
+	$video_id = trim( $video_id );
+
+	if ( preg_match( '/^[A-Za-z0-9_-]{11}$/', $video_id ) ) {
+		return $video_id;
+	}
+
+	return '';
+}
+
+/**
+ * Builds embeddable YouTube URL with autoplay, mute and loop.
+ *
+ * @param string $value Raw URL or potential ID.
+ * @return string
+ */
+function echos_home_build_youtube_embed_url( $value ) {
+	$video_id = echos_home_extract_youtube_id( $value );
+
+	if ( '' === $video_id ) {
+		return '';
+	}
+
+	$embed_base = 'https://www.youtube.com/embed/' . rawurlencode( $video_id );
+
+	return add_query_arg(
+		array(
+			'autoplay'       => '1',
+			'mute'           => '1',
+			'controls'       => '0',
+			'playsinline'    => '1',
+			'loop'           => '1',
+			'playlist'       => $video_id,
+			'rel'            => '0',
+			'modestbranding' => '1',
+			'iv_load_policy' => '3',
+			'disablekb'      => '1',
+		),
+		$embed_base
+	);
+}
+
+/**
  * Escaped multiline text keeping line breaks.
  *
  * @param string $text Text value.

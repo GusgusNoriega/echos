@@ -20,6 +20,49 @@ if ( empty( $tabs ) ) {
 }
 
 $default_service = ! empty( $tabs[0]['value'] ) ? (string) $tabs[0]['value'] : (string) $tabs[0]['label'];
+$service_copy_defaults = array(
+	'infraestructura'       => array(
+		'title'       => 'Infraestructura para eventos',
+		'description' => 'Disenamos y montamos estructuras seguras y funcionales para eventos corporativos y sociales.',
+	),
+	'iluminacion'           => array(
+		'title'       => 'Iluminacion para experiencias',
+		'description' => 'Creamos ambientes visuales con diseno de luz, equipos profesionales y operacion tecnica.',
+	),
+	'iluminacion-inteligente' => array(
+		'title'       => 'Iluminacion inteligente',
+		'description' => 'Programamos soluciones de iluminacion dinamica para reforzar el concepto de cada evento.',
+	),
+	'stands'                => array(
+		'title'       => 'Stands para ferias',
+		'description' => 'Desarrollamos stands funcionales y atractivos para destacar tu marca en ferias y exposiciones.',
+	),
+	'stands-para-ferias'    => array(
+		'title'       => 'Stands para ferias',
+		'description' => 'Desarrollamos stands funcionales y atractivos para destacar tu marca en ferias y exposiciones.',
+	),
+);
+
+$resolve_service_copy = static function ( $value, $label ) use ( $service_copy_defaults ) {
+	$source = '' !== trim( (string) $value ) ? (string) $value : (string) $label;
+	$key    = sanitize_title( remove_accents( $source ) );
+
+	if ( isset( $service_copy_defaults[ $key ] ) ) {
+		return $service_copy_defaults[ $key ];
+	}
+
+	$label_clean = '' !== trim( (string) $label ) ? (string) $label : $source;
+
+	return array(
+		'title'       => sprintf( 'Servicio de %s', $label_clean ),
+		'description' => sprintf( 'Comparte los detalles de tu requerimiento de %s y te ayudaremos a planificarlo.', $label_clean ),
+	);
+};
+
+$default_label = isset( $tabs[0]['label'] ) ? (string) $tabs[0]['label'] : $default_service;
+$default_copy  = $resolve_service_copy( $default_service, $default_label );
+$initial_title = '' !== $default_copy['title'] ? $default_copy['title'] : ( isset( $contact_data['title'] ) ? (string) $contact_data['title'] : '' );
+$initial_desc  = '' !== $default_copy['description'] ? $default_copy['description'] : ( isset( $contact_data['description'] ) ? (string) $contact_data['description'] : '' );
 $social_links    = echos_contact_normalize_social_links( isset( $contact_data['social_links'] ) ? $contact_data['social_links'] : array() );
 $background      = echos_contact_resolve_image_url( isset( $contact_data['background_image'] ) ? $contact_data['background_image'] : '' );
 $left_image      = echos_contact_resolve_image_url( isset( $contact_data['left_image'] ) ? $contact_data['left_image'] : '' );
@@ -55,10 +98,10 @@ $secondary_icon = isset( $contact_data['action_secondary_icon'] ) ? $contact_dat
 		<div class="container">
 			<div class="contacto-grid">
 				<div class="contacto-left">
-					<h1 class="contacto-title"><?php echo wp_kses_post( echos_contact_multiline_text( isset( $contact_data['title'] ) ? $contact_data['title'] : '' ) ); ?></h1>
+					<h1 class="contacto-title js-contact-service-title" data-contact-service-title><?php echo wp_kses_post( echos_contact_multiline_text( $initial_title ) ); ?></h1>
 
-					<p class="contacto-desc">
-						<?php echo esc_html( isset( $contact_data['description'] ) ? $contact_data['description'] : '' ); ?>
+					<p class="contacto-desc js-contact-service-description" data-contact-service-description>
+						<?php echo esc_html( $initial_desc ); ?>
 					</p>
 
 					<?php if ( '' !== $left_image ) : ?>
@@ -103,8 +146,9 @@ $secondary_icon = isset( $contact_data['action_secondary_icon'] ) ? $contact_dat
 							<?php
 							$label = isset( $tab['label'] ) ? (string) $tab['label'] : '';
 							$value = ! empty( $tab['value'] ) ? (string) $tab['value'] : $label;
+							$copy  = $resolve_service_copy( $value, $label );
 							?>
-							<button class="contacto-tab<?php echo 0 === $index ? ' is-active' : ''; ?>" type="button" data-service="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></button>
+							<button class="contacto-tab<?php echo 0 === $index ? ' is-active' : ''; ?>" type="button" data-service="<?php echo esc_attr( $value ); ?>" data-service-title="<?php echo esc_attr( $copy['title'] ); ?>" data-service-description="<?php echo esc_attr( $copy['description'] ); ?>"><?php echo esc_html( $label ); ?></button>
 						<?php endforeach; ?>
 					</div>
 
@@ -115,6 +159,7 @@ $secondary_icon = isset( $contact_data['action_secondary_icon'] ) ? $contact_dat
 						<input class="contacto-input" name="telefono" placeholder="<?php echo esc_attr( isset( $contact_data['placeholder_phone'] ) ? $contact_data['placeholder_phone'] : 'Telefono' ); ?>" type="tel" autocomplete="tel" />
 						<textarea class="contacto-textarea" name="detalle" placeholder="<?php echo esc_attr( isset( $contact_data['placeholder_detail'] ) ? $contact_data['placeholder_detail'] : 'Cuentanos sobre tu evento y necesidades especificas' ); ?>"></textarea>
 
+						<input type="hidden" name="form_source" value="contact_page" />
 						<input type="hidden" name="servicio" id="contactoServicio" value="<?php echo esc_attr( $default_service ); ?>" />
 
 						<div class="contacto-form__footer">

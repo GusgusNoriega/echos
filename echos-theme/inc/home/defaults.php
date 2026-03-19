@@ -24,18 +24,21 @@ function echos_home_default_data() {
 			'slides'  => array(
 				array(
 					'image'       => $hero_image,
+					'video'       => '',
 					'accent'      => 'CREAMOS',
 					'title'       => "ESPECTACULOS\nMEMORABLES",
 					'description' => 'Lorem ipsum dolor sit amet consectetur. Viverra amet semper sed quam lobortis lacus at. Nunc.',
 				),
 				array(
 					'image'       => $hero_image,
+					'video'       => '',
 					'accent'      => 'DISENAMOS',
 					'title'       => "EXPERIENCIAS\nA MEDIDA",
 					'description' => 'Transformamos espacios en escenarios con identidad, luz y detalle tecnico.',
 				),
 				array(
 					'image'       => $hero_image,
+					'video'       => '',
 					'accent'      => 'PRODUCIMOS',
 					'title'       => "EVENTOS\nIMPACTANTES",
 					'description' => 'Equipo, montaje y operacion para que todo salga perfecto de principio a fin.',

@@ -118,8 +118,8 @@ function echos_footer_default_data() {
 				),
 			),
 		),
-		'brand_image'  => echos_asset( 'img/inicio/logo-footer.png' ),
-		'brand_image_alt' => 'ECHOS Logo',
-		'brand_image_link' => $home,
+		'brand_image'      => echos_asset( 'img/inicio/logo-footer.png' ),
+		'brand_image_alt'  => 'ECHOS Logo',
+		'brand_image_link' => '',
 	);
 }

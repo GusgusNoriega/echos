@@ -1,6 +1,35 @@
 (function () {
   const doc = window.document;
 
+  function getDirectChild(parent, selector) {
+    if (!parent) return null;
+    return [...parent.children].find((child) => child.matches(selector)) || null;
+  }
+
+  function getRowsWrap(repeater) {
+    return getDirectChild(repeater, '[data-home-rows]');
+  }
+
+  function getTemplate(repeater) {
+    return getDirectChild(repeater, 'template[data-home-row-template]');
+  }
+
+  function getRows(repeater) {
+    const rowsWrap = getRowsWrap(repeater);
+    if (!rowsWrap) return [];
+    return [...rowsWrap.children].filter((child) => child.matches('[data-home-row]'));
+  }
+
+  function getRepeaterToken(repeater) {
+    return (repeater && repeater.getAttribute('data-home-index-token')) || '__index__';
+  }
+
+  function replaceToken(source, token, value) {
+    if (typeof source !== 'string' || !source) return source;
+    if (!token) return source;
+    return source.split(token).join(String(value));
+  }
+
   function updateImagePreview(field) {
     const input = field.querySelector('[data-home-image-input]');
     const preview = field.querySelector('[data-home-image-preview]');
@@ -32,39 +61,44 @@
   }
 
   function renumberRepeater(repeater) {
-    const rows = [...repeater.querySelectorAll('[data-home-row]')];
+    const token = getRepeaterToken(repeater);
+    const rows = getRows(repeater);
 
     rows.forEach((row, index) => {
       row.querySelectorAll('[data-home-name-template]').forEach((field) => {
         const template = field.getAttribute('data-home-name-template');
         if (!template) return;
-        field.name = template.replace(/__index__/g, String(index));
+        if (!template.includes(token)) return;
+        field.name = replaceToken(template, token, index);
       });
     });
   }
 
   function addRow(repeater) {
-    const template = repeater.querySelector('[data-home-row-template]');
-    const rowsWrap = repeater.querySelector('[data-home-rows]');
+    const template = getTemplate(repeater);
+    const rowsWrap = getRowsWrap(repeater);
     if (!template || !rowsWrap) return;
 
-    const nextIndex = rowsWrap.querySelectorAll('[data-home-row]').length;
-    const html = template.innerHTML.replace(/__index__/g, String(nextIndex));
+    const token = getRepeaterToken(repeater);
+    const nextIndex = getRows(repeater).length;
+    const html = replaceToken(template.innerHTML, token, nextIndex);
     rowsWrap.insertAdjacentHTML('beforeend', html);
 
     renumberRepeater(repeater);
 
-    const lastRow = rowsWrap.querySelector('[data-home-row]:last-child');
+    const rows = getRows(repeater);
+    const lastRow = rows[rows.length - 1];
     if (!lastRow) return;
 
     lastRow.querySelectorAll('[data-home-image-field]').forEach(updateImagePreview);
+    lastRow.querySelectorAll('[data-home-repeater]').forEach(renumberRepeater);
   }
 
   function removeRow(row) {
     const repeater = row.closest('[data-home-repeater]');
     if (!repeater) return;
 
-    const rows = repeater.querySelectorAll('[data-home-row]');
+    const rows = getRows(repeater);
     if (rows.length <= 1) {
       clearRow(row);
       return;

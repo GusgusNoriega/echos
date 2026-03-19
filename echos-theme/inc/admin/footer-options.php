@@ -141,7 +141,7 @@ function echos_footer_render_options_page() {
 				<details class="echos-home-admin__section">
 					<summary><?php esc_html_e( 'Columnas de enlaces', 'echos' ); ?></summary>
 					<div class="echos-home-admin__section-body">
-						<p class="description"><?php esc_html_e( 'Cada linea debe tener formato: Texto del enlace|https://url.com', 'echos' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Agrega o quita enlaces de cada columna con repetidores.', 'echos' ); ?></p>
 						<?php
 						echos_footer_admin_render_repeater(
 							array(
@@ -158,9 +158,23 @@ function echos_footer_render_options_page() {
 									),
 									array(
 										'key'         => 'links',
-										'label'       => __( 'Enlaces', 'echos' ),
-										'type'        => 'links_lines',
-										'placeholder' => "Productos|https://tuweb.com/productos\nServicios|https://tuweb.com/servicios",
+										'label'       => __( 'Enlaces de esta columna', 'echos' ),
+										'type'        => 'repeater',
+										'item_label'  => __( 'Enlace', 'echos' ),
+										'add_label'   => __( 'Agregar enlace', 'echos' ),
+										'index_token' => '__link_index__',
+										'fields'      => array(
+											array(
+												'key'   => 'label',
+												'label' => __( 'Texto del enlace', 'echos' ),
+												'type'  => 'text',
+											),
+											array(
+												'key'   => 'url',
+												'label' => __( 'URL', 'echos' ),
+												'type'  => 'url',
+											),
+										),
 										'wide'        => true,
 									),
 								),
@@ -221,6 +235,7 @@ function echos_footer_admin_render_repeater( $args ) {
 		'name_path'  => array(),
 		'rows'       => array(),
 		'fields'     => array(),
+		'index_token' => '__index__',
 	);
 	$args     = wp_parse_args( $args, $defaults );
 
@@ -233,18 +248,18 @@ function echos_footer_admin_render_repeater( $args ) {
 		$rows[] = array();
 	}
 
-	echo '<div class="echos-home-repeater" data-home-repeater>';
+	echo '<div class="echos-home-repeater" data-home-repeater data-home-index-token="' . esc_attr( $args['index_token'] ) . '">';
 	echo '<div class="echos-home-repeater__head">' . esc_html( $args['title'] ) . '</div>';
 	echo '<div class="echos-home-repeater__rows" data-home-rows>';
 
 	foreach ( $rows as $index => $row ) {
-		echos_footer_admin_render_repeater_row( $args['name_path'], $index, $row, $args['fields'], $args['item_label'] );
+		echos_footer_admin_render_repeater_row( $args['name_path'], $index, $row, $args['fields'], $args['item_label'], $args['index_token'] );
 	}
 
 	echo '</div>';
 	echo '<button type="button" class="button button-secondary" data-home-add-row>' . esc_html( $args['add_label'] ) . '</button>';
 	echo '<template data-home-row-template>';
-	echos_footer_admin_render_repeater_row( $args['name_path'], '__index__', array(), $args['fields'], $args['item_label'] );
+	echos_footer_admin_render_repeater_row( $args['name_path'], $args['index_token'], array(), $args['fields'], $args['item_label'], $args['index_token'] );
 	echo '</template>';
 	echo '</div>';
 }
@@ -257,9 +272,114 @@ function echos_footer_admin_render_repeater( $args ) {
  * @param array       $row        Row values.
  * @param array       $fields     Field definitions.
  * @param string      $item_label Label.
+ * @param string      $index_token Row index token.
  * @return void
  */
-function echos_footer_admin_render_repeater_row( $path, $index, $row, $fields, $item_label ) {
+function echos_footer_admin_render_repeater_row( $path, $index, $row, $fields, $item_label, $index_token = '__index__' ) {
+	echo '<div class="echos-home-row" data-home-row>';
+	echo '<div class="echos-home-row__actions">';
+	echo '<strong>' . esc_html( $item_label ) . '</strong>';
+	echo '<button type="button" class="button-link-delete" data-home-remove-row>' . esc_html__( 'Quitar', 'echos' ) . '</button>';
+	echo '</div>';
+	echo '<div class="echos-home-row__grid">';
+
+	foreach ( $fields as $field ) {
+		$key         = isset( $field['key'] ) ? (string) $field['key'] : '';
+		$label       = isset( $field['label'] ) ? $field['label'] : $key;
+		$type        = isset( $field['type'] ) ? $field['type'] : 'text';
+		$placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
+		$options     = isset( $field['options'] ) && is_array( $field['options'] ) ? $field['options'] : array();
+		$wide        = ! empty( $field['wide'] );
+		$item_label_field = isset( $field['item_label'] ) ? (string) $field['item_label'] : __( 'Item', 'echos' );
+		$add_label_field  = isset( $field['add_label'] ) ? (string) $field['add_label'] : __( 'Agregar item', 'echos' );
+		$sub_fields       = isset( $field['fields'] ) && is_array( $field['fields'] ) ? $field['fields'] : array();
+		$sub_index_token  = isset( $field['index_token'] ) ? (string) $field['index_token'] : '__index__';
+
+		if ( '' === $key ) {
+			continue;
+		}
+
+		$value         = isset( $row[ $key ] ) ? $row[ $key ] : '';
+		$name          = echos_footer_admin_build_repeater_name( $path, $index, $key );
+		$name_template = echos_footer_admin_build_repeater_name( $path, $index_token, $key );
+
+		echo '<div class="echos-home-field ' . ( $wide ? 'is-wide' : '' ) . '">';
+		echo '<label class="echos-home-field__label">' . esc_html( $label ) . '</label>';
+
+		if ( 'repeater' === $type ) {
+			echos_footer_admin_render_nested_repeater_control(
+				array(
+					'base_name'   => $name,
+					'rows'        => is_array( $value ) ? $value : array(),
+					'fields'      => $sub_fields,
+					'item_label'  => $item_label_field,
+					'add_label'   => $add_label_field,
+					'index_token' => $sub_index_token,
+				)
+			);
+		} else {
+			echos_footer_admin_render_field_control( $type, $name, $value, $placeholder, $options, $name_template );
+		}
+		echo '</div>';
+	}
+
+	echo '</div>';
+	echo '</div>';
+}
+
+/**
+ * Renders a nested repeater control inside a repeater row.
+ *
+ * @param array $args Nested repeater args.
+ * @return void
+ */
+function echos_footer_admin_render_nested_repeater_control( $args ) {
+	$defaults = array(
+		'base_name'   => '',
+		'rows'        => array(),
+		'fields'      => array(),
+		'item_label'  => __( 'Item', 'echos' ),
+		'add_label'   => __( 'Agregar item', 'echos' ),
+		'index_token' => '__index__',
+	);
+	$args     = wp_parse_args( $args, $defaults );
+
+	if ( '' === $args['base_name'] ) {
+		return;
+	}
+
+	$rows = is_array( $args['rows'] ) ? array_values( $args['rows'] ) : array();
+	if ( empty( $rows ) ) {
+		$rows[] = array();
+	}
+
+	echo '<div class="echos-home-repeater" data-home-repeater data-home-index-token="' . esc_attr( $args['index_token'] ) . '">';
+	echo '<div class="echos-home-repeater__rows" data-home-rows>';
+
+	foreach ( $rows as $index => $row ) {
+		echos_footer_admin_render_nested_repeater_row( $args['base_name'], $index, $row, $args['fields'], $args['item_label'], $args['index_token'] );
+	}
+
+	echo '</div>';
+	echo '<button type="button" class="button button-secondary" data-home-add-row>' . esc_html( $args['add_label'] ) . '</button>';
+	echo '<template data-home-row-template>';
+	echos_footer_admin_render_nested_repeater_row( $args['base_name'], $args['index_token'], array(), $args['fields'], $args['item_label'], $args['index_token'] );
+	echo '</template>';
+	echo '</div>';
+}
+
+/**
+ * Renders one nested repeater row.
+ *
+ * @param string      $base_name   Base field name.
+ * @param int|string  $index       Current row index.
+ * @param array       $row         Row values.
+ * @param array       $fields      Field definitions.
+ * @param string      $item_label  Row label.
+ * @param string      $index_token Row index token.
+ * @return void
+ */
+function echos_footer_admin_render_nested_repeater_row( $base_name, $index, $row, $fields, $item_label, $index_token = '__index__' ) {
 	echo '<div class="echos-home-row" data-home-row>';
 	echo '<div class="echos-home-row__actions">';
 	echo '<strong>' . esc_html( $item_label ) . '</strong>';
@@ -280,8 +400,8 @@ function echos_footer_admin_render_repeater_row( $path, $index, $row, $fields, $
 		}
 
 		$value         = isset( $row[ $key ] ) ? $row[ $key ] : '';
-		$name          = echos_footer_admin_build_repeater_name( $path, $index, $key );
-		$name_template = echos_footer_admin_build_repeater_name( $path, '__index__', $key );
+		$name          = echos_footer_admin_build_nested_repeater_name( $base_name, $index, $key );
+		$name_template = echos_footer_admin_build_nested_repeater_name( $base_name, $index_token, $key );
 
 		echo '<div class="echos-home-field ' . ( $wide ? 'is-wide' : '' ) . '">';
 		echo '<label class="echos-home-field__label">' . esc_html( $label ) . '</label>';
@@ -416,6 +536,18 @@ function echos_footer_admin_build_repeater_name( $path, $index, $field_key ) {
 }
 
 /**
+ * Builds input name for nested repeater field.
+ *
+ * @param string     $base_name Base input name.
+ * @param int|string $index     Repeater index.
+ * @param string     $field_key Field key.
+ * @return string
+ */
+function echos_footer_admin_build_nested_repeater_name( $base_name, $index, $field_key ) {
+	return $base_name . '[' . $index . '][' . $field_key . ']';
+}
+
+/**
  * Handles footer options save.
  *
  * @return void
@@ -482,7 +614,13 @@ function echos_footer_admin_schema() {
 			'_type'  => 'repeater',
 			'fields' => array(
 				'title' => 'text',
-				'links' => 'links_lines',
+				'links' => array(
+					'_type'  => 'repeater',
+					'fields' => array(
+						'label' => 'text',
+						'url'   => 'url',
+					),
+				),
 			),
 		),
 		'brand_image'      => 'url',
@@ -521,6 +659,15 @@ function echos_footer_admin_sanitize_by_schema( $data, $schema ) {
 					$label = isset( $item['label'] ) ? trim( (string) $item['label'] ) : '';
 					if ( '' === $url && '' === $label ) {
 						continue;
+					}
+				}
+				if ( 'links' === $key ) {
+					$label = isset( $item['label'] ) ? trim( (string) $item['label'] ) : '';
+					if ( '' === $label ) {
+						continue;
+					}
+					if ( ! isset( $item['url'] ) || '' === trim( (string) $item['url'] ) ) {
+						$item['url'] = '#';
 					}
 				}
 				if ( echos_footer_admin_row_has_content( $item ) ) {

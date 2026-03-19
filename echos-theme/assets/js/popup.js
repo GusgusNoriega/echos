@@ -1,7 +1,7 @@
-/* Popup aislado (prefijo epopup)
-   - Se abre automáticamente al entrar (DOMContentLoaded)
-   - Cierra por: botón, click en fondo, Escape
-   - Bloquea el scroll del body mientras está abierto
+/* Popup standalone (prefix epopup)
+   - Opens on page load (DOMContentLoaded)
+   - Closes by button, backdrop click, Escape
+   - Locks body scroll while open
 */
 
 (() => {
@@ -11,6 +11,13 @@
   const dialog = root.querySelector(".epopup__dialog");
   const closeTargets = [...root.querySelectorAll("[data-epopup-close]")];
   const form = document.getElementById("epopupForm");
+  const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+
+  const config = window.echosFormsConfig || {};
+  const ajaxUrl = config.ajaxUrl || "/wp-admin/admin-ajax.php";
+  const nonce = config.nonce || "";
+  const messages = config.messages || {};
+  const formLoading = window.echosFormLoading || null;
 
   let lastFocused = null;
 
@@ -20,7 +27,6 @@
     root.setAttribute("aria-hidden", "false");
     document.body.classList.add("epopup--lock");
 
-    // Enfocar el diálogo (mejor para teclado/lector)
     window.requestAnimationFrame(() => {
       dialog?.focus?.();
     });
@@ -30,10 +36,13 @@
     root.classList.remove("is-open");
     root.setAttribute("aria-hidden", "true");
     document.body.classList.remove("epopup--lock");
-    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+
+    if (lastFocused && typeof lastFocused.focus === "function") {
+      lastFocused.focus();
+    }
   }
 
-  // Click en backdrop o botón X
+  // Click on backdrop or X button.
   closeTargets.forEach((el) => {
     el.addEventListener("click", (e) => {
       e.preventDefault();
@@ -41,36 +50,85 @@
     });
   });
 
-  // Escape
+  // Escape key.
   window.addEventListener("keydown", (e) => {
     if (root.getAttribute("aria-hidden") === "true") return;
+
     if (e.key === "Escape"){
       e.preventDefault();
       closePopup();
     }
   });
 
-  // Envío (demo): valida y cierra
-  form?.addEventListener("submit", (e) => {
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const empresa = form.querySelector('input[name="empresa"]');
-    const email = form.querySelector('input[name="email"]');
-
-    const ok = !!empresa?.value?.trim() && !!email?.value?.trim();
-    if (!ok){
-      // Usar validación nativa si está disponible
-      form.reportValidity?.();
+    if (formLoading && formLoading.isLocked()) {
       return;
     }
 
-    // UX demo (sin back-end)
-    alert("¡Gracias! Te enviaremos tu descuento.");
-    form.reset();
-    closePopup();
+    if (!form.checkValidity()){
+      if (typeof form.reportValidity === "function") {
+        form.reportValidity();
+      }
+      return;
+    }
+
+    const data = new FormData(form);
+    data.append("action", "echos_submit_form");
+    data.append("nonce", nonce);
+    data.append("page_url", window.location.href);
+    data.append("page_title", document.title || "");
+
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    if (formLoading) {
+      formLoading.lock();
+    }
+
+    try {
+      const response = await fetch(ajaxUrl, {
+        method: "POST",
+        body: data,
+        credentials: "same-origin",
+      });
+
+      let json = null;
+      try {
+        json = await response.json();
+      } catch (parseError) {
+        json = null;
+      }
+
+      if (!response.ok || !json || !json.success) {
+        const errorMessage = json && json.data && json.data.message
+          ? json.data.message
+          : (messages.error || "No se pudo enviar el formulario.");
+        throw new Error(errorMessage);
+      }
+
+      const successMessage = json.data && json.data.message
+        ? json.data.message
+        : (messages.success || "Formulario enviado correctamente.");
+
+      alert(successMessage);
+      form.reset();
+      closePopup();
+    } catch (error) {
+      const fallback = messages.error || "No se pudo enviar el formulario.";
+      alert(error && error.message ? error.message : fallback);
+    } finally {
+      if (formLoading) {
+        formLoading.unlock();
+      }
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
   });
 
-  // Abrir automáticamente al entrar a la página
+  // Open automatically when page finishes loading.
   window.addEventListener("DOMContentLoaded", () => {
     openPopup();
   });
