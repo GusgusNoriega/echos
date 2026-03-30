@@ -671,15 +671,168 @@ function echos_service_render_certifications( $certifications ) {
 }
 
 /**
- * Renders stands additional slider section.
+ * Splits multiline text into clean lines.
  *
- * @param array $section Section data.
+ * @param mixed $text Text value.
+ * @return array
+ */
+function echos_service_split_text_lines( $text ) {
+	$lines = preg_split( '/\r\n|\r|\n/', (string) $text );
+	if ( ! is_array( $lines ) ) {
+		return array();
+	}
+
+	$clean = array();
+	foreach ( $lines as $line ) {
+		$line = trim( (string) $line );
+		if ( '' !== $line ) {
+			$clean[] = $line;
+		}
+	}
+
+	return $clean;
+}
+
+/**
+ * Normalizes additional slider data and supports legacy iluminacion card values.
+ *
+ * @param array $section        Additional slider section data.
+ * @param array $legacy_section Legacy iluminacion additional section.
+ * @return array
+ */
+function echos_service_normalize_additional_slider_section( $section, $legacy_section = array() ) {
+	$section        = is_array( $section ) ? $section : array();
+	$legacy_section = is_array( $legacy_section ) ? $legacy_section : array();
+
+	$title = isset( $section['title'] ) ? (string) $section['title'] : '';
+	if ( '' === trim( $title ) ) {
+		$title = isset( $legacy_section['title'] ) ? (string) $legacy_section['title'] : '';
+	}
+
+	$subtitle = isset( $section['subtitle'] ) ? (string) $section['subtitle'] : '';
+	if ( '' === trim( $subtitle ) ) {
+		$subtitle = isset( $legacy_section['subtitle'] ) ? (string) $legacy_section['subtitle'] : '';
+	}
+
+	$items = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
+	if ( empty( $items ) && ! empty( $legacy_section ) ) {
+		$items[] = array(
+			'image'                => isset( $legacy_section['card_image'] ) ? $legacy_section['card_image'] : '',
+			'alt'                  => isset( $legacy_section['card_alt'] ) ? $legacy_section['card_alt'] : '',
+			'title'                => isset( $legacy_section['card_title'] ) ? $legacy_section['card_title'] : '',
+			'text'                 => isset( $legacy_section['card_text'] ) ? $legacy_section['card_text'] : '',
+			'button_text'          => isset( $legacy_section['button_text'] ) ? $legacy_section['button_text'] : '',
+			'button_url'           => isset( $legacy_section['button_url'] ) ? $legacy_section['button_url'] : '',
+			'popup_image'          => isset( $legacy_section['card_image'] ) ? $legacy_section['card_image'] : '',
+			'popup_image_alt'      => isset( $legacy_section['card_alt'] ) ? $legacy_section['card_alt'] : '',
+			'popup_title'          => isset( $legacy_section['card_title'] ) ? $legacy_section['card_title'] : '',
+			'popup_description'    => isset( $legacy_section['card_text'] ) ? $legacy_section['card_text'] : '',
+			'popup_features_title' => 'Caracteristicas',
+			'popup_features'       => '',
+		);
+	}
+
+	return array(
+		'title'    => $title,
+		'subtitle' => $subtitle,
+		'items'    => $items,
+	);
+}
+
+/**
+ * Prepares one additional slider item with display-safe fallback values.
+ *
+ * @param array  $item          Card data.
+ * @param string $fallback_image Fallback image URL.
+ * @return array
+ */
+function echos_service_prepare_additional_slider_item( $item, $fallback_image ) {
+	$item  = is_array( $item ) ? $item : array();
+	$title = trim( (string) ( isset( $item['title'] ) ? $item['title'] : '' ) );
+	$text  = trim( (string) ( isset( $item['text'] ) ? $item['text'] : '' ) );
+
+	$image = echos_service_resolve_image_url( isset( $item['image'] ) ? $item['image'] : '', $fallback_image );
+	$alt   = trim( (string) ( isset( $item['alt'] ) ? $item['alt'] : '' ) );
+	if ( '' === $alt ) {
+		$alt = $title;
+	}
+
+	$button_text = trim( (string) ( isset( $item['button_text'] ) ? $item['button_text'] : '' ) );
+	if ( '' === $button_text ) {
+		$button_text = 'Mas informacion';
+	}
+
+	$popup_image = echos_service_resolve_image_url( isset( $item['popup_image'] ) ? $item['popup_image'] : '', $image );
+
+	$popup_image_alt = trim( (string) ( isset( $item['popup_image_alt'] ) ? $item['popup_image_alt'] : '' ) );
+	if ( '' === $popup_image_alt ) {
+		$popup_image_alt = $alt;
+	}
+
+	$popup_title = trim( (string) ( isset( $item['popup_title'] ) ? $item['popup_title'] : '' ) );
+	if ( '' === $popup_title ) {
+		$popup_title = $title;
+	}
+
+	$popup_description = trim( (string) ( isset( $item['popup_description'] ) ? $item['popup_description'] : '' ) );
+	if ( '' === $popup_description ) {
+		$popup_description = $text;
+	}
+
+	$popup_features_title = trim( (string) ( isset( $item['popup_features_title'] ) ? $item['popup_features_title'] : '' ) );
+	if ( '' === $popup_features_title ) {
+		$popup_features_title = 'Caracteristicas';
+	}
+
+	$popup_features_raw = isset( $item['popup_features'] ) ? (string) $item['popup_features'] : '';
+
+	return array(
+		'image'                => $image,
+		'alt'                  => $alt,
+		'title'                => $title,
+		'text'                 => $text,
+		'button_text'          => $button_text,
+		'popup_image'          => $popup_image,
+		'popup_image_alt'      => $popup_image_alt,
+		'popup_title'          => $popup_title,
+		'popup_description'    => $popup_description,
+		'popup_features_title' => $popup_features_title,
+		'popup_features'       => $popup_features_raw,
+		'popup_features_lines' => echos_service_split_text_lines( $popup_features_raw ),
+	);
+}
+
+/**
+ * Renders additional slider section.
+ *
+ * @param array $section        Section data.
+ * @param array $legacy_section Legacy iluminacion section data.
  * @return void
  */
-function echos_service_render_stands_additional_slider( $section ) {
-	$items    = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
+function echos_service_render_additional_slider( $section, $legacy_section = array() ) {
+	$section = echos_service_normalize_additional_slider_section( $section, $legacy_section );
+	$items   = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
 	$img_base = get_template_directory_uri() . '/assets/img/inicio/';
 	$fallback = $img_base . 'baner1.jpg';
+	$cards    = array();
+
+	foreach ( $items as $item ) {
+		$card = echos_service_prepare_additional_slider_item( $item, $fallback );
+		if ( '' === $card['title'] && '' === $card['text'] && '' === $card['popup_description'] ) {
+			continue;
+		}
+		$cards[] = $card;
+	}
+
+	if ( empty( $cards ) ) {
+		return;
+	}
+
+	static $section_index = 0;
+	$section_index++;
+	$modal_id = 'srv-additional-modal-' . $section_index;
+	$title_id = $modal_id . '-title';
+	$first    = $cards[0];
 	?>
 	<section class="srv-additional">
 		<div class="srv-additional__inner">
@@ -688,23 +841,24 @@ function echos_service_render_stands_additional_slider( $section ) {
 
 			<div class="srv-additional__slider">
 				<div class="srv-additional__track">
-					<?php foreach ( $items as $item ) : ?>
-						<?php
-						if ( ! is_array( $item ) ) {
-							continue;
-						}
-
-						$image = echos_service_resolve_image_url( isset( $item['image'] ) ? $item['image'] : '', $fallback );
-						$alt   = isset( $item['alt'] ) ? $item['alt'] : ( isset( $item['title'] ) ? $item['title'] : '' );
-						?>
+					<?php foreach ( $cards as $card ) : ?>
 						<div class="srv-additional__card">
 							<div class="srv-additional__card-img">
-								<img src="<?php echo esc_url( $image ); ?>" alt="<?php echo esc_attr( $alt ); ?>" />
+								<img src="<?php echo esc_url( $card['image'] ); ?>" alt="<?php echo esc_attr( $card['alt'] ); ?>" />
 							</div>
 							<div class="srv-additional__card-content">
-								<h3 class="srv-additional__card-title"><?php echo esc_html( isset( $item['title'] ) ? $item['title'] : '' ); ?></h3>
-								<p class="srv-additional__card-text"><?php echo esc_html( isset( $item['text'] ) ? $item['text'] : '' ); ?></p>
-								<a class="srv-additional__card-btn" href="<?php echo esc_url( isset( $item['button_url'] ) ? $item['button_url'] : '#' ); ?>"><?php echo esc_html( isset( $item['button_text'] ) ? $item['button_text'] : '' ); ?></a>
+								<h3 class="srv-additional__card-title"><?php echo esc_html( $card['title'] ); ?></h3>
+								<p class="srv-additional__card-text"><?php echo esc_html( $card['text'] ); ?></p>
+								<button
+									type="button"
+									class="srv-additional__card-btn js-srv-additional-open"
+									data-popup-image="<?php echo esc_attr( $card['popup_image'] ); ?>"
+									data-popup-image-alt="<?php echo esc_attr( $card['popup_image_alt'] ); ?>"
+									data-popup-title="<?php echo esc_attr( $card['popup_title'] ); ?>"
+									data-popup-description="<?php echo esc_attr( $card['popup_description'] ); ?>"
+									data-popup-features-title="<?php echo esc_attr( $card['popup_features_title'] ); ?>"
+									data-popup-features="<?php echo esc_attr( $card['popup_features'] ); ?>"
+								><?php echo esc_html( $card['button_text'] ); ?></button>
 							</div>
 						</div>
 					<?php endforeach; ?>
@@ -720,9 +874,44 @@ function echos_service_render_stands_additional_slider( $section ) {
 					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
 				</button>
 			</div>
+
+			<div id="<?php echo esc_attr( $modal_id ); ?>" class="srv-additional-modal" aria-hidden="true">
+				<button type="button" class="srv-additional-modal__backdrop js-srv-additional-close" aria-label="Cerrar"></button>
+				<div class="srv-additional-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr( $title_id ); ?>">
+					<button type="button" class="srv-additional-modal__close js-srv-additional-close" aria-label="Cerrar">
+						<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+					</button>
+					<div class="srv-additional-modal__media">
+						<img class="srv-additional-modal__image" src="<?php echo esc_url( $first['popup_image'] ); ?>" alt="<?php echo esc_attr( $first['popup_image_alt'] ); ?>" />
+					</div>
+					<div class="srv-additional-modal__content">
+						<h3 class="srv-additional-modal__title" id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $first['popup_title'] ); ?></h3>
+						<p class="srv-additional-modal__description"><?php echo esc_html( $first['popup_description'] ); ?></p>
+						<div class="srv-additional-modal__features-wrap<?php echo empty( $first['popup_features_lines'] ) ? ' is-hidden' : ''; ?>">
+							<h4 class="srv-additional-modal__features-title"><?php echo esc_html( $first['popup_features_title'] ); ?></h4>
+							<ul class="srv-additional-modal__features">
+								<?php foreach ( $first['popup_features_lines'] as $line ) : ?>
+									<li><?php echo esc_html( $line ); ?></li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</section>
 	<?php
+}
+
+/**
+ * Backward-compatible alias.
+ *
+ * @param array $section        Section data.
+ * @param array $legacy_section Legacy section data.
+ * @return void
+ */
+function echos_service_render_stands_additional_slider( $section, $legacy_section = array() ) {
+	echos_service_render_additional_slider( $section, $legacy_section );
 }
 
 /**

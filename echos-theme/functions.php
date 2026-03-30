@@ -113,6 +113,21 @@ function echos_enqueue_assets() {
         wp_enqueue_style( 'echos-srv3', $theme_uri . '/assets/css/servicios-3.css', array( 'echos-base' ), $version );
     }
 
+    $is_service_template = echos_is_template_active( 'page-templates/template-servicios-infraestructura.php' )
+        || echos_is_template_active( 'page-templates/template-servicios-iluminacion.php' )
+        || echos_is_template_active( 'page-templates/template-servicios-stands.php' );
+
+    if ( $is_service_template ) {
+        $srv_additional_css_path    = $theme_dir . '/assets/css/servicios-additional.css';
+        $srv_additional_css_version = file_exists( $srv_additional_css_path ) ? (string) filemtime( $srv_additional_css_path ) : $version;
+        wp_enqueue_style(
+            'echos-srv-additional',
+            $theme_uri . '/assets/css/servicios-additional.css',
+            array( 'echos-base' ),
+            $srv_additional_css_version
+        );
+    }
+
     if ( is_page_template( 'page-templates/template-proyectos.php' ) || is_post_type_archive( 'proyecto' ) ) {
         wp_enqueue_style( 'echos-proyectos-page', $theme_uri . '/assets/css/proyectos-page.css', array( 'echos-base' ), $version );
         wp_enqueue_script( 'echos-proyectos-js', $theme_uri . '/assets/js/proyectos.js', array(), $version, true );
@@ -171,6 +186,18 @@ function echos_enqueue_assets() {
 
     if ( echos_is_template_active( 'page-templates/template-servicios-stands.php' ) ) {
         wp_enqueue_script( 'echos-srv3-js', $theme_uri . '/assets/js/servicios-3.js', array(), $version, true );
+    }
+
+    if ( $is_service_template ) {
+        $srv_additional_js_path    = $theme_dir . '/assets/js/servicios-additional.js';
+        $srv_additional_js_version = file_exists( $srv_additional_js_path ) ? (string) filemtime( $srv_additional_js_path ) : $version;
+        wp_enqueue_script(
+            'echos-srv-additional-js',
+            $theme_uri . '/assets/js/servicios-additional.js',
+            array(),
+            $srv_additional_js_version,
+            true
+        );
     }
 
     if ( function_exists( 'echos_forms_get_frontend_config' ) ) {
@@ -253,6 +280,9 @@ require_once get_template_directory() . '/inc/admin/project-metabox.php';
 require_once get_template_directory() . '/inc/footer/defaults.php';
 require_once get_template_directory() . '/inc/footer/data.php';
 require_once get_template_directory() . '/inc/admin/footer-options.php';
+require_once get_template_directory() . '/inc/analytics/defaults.php';
+require_once get_template_directory() . '/inc/analytics/data.php';
+require_once get_template_directory() . '/inc/admin/analytics-options.php';
 require_once get_template_directory() . '/inc/popup/defaults.php';
 require_once get_template_directory() . '/inc/popup/data.php';
 require_once get_template_directory() . '/inc/admin/popup-metabox.php';

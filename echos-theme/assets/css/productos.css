@@ -39,9 +39,35 @@
     linear-gradient(135deg, #0b0c10, #12141a);
   z-index: 0;
 }
+.productos-hero__video {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.productos-hero__video iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-width: 177.78vh;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  border: 0;
+}
+.productos-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, .72), rgba(0, 0, 0, .30) 45%, rgba(0, 0, 0, .48));
+  pointer-events: none;
+  z-index: 2;
+}
 .productos-hero__inner {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 680px;
   margin: 0 auto;
 }

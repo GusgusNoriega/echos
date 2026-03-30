@@ -176,21 +176,59 @@ function echos_nosotros_get_action_icon_markup( $icon ) {
 }
 
 /**
+ * Normalizes MV icon key, keeping backward compatibility with old values.
+ *
+ * @param string $icon Icon key.
+ * @return string
+ */
+function echos_nosotros_normalize_mv_icon_key( $icon ) {
+	$key = sanitize_key( (string) $icon );
+
+	switch ( $key ) {
+		case 'gear':
+		case 'star':
+		case 'ojo':
+			return 'ojo';
+
+		case 'mountain':
+		case 'montana':
+			return 'montana';
+
+		default:
+			return 'ojo';
+	}
+}
+
+/**
+ * Returns icon URL for mision and vision cards.
+ *
+ * @param string $icon Icon key.
+ * @return string
+ */
+function echos_nosotros_get_mv_icon_url( $icon ) {
+	$normalized = echos_nosotros_normalize_mv_icon_key( $icon );
+	$base_url   = trailingslashit( get_template_directory_uri() ) . 'assets/img/nosotros/';
+
+	return $base_url . $normalized . '.svg';
+}
+
+/**
  * Returns icon markup for mision and vision cards.
  *
  * @param string $icon Icon key.
  * @return string
  */
 function echos_nosotros_get_mv_icon_markup( $icon ) {
-	switch ( sanitize_key( (string) $icon ) ) {
-		case 'mountain':
-			return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L10 8l4 6 2-3 4 9"/><path d="M14 10l2-2 1.5 1.5"/><line x1="16" y1="8" x2="16" y2="5"/><path d="M15 5h2l-1-2-1 2z"/></svg>';
+	$normalized = echos_nosotros_normalize_mv_icon_key( $icon );
+	$icon_url   = echos_nosotros_get_mv_icon_url( $normalized );
 
-		case 'star':
-			return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 18.77 6.2 20.88l1.1-6.47-4.7-4.58 6.5-.95L12 3z"/></svg>';
-
-		case 'gear':
-		default:
-			return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/><circle cx="12" cy="12" r="1"/></svg>';
+	if ( '' === trim( $icon_url ) ) {
+		return '';
 	}
+
+	return sprintf(
+		'<img class="nosotros-mv__icon-img nosotros-mv__icon-img--%1$s" src="%2$s" alt="" loading="lazy" decoding="async" />',
+		esc_attr( $normalized ),
+		esc_url( $icon_url )
+	);
 }

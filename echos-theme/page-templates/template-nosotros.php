@@ -141,7 +141,7 @@ if ( ! is_string( $history_json ) ) {
 				<div class="nosotros-mv__header">
 					<h3 class="nosotros-mv__title"><?php echo esc_html( isset( $nosotros_data['mission_title'] ) ? $nosotros_data['mission_title'] : '' ); ?></h3>
 					<div class="nosotros-mv__icon">
-						<?php echo echos_nosotros_get_mv_icon_markup( isset( $nosotros_data['mission_icon'] ) ? $nosotros_data['mission_icon'] : 'gear' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo echos_nosotros_get_mv_icon_markup( isset( $nosotros_data['mission_icon'] ) ? $nosotros_data['mission_icon'] : 'ojo' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				</div>
 				<p class="nosotros-mv__desc"><?php echo esc_html( isset( $nosotros_data['mission_description'] ) ? $nosotros_data['mission_description'] : '' ); ?></p>
@@ -151,7 +151,7 @@ if ( ! is_string( $history_json ) ) {
 				<div class="nosotros-mv__header">
 					<h3 class="nosotros-mv__title"><?php echo esc_html( isset( $nosotros_data['vision_title'] ) ? $nosotros_data['vision_title'] : '' ); ?></h3>
 					<div class="nosotros-mv__icon">
-						<?php echo echos_nosotros_get_mv_icon_markup( isset( $nosotros_data['vision_icon'] ) ? $nosotros_data['vision_icon'] : 'mountain' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php echo echos_nosotros_get_mv_icon_markup( isset( $nosotros_data['vision_icon'] ) ? $nosotros_data['vision_icon'] : 'montana' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				</div>
 				<p class="nosotros-mv__desc"><?php echo esc_html( isset( $nosotros_data['vision_description'] ) ? $nosotros_data['vision_description'] : '' ); ?></p>

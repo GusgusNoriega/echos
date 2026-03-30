@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'add_meta_boxes', 'echos_product_register_admin_metaboxes', 10, 2 );
 add_action( 'save_post_producto', 'echos_product_save_admin_metabox', 10, 2 );
 add_action( 'save_post_page', 'echos_product_save_listing_admin_metabox', 10, 2 );
+add_action( 'admin_enqueue_scripts', 'echos_product_enqueue_admin_assets' );
 
 /**
  * Checks if page uses the products listing template.
@@ -92,6 +93,46 @@ function echos_product_admin_render_row( $name, $label, $value, $type = 'text', 
 }
 
 /**
+ * Renders file selector row (URL + media picker).
+ *
+ * @param string $name  Input name.
+ * @param string $label Label.
+ * @param string $value Value.
+ * @param string $help  Help text.
+ * @return void
+ */
+function echos_product_admin_render_file_row( $name, $label, $value, $help = '' ) {
+	$value      = is_scalar( $value ) ? (string) $value : '';
+	$file_name  = '';
+	$file_path  = wp_parse_url( $value, PHP_URL_PATH );
+
+	if ( is_string( $file_path ) && '' !== trim( $file_path ) ) {
+		$file_name = basename( $file_path );
+	}
+
+	echo '<tr>';
+	echo '<th scope="row"><label for="' . esc_attr( $name ) . '">' . esc_html( $label ) . '</label></th>';
+	echo '<td>';
+	echo '<div class="echos-product-file-field" data-product-file-field>';
+	echo '<input class="regular-text" type="url" id="' . esc_attr( $name ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" placeholder="https://" data-product-file-input />';
+	echo '<button type="button" class="button" data-product-file-pick>' . esc_html__( 'Seleccionar archivo', 'echos' ) . '</button> ';
+	echo '<button type="button" class="button-link-delete" data-product-file-clear>' . esc_html__( 'Limpiar', 'echos' ) . '</button>';
+	echo '<p class="description" data-product-file-current data-empty-label="' . esc_attr__( 'Ningun archivo seleccionado.', 'echos' ) . '">';
+	echo '' !== $file_name
+		? esc_html( sprintf( __( 'Archivo seleccionado: %s', 'echos' ), $file_name ) )
+		: esc_html__( 'Ningun archivo seleccionado.', 'echos' );
+	echo '</p>';
+
+	if ( '' !== $help ) {
+		echo '<p class="description">' . esc_html( $help ) . '</p>';
+	}
+
+	echo '</div>';
+	echo '</td>';
+	echo '</tr>';
+}
+
+/**
  * Converts product arrays to editable text lines.
  *
  * @param array $data Product data.
@@ -132,6 +173,7 @@ function echos_product_admin_flatten_product_data( $data ) {
 		'hero_topbar_cta_url'       => (string) ( $data['hero']['topbar_cta_url'] ?? '' ),
 		'hero_title'                => (string) ( $data['hero']['title'] ?? '' ),
 		'hero_description'          => (string) ( $data['hero']['description'] ?? '' ),
+		'hero_video'                => (string) ( $data['hero']['video'] ?? '' ),
 		'hero_button_text'          => (string) ( $data['hero']['button_text'] ?? '' ),
 		'hero_button_url'           => (string) ( $data['hero']['button_url'] ?? '' ),
 		'hero_image'                => (string) ( $data['hero']['image'] ?? '' ),
@@ -180,6 +222,7 @@ function echos_product_render_admin_metabox( $post ) {
 	echos_product_admin_render_row( 'echos_product_data[hero_topbar_cta_url]', __( 'URL CTA topbar', 'echos' ), $data['hero_topbar_cta_url'], 'url' );
 	echos_product_admin_render_row( 'echos_product_data[hero_title]', __( 'Hero titulo (opcional)', 'echos' ), $data['hero_title'] );
 	echos_product_admin_render_row( 'echos_product_data[hero_description]', __( 'Hero descripcion', 'echos' ), $data['hero_description'], 'textarea' );
+	echos_product_admin_render_row( 'echos_product_data[hero_video]', __( 'Hero video de fondo (YouTube URL)', 'echos' ), $data['hero_video'], 'url', __( 'Pega un enlace de YouTube para mostrarlo en loop de fondo.', 'echos' ) );
 	echos_product_admin_render_row( 'echos_product_data[hero_button_text]', __( 'Hero boton texto', 'echos' ), $data['hero_button_text'] );
 	echos_product_admin_render_row( 'echos_product_data[hero_button_url]', __( 'Hero boton URL', 'echos' ), $data['hero_button_url'], 'url' );
 	echos_product_admin_render_row( 'echos_product_data[hero_image]', __( 'Hero imagen URL', 'echos' ), $data['hero_image'], 'url' );
@@ -196,7 +239,7 @@ function echos_product_render_admin_metabox( $post ) {
 	echos_product_admin_render_row( 'echos_product_data[ficha_title]', __( 'Ficha titulo', 'echos' ), $data['ficha_title'] );
 	echos_product_admin_render_row( 'echos_product_data[ficha_text]', __( 'Ficha texto', 'echos' ), $data['ficha_text'], 'textarea' );
 	echos_product_admin_render_row( 'echos_product_data[ficha_button_text]', __( 'Ficha boton texto', 'echos' ), $data['ficha_button_text'] );
-	echos_product_admin_render_row( 'echos_product_data[ficha_button_url]', __( 'Ficha boton URL', 'echos' ), $data['ficha_button_url'], 'url' );
+	echos_product_admin_render_file_row( 'echos_product_data[ficha_button_url]', __( 'Ficha archivo de descarga', 'echos' ), $data['ficha_button_url'], __( 'Puedes pegar una URL o seleccionar un archivo desde la biblioteca de medios.', 'echos' ) );
 
 	echos_product_admin_render_row( 'echos_product_data[ideal_title]', __( 'Ideal para titulo', 'echos' ), $data['ideal_title'] );
 	echos_product_admin_render_row( 'echos_product_data[ideal_paragraphs_lines]', __( 'Ideal para parrafos', 'echos' ), $data['ideal_paragraphs_lines'], 'textarea', __( 'Una linea por parrafo.', 'echos' ) );
@@ -241,6 +284,7 @@ function echos_product_render_listing_admin_metabox( $post ) {
 	echos_product_admin_render_row( 'echos_product_listing_data[topbar_cta_url]', __( 'URL CTA topbar', 'echos' ), (string) ( $data['topbar_cta_url'] ?? '' ), 'url' );
 	echos_product_admin_render_row( 'echos_product_listing_data[hero_title]', __( 'Hero titulo', 'echos' ), (string) ( $data['hero']['title'] ?? '' ) );
 	echos_product_admin_render_row( 'echos_product_listing_data[hero_description]', __( 'Hero descripcion', 'echos' ), (string) ( $data['hero']['description'] ?? '' ), 'textarea' );
+	echos_product_admin_render_row( 'echos_product_listing_data[hero_video]', __( 'Hero video de fondo (YouTube URL)', 'echos' ), (string) ( $data['hero']['video'] ?? '' ), 'url', __( 'Pega un enlace de YouTube para mostrarlo en loop de fondo.', 'echos' ) );
 
 	echos_product_admin_render_row( 'echos_product_listing_data[filters_search_placeholder]', __( 'Filtro buscador placeholder', 'echos' ), (string) ( $data['filters']['search_placeholder'] ?? '' ) );
 	echos_product_admin_render_row( 'echos_product_listing_data[filters_all_categories_label]', __( 'Filtro label todas categorias', 'echos' ), (string) ( $data['filters']['all_categories_label'] ?? '' ) );
@@ -399,6 +443,7 @@ function echos_product_save_admin_metabox( $post_id, $post ) {
 			'topbar_cta_url' => esc_url_raw( trim( (string) ( $raw['hero_topbar_cta_url'] ?? '' ) ) ),
 			'title'          => sanitize_text_field( $raw['hero_title'] ?? '' ),
 			'description'    => sanitize_textarea_field( $raw['hero_description'] ?? '' ),
+			'video'          => esc_url_raw( trim( (string) ( $raw['hero_video'] ?? '' ) ) ),
 			'button_text'    => sanitize_text_field( $raw['hero_button_text'] ?? '' ),
 			'button_url'     => esc_url_raw( trim( (string) ( $raw['hero_button_url'] ?? '' ) ) ),
 			'image'          => esc_url_raw( trim( (string) ( $raw['hero_image'] ?? '' ) ) ),
@@ -491,6 +536,7 @@ function echos_product_save_listing_admin_metabox( $post_id, $post ) {
 		'hero'           => array(
 			'title'       => sanitize_text_field( $raw['hero_title'] ?? '' ),
 			'description' => sanitize_textarea_field( $raw['hero_description'] ?? '' ),
+			'video'       => esc_url_raw( trim( (string) ( $raw['hero_video'] ?? '' ) ) ),
 		),
 		'filters'        => array(
 			'search_placeholder'    => sanitize_text_field( $raw['filters_search_placeholder'] ?? '' ),
@@ -525,4 +571,46 @@ function echos_product_save_listing_admin_metabox( $post_id, $post ) {
 	}
 
 	update_post_meta( $post_id, '_echos_product_listing_sections', $clean );
+}
+
+/**
+ * Loads admin JS for product metabox file picker.
+ *
+ * @param string $hook Current hook.
+ * @return void
+ */
+function echos_product_enqueue_admin_assets( $hook ) {
+	if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+		return;
+	}
+
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen || 'producto' !== $screen->post_type ) {
+		return;
+	}
+
+	$theme_dir = get_template_directory();
+	$theme_uri = get_template_directory_uri();
+	$version   = wp_get_theme()->get( 'Version' );
+	$js_path   = $theme_dir . '/assets/js/admin-product-metabox.js';
+	$js_ver    = file_exists( $js_path ) ? (string) filemtime( $js_path ) : $version;
+
+	wp_enqueue_media();
+
+	wp_enqueue_script(
+		'echos-product-admin',
+		$theme_uri . '/assets/js/admin-product-metabox.js',
+		array(),
+		$js_ver,
+		true
+	);
+
+	wp_localize_script(
+		'echos-product-admin',
+		'echosProductAdmin',
+		array(
+			'mediaTitle'  => __( 'Seleccionar archivo', 'echos' ),
+			'mediaButton' => __( 'Usar archivo', 'echos' ),
+		)
+	);
 }

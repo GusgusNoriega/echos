@@ -174,9 +174,12 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
-  justify-content: center;
+  column-gap: clamp(8px, 2vw, 28px);
+  padding: 0 clamp(22px, 4vw, 64px);
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -186,30 +189,27 @@
   font-style: italic;
   color: rgba(255, 255, 255, .06);
   line-height: 1;
-  position: absolute;
+  position: relative;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
   user-select: none;
   transition: opacity .5s ease, transform .5s ease;
 }
 
 .nosotros-historia__bg-year--prev {
-  font-size: clamp(180px, 22vw, 320px);
-  left: -2%;
-  top: 50%;
-  transform: translateY(-50%);
+  font-size: clamp(110px, 12vw, 180px);
+  transform: translateX(-10%);
 }
 
 .nosotros-historia__bg-year--next {
-  font-size: clamp(180px, 22vw, 320px);
-  right: 2%;
-  top: 50%;
-  transform: translateY(-50%);
+  font-size: clamp(110px, 12vw, 180px);
+  transform: translateX(0);
 }
 
 .nosotros-historia__bg-year--far {
-  font-size: clamp(180px, 22vw, 320px);
-  right: -12%;
-  top: 50%;
-  transform: translateY(-50%);
+  font-size: clamp(110px, 12vw, 180px);
+  transform: translateX(10%);
 }
 
 /* ---- Contenido centrado ---- */
@@ -391,13 +391,28 @@
 }
 
 .nosotros-mv__icon {
-  color: rgba(255, 255, 255, .85);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  width: 104px;
+  min-width: 104px;
+  height: 104px;
   flex-shrink: 0;
   margin-left: 16px;
 }
 
-.nosotros-mv__icon svg {
+.nosotros-mv__icon-img {
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.nosotros-mv__icon-img--montana {
+  width: 82px;
+  height: 82px;
+  margin-top: 6px;
+  margin-left: auto;
 }
 
 .nosotros-mv__desc {
@@ -588,7 +603,11 @@
   .nosotros-historia__bg-year--prev,
   .nosotros-historia__bg-year--next,
   .nosotros-historia__bg-year--far {
-    font-size: clamp(120px, 18vw, 220px);
+    font-size: clamp(90px, 14vw, 130px);
+  }
+  .nosotros-historia__bg-years {
+    column-gap: clamp(6px, 1.8vw, 16px);
+    padding: 0 16px;
   }
 
   /* Misión y Visión */
@@ -606,9 +625,15 @@
   .nosotros-mv__title {
     font-size: 26px;
   }
-  .nosotros-mv__icon svg {
-    width: 44px;
-    height: 44px;
+  .nosotros-mv__icon {
+    width: 84px;
+    min-width: 84px;
+    height: 84px;
+  }
+  .nosotros-mv__icon-img--montana {
+    width: 66px;
+    height: 66px;
+    margin-top: 5px;
   }
   .nosotros-mv__desc {
     font-size: 14px;
@@ -705,7 +730,7 @@
   .nosotros-historia__bg-year--prev,
   .nosotros-historia__bg-year--next,
   .nosotros-historia__bg-year--far {
-    font-size: clamp(100px, 25vw, 160px);
+    font-size: clamp(74px, 21vw, 108px);
   }
   .nosotros-historia__bg-year--far {
     display: none;
@@ -728,9 +753,16 @@
     font-size: 22px;
     letter-spacing: 1.5px;
   }
-  .nosotros-mv__icon svg {
-    width: 40px;
-    height: 40px;
+  .nosotros-mv__icon {
+    width: 70px;
+    min-width: 70px;
+    height: 70px;
+    margin-left: 12px;
+  }
+  .nosotros-mv__icon-img--montana {
+    width: 56px;
+    height: 56px;
+    margin-top: 4px;
   }
   .nosotros-mv__desc {
     font-size: 13px;

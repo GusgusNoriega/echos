@@ -170,6 +170,20 @@ function echos_product_resolve_image_url( $value, $fallback = '' ) {
 }
 
 /**
+ * Builds embeddable YouTube URL for product templates.
+ *
+ * @param string $value Raw URL or potential ID.
+ * @return string
+ */
+function echos_product_build_youtube_embed_url( $value ) {
+	if ( function_exists( 'echos_home_build_youtube_embed_url' ) ) {
+		return echos_home_build_youtube_embed_url( $value );
+	}
+
+	return '';
+}
+
+/**
  * Escaped multiline text keeping line breaks.
  *
  * @param string $text Text value.

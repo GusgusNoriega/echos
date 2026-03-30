@@ -25,6 +25,7 @@ function echos_product_default_single_sections() {
 			'description'    => 'Lorem ipsum dolor sit amet consectetur. Viverra amet semper sed quam lobortis lacus sit.',
 			'button_text'    => 'Cotizar',
 			'button_url'     => home_url( '/#contacto' ),
+			'video'          => '',
 			'image'          => $default_image,
 			'image_alt'      => '',
 		),
@@ -126,6 +127,7 @@ function echos_product_default_listing_sections() {
 		'hero'           => array(
 			'title'       => 'NUESTROS PRODUCTOS',
 			'description' => 'Descubre nuestra linea completa de soluciones tecnologicas para eventos y espectaculos.',
+			'video'       => '',
 		),
 		'filters'        => array(
 			'search_placeholder'    => 'Buscar producto...',

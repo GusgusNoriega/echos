@@ -40,6 +40,7 @@ if ( '' === $hero_desc ) {
 if ( '' === $hero_desc ) {
 	$hero_desc = wp_trim_words( wp_strip_all_tags( (string) get_post_field( 'post_content', $product_id ) ), 35, '...' );
 }
+$hero_video_embed = echos_product_build_youtube_embed_url( (string) ( $data['hero']['video'] ?? '' ) );
 
 $hero_image = echos_product_resolve_image_url( ( $data['hero']['image'] ?? '' ), get_the_post_thumbnail_url( $product_id, 'full' ) );
 $hero_image = echos_product_resolve_image_url( $hero_image, $default_image );
@@ -73,8 +74,21 @@ $final_cta = is_array( $data['final_cta'] ?? null ) ? $data['final_cta'] : array
 	<?php get_template_part( 'template-parts/topbar', null, array( 'modifier' => 'topbar--static', 'cta_url' => $topbar_cta ) ); ?>
 </header>
 
-<section class="prod-hero">
+<section class="prod-hero<?php echo '' !== $hero_video_embed ? ' has-video' : ''; ?>">
 	<div class="prod-hero__bg" aria-hidden="true"></div>
+	<?php if ( '' !== $hero_video_embed ) : ?>
+		<div class="prod-hero__video" aria-hidden="true">
+			<iframe
+				src="<?php echo esc_url( $hero_video_embed ); ?>"
+				title="<?php esc_attr_e( 'Video de fondo del producto', 'echos' ); ?>"
+				loading="eager"
+				allow="autoplay; encrypted-media; picture-in-picture"
+				referrerpolicy="strict-origin-when-cross-origin"
+				tabindex="-1"
+			></iframe>
+		</div>
+		<div class="prod-hero__overlay" aria-hidden="true"></div>
+	<?php endif; ?>
 	<div class="container prod-hero__inner">
 		<div class="prod-hero__copy">
 			<h1 class="prod-hero__title"><?php echo esc_html( $hero_title ); ?></h1>

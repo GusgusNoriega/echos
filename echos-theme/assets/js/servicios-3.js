@@ -25,49 +25,6 @@
   update();
 })();
 
-/* Slider Servicios Adicionales */
-(function(){
-  const track = document.querySelector('.srv-additional__track');
-  if(!track) return;
-  const cards = track.querySelectorAll('.srv-additional__card');
-  const prevBtn = document.querySelector('.srv-additional__arrow--prev');
-  const nextBtn = document.querySelector('.srv-additional__arrow--next');
-  const dotsWrap = document.querySelector('.srv-additional__dots');
-  let idx = 0;
-  const visible = () => window.innerWidth <= 720 ? 1 : 2;
-  const gap = 28;
-
-  function totalPages(){ return Math.max(Math.ceil(cards.length / visible()) , 1); }
-
-  function buildDots(){
-    dotsWrap.innerHTML = '';
-    const pages = totalPages();
-    for(let i = 0; i < pages; i++){
-      const dot = document.createElement('span');
-      dot.className = 'srv-additional__dot' + (i === idx ? ' srv-additional__dot--active' : '');
-      dot.addEventListener('click', ()=>{ idx = i; update(); });
-      dotsWrap.appendChild(dot);
-    }
-  }
-
-  function update(){
-    const v = visible();
-    const pages = totalPages();
-    if(idx >= pages) idx = pages - 1;
-    if(idx < 0) idx = 0;
-    const card = cards[0];
-    const w = card.offsetWidth + gap;
-    const offset = idx * v * w;
-    track.style.transform = `translateX(-${offset}px)`;
-    buildDots();
-  }
-
-  prevBtn.addEventListener('click', ()=>{ idx--; update(); });
-  nextBtn.addEventListener('click', ()=>{ idx++; update(); });
-  window.addEventListener('resize', update);
-  update();
-})();
-
 /* Slider Mobiliario en Alquiler */
 (function(){
   const track = document.querySelector('.srv-furniture__track');

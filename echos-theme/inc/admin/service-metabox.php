@@ -120,6 +120,7 @@ function echos_service_admin_render_variant_infraestructura( $data, $post_id = 0
 			<?php echos_service_admin_render_hero_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_infra_systems_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
+			<?php echos_service_admin_render_additional_slider_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_certifications_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_other_services_fields( $data, $variant ); ?>
@@ -145,7 +146,7 @@ function echos_service_admin_render_variant_iluminacion( $data, $post_id = 0 ) {
 			<?php echos_service_admin_render_hero_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_iluminacion_systems_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
-			<?php echos_service_admin_render_iluminacion_additional_fields( $data, $variant ); ?>
+			<?php echos_service_admin_render_additional_slider_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_other_services_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_final_cta_fields( $data, $variant ); ?>
@@ -172,7 +173,7 @@ function echos_service_admin_render_variant_stands( $data, $post_id = 0 ) {
 			<?php echos_service_admin_render_stands_ficha_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_products_fields( $data, $variant, $post_id ); ?>
 			<?php echos_service_admin_render_featured_fields( $data, $variant ); ?>
-			<?php echos_service_admin_render_stands_additional_slider_fields( $data, $variant ); ?>
+			<?php echos_service_admin_render_additional_slider_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_stands_furniture_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_other_services_fields( $data, $variant ); ?>
 			<?php echos_service_admin_render_final_cta_fields( $data, $variant ); ?>
@@ -885,14 +886,14 @@ function echos_service_admin_render_stands_ficha_fields( $data, $variant ) {
 }
 
 /**
- * Renders stands additional slider fields.
+ * Renders additional slider fields.
  *
  * @param array  $data    Current data.
  * @param string $variant Variant key.
  * @return void
  */
-function echos_service_admin_render_stands_additional_slider_fields( $data, $variant ) {
-	echo '<h4>' . esc_html__( 'Servicios adicionales (slider stands)', 'echos' ) . '</h4>';
+function echos_service_admin_render_additional_slider_fields( $data, $variant ) {
+	echo '<h4>' . esc_html__( 'Servicios adicionales (slider)', 'echos' ) . '</h4>';
 
 	echos_service_admin_render_single_field(
 		$data,
@@ -950,9 +951,52 @@ function echos_service_admin_render_stands_additional_slider_fields( $data, $var
 					'label' => __( 'URL boton', 'echos' ),
 					'type'  => 'url',
 				),
+				array(
+					'key'   => 'popup_image',
+					'label' => __( 'Imagen popup', 'echos' ),
+					'type'  => 'image',
+				),
+				array(
+					'key'   => 'popup_image_alt',
+					'label' => __( 'ALT imagen popup', 'echos' ),
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'popup_title',
+					'label' => __( 'Titulo popup', 'echos' ),
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'popup_description',
+					'label' => __( 'Descripcion popup', 'echos' ),
+					'type'  => 'textarea',
+					'wide'  => true,
+				),
+				array(
+					'key'   => 'popup_features_title',
+					'label' => __( 'Titulo caracteristicas popup', 'echos' ),
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'popup_features',
+					'label' => __( 'Caracteristicas popup (una por linea)', 'echos' ),
+					'type'  => 'textarea',
+					'wide'  => true,
+				),
 			),
 		)
 	);
+}
+
+/**
+ * Backward-compatible alias.
+ *
+ * @param array  $data    Current data.
+ * @param string $variant Variant key.
+ * @return void
+ */
+function echos_service_admin_render_stands_additional_slider_fields( $data, $variant ) {
+	echos_service_admin_render_additional_slider_fields( $data, $variant );
 }
 
 /**
@@ -1508,6 +1552,28 @@ function echos_service_admin_schema() {
 		'secondary_url'  => 'url',
 	);
 
+	$additional_slider_schema = array(
+		'title'    => 'text',
+		'subtitle' => 'textarea',
+		'items'    => array(
+			'_type'  => 'repeater',
+			'fields' => array(
+				'image'                => 'url',
+				'alt'                  => 'text',
+				'title'                => 'text',
+				'text'                 => 'textarea',
+				'button_text'          => 'text',
+				'button_url'           => 'url',
+				'popup_image'          => 'url',
+				'popup_image_alt'      => 'text',
+				'popup_title'          => 'text',
+				'popup_description'    => 'textarea',
+				'popup_features_title' => 'text',
+				'popup_features'       => 'textarea',
+			),
+		),
+	);
+
 	return array(
 		'infraestructura' => array(
 			'hero'           => $hero_schema,
@@ -1528,6 +1594,7 @@ function echos_service_admin_schema() {
 				),
 			),
 			'products'       => $products_schema,
+			'additional_slider' => $additional_slider_schema,
 			'featured'       => $featured_schema,
 			'certifications' => array(
 				'title'    => 'text',
@@ -1565,6 +1632,7 @@ function echos_service_admin_schema() {
 				'button_text' => 'text',
 				'button_url'  => 'url',
 			),
+			'additional_slider' => $additional_slider_schema,
 			'featured'       => $featured_schema,
 			'other_services' => $other_services_schema,
 			'final_cta'      => $final_cta_schema,
@@ -1590,21 +1658,7 @@ function echos_service_admin_schema() {
 			),
 			'products'          => $products_schema,
 			'featured'          => $featured_schema,
-			'additional_slider' => array(
-				'title'    => 'text',
-				'subtitle' => 'textarea',
-				'items'    => array(
-					'_type'  => 'repeater',
-					'fields' => array(
-						'image'       => 'url',
-						'alt'         => 'text',
-						'title'       => 'text',
-						'text'        => 'textarea',
-						'button_text' => 'text',
-						'button_url'  => 'url',
-					),
-				),
-			),
+			'additional_slider' => $additional_slider_schema,
 			'furniture'         => array(
 				'title'    => 'text',
 				'subtitle' => 'textarea',

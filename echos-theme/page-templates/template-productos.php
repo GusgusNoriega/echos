@@ -10,6 +10,7 @@ get_header();
 
 $page_id = get_queried_object_id();
 $data    = echos_product_get_listing_data( $page_id );
+$hero_video_embed = echos_product_build_youtube_embed_url( (string) ( $data['hero']['video'] ?? '' ) );
 
 $home       = esc_url( home_url( '/' ) );
 $topbar_cta = trim( (string) ( $data['topbar_cta_url'] ?? '' ) );
@@ -97,8 +98,21 @@ $filters = is_array( $data['filters'] ?? null ) ? $data['filters'] : array();
 	<?php get_template_part( 'template-parts/topbar', null, array( 'modifier' => 'topbar--static', 'cta_url' => $topbar_cta ) ); ?>
 </header>
 
-<section class="productos-hero">
+<section class="productos-hero<?php echo '' !== $hero_video_embed ? ' has-video' : ''; ?>">
 	<div class="productos-hero__bg" aria-hidden="true"></div>
+	<?php if ( '' !== $hero_video_embed ) : ?>
+		<div class="productos-hero__video" aria-hidden="true">
+			<iframe
+				src="<?php echo esc_url( $hero_video_embed ); ?>"
+				title="<?php esc_attr_e( 'Video de fondo de productos', 'echos' ); ?>"
+				loading="eager"
+				allow="autoplay; encrypted-media; picture-in-picture"
+				referrerpolicy="strict-origin-when-cross-origin"
+				tabindex="-1"
+			></iframe>
+		</div>
+	<?php endif; ?>
+	<div class="productos-hero__overlay" aria-hidden="true"></div>
 	<div class="container productos-hero__inner">
 		<h1 class="productos-hero__title"><?php echo esc_html( (string) ( $data['hero']['title'] ?? __( 'NUESTROS PRODUCTOS', 'echos' ) ) ); ?></h1>
 		<p class="productos-hero__desc"><?php echo esc_html( (string) ( $data['hero']['description'] ?? '' ) ); ?></p>

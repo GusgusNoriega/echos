@@ -29,9 +29,8 @@ function echos_nosotros_action_icon_options() {
  */
 function echos_nosotros_mv_icon_options() {
 	return array(
-		'gear'     => 'Gear',
-		'mountain' => 'Mountain',
-		'star'     => 'Star',
+		'ojo'     => 'Ojo (Mision)',
+		'montana' => 'Montana (Vision)',
 	);
 }
 
@@ -89,10 +88,10 @@ function echos_nosotros_default_data() {
 			),
 		),
 		'mission_title'          => 'MISION',
-		'mission_icon'           => 'gear',
+		'mission_icon'           => 'ojo',
 		'mission_description'    => 'Lorem ipsum dolor sit amet consectetur. In donec id tortor sollicitudin varius gravida aenean sit. Quam nisl quis mauris viverra. Blandit vestibulum tempus lectus consequat auctor velit egestas.',
 		'vision_title'           => 'VISION',
-		'vision_icon'            => 'mountain',
+		'vision_icon'            => 'montana',
 		'vision_description'     => 'Lorem ipsum dolor sit amet consectetur. In donec id tortor sollicitudin varius gravida aenean sit. Quam nisl quis mauris viverra. Blandit vestibulum tempus lectus consequat auctor velit egestas.',
 		'process_title'          => 'COMO TRABAJAMOS?',
 		'process_description'    => 'Lorem ipsum dolor sit amet consectetur. Viverra amet semper sed quam lobortis lacus sit. Nulla id.',

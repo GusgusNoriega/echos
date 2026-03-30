@@ -57,11 +57,29 @@
   font-display: swap;
 }
 
-/* Universo Black (real licensed file for display headings) */
+/* Universo Bold (principal typography) */
 @font-face {
   font-family: 'Universo Sans';
-  src: local('Universo Black'), local('Universo-Black'),
-    url('../fonts/universo/Universo-Black.ttf') format('truetype');
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Universo Sans';
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Universo Sans';
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -69,8 +87,8 @@
 
 @font-face {
   font-family: 'Universo Sans';
-  src: local('Universo Black'), local('Universo-Black'),
-    url('../fonts/universo/Universo-Black.ttf') format('truetype');
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -78,8 +96,8 @@
 
 @font-face {
   font-family: 'Universo Sans';
-  src: local('Universo Black'), local('Universo-Black'),
-    url('../fonts/universo/Universo-Black.ttf') format('truetype');
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -87,8 +105,8 @@
 
 @font-face {
   font-family: 'Universo Sans';
-  src: local('Universo Black'), local('Universo-Black'),
-    url('../fonts/universo/Universo-Black.ttf') format('truetype');
+  src: local('Universo Bold'), local('Universo-Bold'),
+    url('../fonts/universo/Universo-Bold.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;

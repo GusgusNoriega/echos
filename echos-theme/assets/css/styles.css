@@ -21,7 +21,7 @@
   --container: 1160px;
 
   /* Typography */
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-sans: 'Universo Sans', 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   /* Alternativa gratuita similar a ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œUniverso BlackÃƒÂ¢Ã¢â€šÂ¬Ã‚Â */
   --font-display: 'Universo Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif;
 }
@@ -175,8 +175,8 @@ h1, h2, h3, h4, h5, h6,
   left:50%;
   width: 100vw;
   height: 56.25vw;
-  min-width: 100%;
-  min-height: 100%;
+  min-width: 177.78vh;
+  min-height: 100vh;
   transform: translate(-50%, -50%);
   border: 0;
 }
@@ -1867,7 +1867,7 @@ body.home .textarea {
 
 body.home .footer__label {
   font-family: var(--font-sans);
-  font-size: clamp(28px, 3.3vw, 42px);
+  font-size: clamp(28px, 2.3vw, 42px);
   font-weight: 500;
   line-height: 1.12;
 }
@@ -2086,5 +2086,71 @@ body.home .logo-footer {
   body.home .logo-footer {
     width: 250px;
     bottom: 5px;
+  }
+}
+
+/* =====================================================
+   FOOTER TYPOGRAPHY CALIBRATION
+   ===================================================== */
+.footer__label,
+body.home .footer__label {
+  font-family: var(--font-sans);
+  font-size: clamp(31px, 2.2vw, 40px);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+
+.col__title,
+body.home .col__title {
+  font-family: var(--font-sans);
+  font-size: clamp(17px, 1.02vw, 19px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.col a,
+body.home .col a {
+  font-family: var(--font-sans);
+  font-size: clamp(15px, .88vw, 16px);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+@media (max-width: 980px) {
+  .footer__label,
+  body.home .footer__label {
+    font-size: clamp(24px, 4.9vw, 32px);
+  }
+
+  .col__title,
+  body.home .col__title {
+    font-size: 15px;
+  }
+
+  .col a,
+  body.home .col a {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer__label,
+  body.home .footer__label {
+    font-size: clamp(20px, 6.3vw, 26px);
+    line-height: 1.25;
+  }
+
+  .col__title,
+  body.home .col__title {
+    font-size: 14px;
+  }
+
+  .col a,
+  body.home .col a {
+    font-size: 13px;
+    line-height: 1.55;
   }
 }
